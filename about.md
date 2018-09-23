@@ -1,6 +1,11 @@
 ---
 layout: page
-title: About
-permalink: /about/
+title: 关于我 
 ---
-This is a place for my study 
+初学者
+
+<p> 
+
+
+{% include comments.html %}
+

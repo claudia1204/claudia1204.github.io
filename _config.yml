@@ -15,19 +15,50 @@
 # in the templates via {{ site.myvariable }}.
 title: step by step
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  small place
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
-
+# 头像里面的标题
+avatarTitle: leopardpan
+# 头像里面的描述
+avatarDesc: frontend / python
+url: "http://baixin.io"
 # Build settings
 markdown: kramdown
 theme: minima
-plugins:
-  - jekyll-feed
+baidu:
+    id: 1e7593df0fda4cc448d5135bc564147c
+#plugins:
+#  - jekyll-paginate
+#  - jekyll-sitemap
+
+
+permalink: /:year/:month/:title/
+# Format
+highlighter: rouge
+
+textColor: #FF0000
+
+# supported colors: blue, green, purple, red, orange or slate. If you need clear, leave it empty.
+cover_color: clear
+
+# The blog button should not be removed.
+blog_button:
+    title: 博客主页
+
+# Navigation buttons in the front page.s
+nav:
+    - {title: 所有文章, description: archive, url: '/archive'}
+    - {title: 标签, description: tags, url: '/tags'}
+    - {title: 关于我, description: about, url: '/about'}
+
+
+# Pagination
+#plugins: [jekyll-paginate,jekyll-sitemap]
+paginate: 20
+paginate_path: "page/:num/"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

@@ -1,14 +1,218 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-09-22T23:04:49+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">one step by step</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">test</title><link href="http://localhost:4000/test/2018/09/22/about-regex.html" rel="alternate" type="text/html" title="test" /><published>2018-09-22T16:29:41+08:00</published><updated>2018-09-22T16:29:41+08:00</updated><id>http://localhost:4000/test/2018/09/22/about-regex</id><content type="html" xml:base="http://localhost:4000/test/2018/09/22/about-regex.html">&lt;p&gt;test
-test222222&lt;/p&gt;</content><author><name></name></author><summary type="html">test test222222</summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2018/09/22/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2018-09-22T16:29:41+08:00</published><updated>2018-09-22T16:29:41+08:00</updated><id>http://localhost:4000/jekyll/update/2018/09/22/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2018/09/22/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>step by step</title>
+    <description>small place</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 23 Sep 2018 22:26:27 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Sep 2018 22:26:27 +0800</lastBuildDate>
+    <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>about regex</title>
+        <description>&lt;p&gt;　　经过各种找资料，踩过各种坑，终于使用 hexo 搭建个人博客初步完成了，域名目前用得时 github 的，我的 hexo 是 3.1.1 版本，hexo 不同的版本，很多配置都不一样。好吧，废话不多说了，开始吧。&lt;/p&gt;
 
-&lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;p&gt;　　本篇文章累计了大量评论，和我的一些解答，读者有什么问题可以先看看评论，或者搜下关键字，如果还是有问题可以给我在评论里给我留言，问题很着急的可以加我 ＱＱ：1499065178　，或者给我发邮件：&lt;a href=&quot;mailto:leopardpan@icloud.com&quot;&gt;leopardpan@icloud.com&lt;/a&gt;  ，都可以，如果你已经搭建完成了，可以看看我的另一篇博客&lt;a href=&quot;http://baixin.io/2016/06/HEXO_Advanced/&quot;&gt;HEXO进阶&lt;/a&gt;，有讲如何能百度搜索你的博客、多台电脑使用HEXO发布博客等。我现在的博客是使用 Jekyll 搭建的，如果你想使用我现在的模板请看&lt;a href=&quot;http://baixin.io/2016/10/jekyll_tutorials1/&quot;&gt;Jekyll搭建个人博客&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;h2 id=&quot;关于正则&quot;&gt;关于正则&lt;/h2&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;h1 id=&quot;正则组成&quot;&gt;正则组成&lt;/h1&gt;
+&lt;p&gt;普通字符        +     元字符
+a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!pattern) (?=pattern)  [] [^] \b&lt;/p&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry></feed>
+&lt;h1 id=&quot;元字符详细&quot;&gt;元字符详细&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;字符&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;描述&lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;\&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;标记下一个字符为特殊字符/原义字符/向后引用/八进制转义符。e.g. \n 代表换行符&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;^&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配输入字符串开始位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之后的位置。 ^ss 代表字符串以ss开始&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配输入字符串的结束位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之前的位置。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;.&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配单个任意字符，除了\n。 可使用[.\n]匹配任意字符&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;?&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配前面的表达式或者字符的0次或者1次。等价于{0,1}。e.g. test(as)+ 可以匹配test或者是testas.  testa+ 可以匹配test或者testa。&lt;br /&gt; 备注：当?跟在次数限定符（*，+，？，{m,n},{n}）后面时，匹配模式是非贪婪的，即尽可能少匹配所搜索的字符串。&lt;br /&gt;e.g. ‘o+?’ 将只会匹配’hellooooo’中的单个’o’而不是’ooooo’&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;*&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配前面的表达式的0次或者多次。 等价于{0,}。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;+&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配前面的表达式的1次或者多次。等价于{1,}。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt; &lt;/td&gt;
+      &lt;td&gt;匹配两边表达式。&lt;br /&gt;e.g. test&lt;/td&gt;
+      &lt;td&gt;hello \d\d, 等价于 (test&lt;/td&gt;
+      &lt;td&gt;hello \d\d)，因此只会匹配’test 22’中的test以及匹配’hello 22’中的’hello 22’. 如果想要匹配’test 22’则可用括号限定两边的表达式，例如(test&lt;/td&gt;
+      &lt;td&gt;hello) \d\d.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;{n}&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配前面表达式n次&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;{m,n}&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配前面表达式最小m次，最多n次，m&amp;lt;=n&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(…..)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配…..且获取匹配…..的结果。将括号中的表达式作为一个分组，匹配后可根据$index,index为该分组的序号可获取该匹配结果。例如$5&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(?:…..)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配…..但不存储匹配结果。将括号中的表达式作为一个分组，匹配后无法根据$index获取结果，为非获取匹配&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(?=…..)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;正向预查（肯定顺序环视）。从左往右在匹配…..字符串,且不消耗匹配字符。&lt;br /&gt;如’windows(?=2000)’,则匹配windows2000中的windows，但是不匹配windows300中的windows。。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(?&amp;lt;…..)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;肯定逆序环视。同上，方向为从右往左。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(?!…..)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;负向预查。在任何不匹配…..的字符串开始处匹配查找字符串。 如’wdinwos (?!2000)’,代表获取’window ‘字符串且该字符串必须满足后面不带’2000’.&lt;br /&gt;备注，此匹配不消耗该预查字符…..，即下一次搜索会window空格后开始查找。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(?&amp;lt;!…..)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;否定逆序环视。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;[….]&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配在字符集合….里的单个字符。例如Chapter [123]，可以匹配Chapter 1， Chapter 2。 如果希望表示范围的话可以用[1-5]，此时表示匹配1-5内的任意单个数字。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;[^….]&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配不在字符集合….里的单个字符。例如Chater [^123],可以匹配Chater 4，但是不能匹配Chapter 1&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;\b&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;匹配单词边界。例如never say never，可以用ver\b 匹配never中的verb 。&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&quot;优先级&quot;&gt;优先级&lt;/h1&gt;
+&lt;p&gt;转义符 &amp;gt; ()、[]  &amp;gt; 限定符 &amp;gt; 位置和顺序 &amp;gt; |&lt;/p&gt;
+
+&lt;h1 id=&quot;python分组使用命名分组&quot;&gt;Python分组使用–命名分组&lt;/h1&gt;
+&lt;p&gt;(?P&lt;name&gt;) 其中name代表该分组的另外一个别名
+&lt;code&gt;
+	s = 'debug 10:01:01 11:11:11:hello word'
+	import re
+	time = re.search(r'debug\s(?P&lt;time&gt;\d+:\d+:\d+\s\d+:\d+:\d+):.*', s).group('time')
+	print(time)	
+&amp;lt;/code&amp;gt;&lt;/time&gt;&lt;/code&gt;&lt;/name&gt;&lt;/p&gt;
+
+&lt;p&gt;result: 10:01:01 11:11:11&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 22 Sep 2018 16:29:41 +0800</pubDate>
+        <link>http://localhost:4000/2018/09/about-regex/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/about-regex/</guid>
+        
+        
+        <category>test</category>
+        
+      </item>
+    
+  </channel>
+</rss>
