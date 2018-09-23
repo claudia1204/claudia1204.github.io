@@ -2,85 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f39f581d-6094-4875-a965-40109dbe339e" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/archive.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/feed.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/avatar.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/background-cover.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/calendar.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/favicon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/alipay.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/alipayimg.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/close.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/code-bg.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/cy-reward-title-bg.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/radio1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/radio2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/wechat.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/payimg/weipayimg.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Wifilist/PastedGraphic.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Wifilist/WLAN.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Wifilist/entitlement.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Wifilist/infoplist.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Wifilist/systemVersion.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image10.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image11.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image12.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image13.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/Xcode8/image9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/code.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/codeless1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/codeless2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/image01.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/image02.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/image03.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/image04.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/image05.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/img1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/codeless/img2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/iBeacon/iBeacon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/icon/image01.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/jekyll/image1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/markdown/image1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/markdown/image2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/markdown/image3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/ck.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/image01.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/image02.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/ipod1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/ipod2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/logo.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/mouse1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/mouse2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/notebook.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/wb.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/posts/tfimg/wq.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/readme/icon.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/readme/img1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/readme/img2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/readme/img3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/readme/img4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/readme/img5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/tag-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tags.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/about/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/about/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/feed.xml" beforeDir="false" afterPath="$PROJECT_DIR$/_site/feed.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/jekyll/update/2018/09/22/welcome-to-jekyll.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/test/2018/09/22/about-regex.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -115,11 +37,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_config.yml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="_config.yml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_config.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
-              <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
+            <state relative-caret-position="378">
+              <caret line="21" column="24" lean-forward="true" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="2018-09-23-about-regex.markdown" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="90">
+                <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -173,9 +107,9 @@
         <option value="$PROJECT_DIR$/css/main.css" />
         <option value="$PROJECT_DIR$/about.md" />
         <option value="$PROJECT_DIR$/_site/index.html" />
-        <option value="$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown" />
         <option value="$PROJECT_DIR$/_layouts/default.html" />
         <option value="$PROJECT_DIR$/_config.yml" />
+        <option value="$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown" />
       </list>
     </option>
   </component>
@@ -260,25 +194,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1537630624363</updated>
-      <workItem from="1537630625693" duration="6301000" />
+      <workItem from="1537630625693" duration="6574000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6301000" />
+    <option name="totallyTimeSpent" value="6574000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-309" y="-1080" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24960506" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24960506" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Version Control" weight="0.32996973" />
+      <window_info anchor="bottom" id="Version Control" weight="0.3291506" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.31563705" />
+      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.31563705" />
       <window_info id="Favorites" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -1244,26 +1178,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="342">
-            <caret line="19" column="21" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/_posts/2015-08-25-HEXO搭建个人博客.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="324">
-            <caret line="18" column="12" lean-forward="true" selection-start-line="18" selection-start-column="12" selection-end-line="18" selection-end-column="12" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/archive.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -1292,10 +1206,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/_posts/2015-08-25-HEXO搭建个人博客.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="324">
+            <caret line="18" column="12" lean-forward="true" selection-start-line="18" selection-start-column="12" selection-end-line="18" selection-end-column="12" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/_config.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
+        <state relative-caret-position="378">
+          <caret line="21" column="24" lean-forward="true" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_posts/2018-09-23-about-regex.markdown">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="90">
+            <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
