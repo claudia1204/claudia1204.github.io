@@ -18,13 +18,13 @@ description: >- # this means to ignore newlines until "baseurl:"
   small place
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+#twitter_username: jekyllrb
+#github_username:  jekyll
 # 头像里面的标题
-avatarTitle: leopardpan
+avatarTitle: claudia
 # 头像里面的描述
 avatarDesc: frontend / python
-url: "http://baixin.io"
+url: "https://claudia1204.github.io"
 # Build settings
 markdown: kramdown
 theme: minima
