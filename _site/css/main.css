@@ -211,7 +211,7 @@ pre code {
 
 table {
   color: #333333;
-  font-size: 1.0em;
+  font-size: 1.4em;
   text-align: center;
   line-height: 40px;
   border: 2px solid #363636;
@@ -239,6 +239,7 @@ th:first-child, td:first-child {
 tbody td {
   font-size: .85em; 
   border: 1px solid #363636;
+  white-space: nowrap;
 }
 td:last-child {
   padding-right: 10px; 
