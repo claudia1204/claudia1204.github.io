@@ -5,9 +5,6 @@ date:   2018-09-22 16:29:41 +0800
 categories: test
 ---
 
-关于正则
-------------------------
-
 正则组成
 =======
 普通字符        +     元字符
@@ -17,8 +14,8 @@ a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!patter
 元字符详细
 =======
 
-| 字符        | 描述      |  
-| --------   | -----:  |
+| 字符        | 描述       
+| --------   | :---- |
 |\        | 标记下一个字符为特殊字符/原义字符/向后引用/八进制转义符。e.g. \n 代表换行符
 |^        | 匹配输入字符串开始位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之后的位置。 ^ss 代表字符串以ss开始
 |$        | 匹配输入字符串的结束位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之前的位置。
@@ -26,7 +23,7 @@ a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!patter
 |?        | 匹配前面的表达式或者字符的0次或者1次。等价于{0,1}。e.g. test(as)+ 可以匹配test或者是testas.  testa+ 可以匹配test或者testa。<br/> 备注：当?跟在次数限定符（*，+，？，{m,n},{n}）后面时，匹配模式是非贪婪的，即尽可能少匹配所搜索的字符串。<br>e.g. 'o+?' 将只会匹配'hellooooo'中的单个'o'而不是'ooooo'
 |*        | 匹配前面的表达式的0次或者多次。 等价于{0,}。
 |+        | 匹配前面的表达式的1次或者多次。等价于{1,}。
-||        | 匹配两边表达式。<br>e.g. test|hello \d\d, 等价于 (test|hello \d\d)，因此只会匹配'test 22'中的test以及匹配'hello 22'中的'hello 22'. 如果想要匹配'test 22'则可用括号限定两边的表达式，例如(test|hello) \d\d.
+|&#124;        | 匹配两边表达式。<br>e.g. test&#124;hello \d\d, 等价于 (test&#124;hello \d\d)，因此只会匹配'test 22'中的test以及匹配'hello 22'中的'hello 22'. 如果想要匹配'test 22'则可用括号限定两边的表达式，例如(test&#124;hello) \d\d.
 |{n}        |匹配前面表达式n次
 |{m,n}      |匹配前面表达式最小m次，最多n次，m<=n
 |(.....)    |匹配.....且获取匹配.....的结果。将括号中的表达式作为一个分组，匹配后可根据$index,index为该分组的序号可获取该匹配结果。例如$5
@@ -44,17 +41,20 @@ a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!patter
 转义符 > ()、[]  > 限定符 > 位置和顺序 > |
 
 
+
 Python分组使用--命名分组
 =================
 (?P<name>) 其中name代表该分组的另外一个别名
-<code>
+
+
 	s = 'debug 10:01:01 11:11:11:hello word'
 	import re
-	time = re.search(r'debug\s(?P<time>\d+:\d+:\d+\s\d+:\d+:\d+):.*', s).group('time')
-	print(time)	
-</code>
+	
+	result = re.search(r'debug\s(?P<time>\d+:\d+:\d+\s\d+:\d+:\d+):.*', s).group('time')
+	
+	print(result)	
 
-result: 10:01:01 11:11:11
+	10:01:01 11:11:11
 
 
 
