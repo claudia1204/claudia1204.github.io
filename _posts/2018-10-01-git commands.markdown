@@ -1,10 +1,14 @@
-#git commands record
+---
+layout: post
+title:  "git commands record"
+date:   2018-10-01 16:29:41 +0800
+categories: git
+---
 
------------
 
 ```
-git config user.name "用户名"
-git config user.email "邮箱"
+git config user.name "username"
+git config user.email "mail"
 
 git remote -v       #show remote git repository
 git remote add origin git://github.com/username/test.git

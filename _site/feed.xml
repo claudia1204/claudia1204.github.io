@@ -5,9 +5,29 @@
     <description>small place</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 18 Sep 2019 16:46:09 +0800</pubDate>
-    <lastBuildDate>Wed, 18 Sep 2019 16:46:09 +0800</lastBuildDate>
+    <pubDate>Thu, 19 Sep 2019 10:46:34 +0800</pubDate>
+    <lastBuildDate>Thu, 19 Sep 2019 10:46:34 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>turn web to app on mac</title>
+        <description>&lt;h1 id=&quot;just-two-commands-turn-web-to-app-on-mac&quot;&gt;just two commands, turn web to app on mac&lt;/h1&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   npm i -g nativefier
+   
+   nativefier &quot;https://www.ximalaya.com/&quot;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Wed, 02 Jan 2019 16:29:41 +0800</pubDate>
+        <link>http://localhost:4000/2019/01/turn-web-to-app-on-mac/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/01/turn-web-to-app-on-mac/</guid>
+        
+        
+        <category>fun</category>
+        
+      </item>
     
       <item>
         <title>Selenium problems collection</title>
@@ -80,18 +100,14 @@
         <guid isPermaLink="true">http://localhost:4000/2019/01/selenium_problems_collection/</guid>
         
         
-        <category>test</category>
+        <category>selenium</category>
         
       </item>
     
       <item>
-        <title>Git commands</title>
-        <description>&lt;p&gt;#git commands record&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config user.name &quot;用户名&quot;
-git config user.email &quot;邮箱&quot;
+        <title>git commands record</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config user.name &quot;username&quot;
+git config user.email &quot;mail&quot;
 
 git remote -v       #show remote git repository
 git remote add origin git://github.com/username/test.git
@@ -102,30 +118,38 @@ git pull --allow-unrelated-histories   #solve allow-unrelated-histories problems
 ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  #generate rsa file
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
-        <pubDate>Mon, 01 Oct 2018 00:00:00 +0800</pubDate>
+        <pubDate>Mon, 01 Oct 2018 16:29:41 +0800</pubDate>
         <link>http://localhost:4000/2018/10/git-commands/</link>
         <guid isPermaLink="true">http://localhost:4000/2018/10/git-commands/</guid>
         
         
+        <category>git</category>
+        
       </item>
     
       <item>
-        <title>turn web to app on mac</title>
-        <description>&lt;h1 id=&quot;just-two-commands-turn-web-to-app-on-mac&quot;&gt;just two commands, turn web to app on mac&lt;/h1&gt;
+        <title>bashrc 、~/.bashrc、profile、~/.profile</title>
+        <description>&lt;p&gt;Interactive (&lt;strong&gt;non-login&lt;/strong&gt;) shells, then the config is read from these files:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   npm i -g nativefier
-   
-   nativefier &quot;https://www.ximalaya.com/&quot;
+&lt;pre&gt;&lt;code class=&quot;language-$HOME/.bashrc```&quot;&gt;
 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+For **login** shells, the config is read from these files:
 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;/etc/profile (Always sourced)
+$HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
+$HOME/.bash_login
+$HOME/.profile
+```&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;~/.bash_profile&lt;/code&gt; only load once after login&lt;/p&gt;
 </description>
         <pubDate>Sat, 22 Sep 2018 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2018/09/turn-web-to-app-on-mac/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/09/turn-web-to-app-on-mac/</guid>
+        <link>http://localhost:4000/2018/09/bashrc/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/bashrc/</guid>
         
         
-        <category>test</category>
+        <category>linux</category>
         
       </item>
     
@@ -246,7 +270,7 @@ print(result)
         <guid isPermaLink="true">http://localhost:4000/2018/09/about-regex/</guid>
         
         
-        <category>test</category>
+        <category>regex</category>
         
       </item>
     

@@ -1,8 +1,8 @@
 ---
 layout: page
-title: 关于我 
+title: about me 
 ---
-初学者
+little girl
 
 <p> 
 

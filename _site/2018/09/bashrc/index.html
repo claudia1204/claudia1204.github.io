@@ -6,17 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>turn web to app on mac</title>
-  <meta name="description" content="just two commands, turn web to app on mac">
+  <title>bashrc 、~/.bashrc、profile、~/.profile</title>
+  <meta name="description" content="Interactive (non-login) shells, then the config is read from these files:">
   <meta name="author" content="leopardpan">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="turn web to app on mac">
-  <meta name="twitter:description" content="just two commands, turn web to app on mac">
+  <meta name="twitter:title" content="bashrc 、~/.bashrc、profile、~/.profile">
+  <meta name="twitter:description" content="Interactive (non-login) shells, then the config is read from these files:">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="turn web to app on mac">
-  <meta property="og:description" content="just two commands, turn web to app on mac">
+  <meta property="og:title" content="bashrc 、~/.bashrc、profile、~/.profile">
+  <meta property="og:description" content="Interactive (non-login) shells, then the config is read from these files:">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2018/09/turn-web-to-app-on-mac/">
+  <link rel="canonical" href="http://localhost:4000/2018/09/bashrc/">
   <link rel="alternate" type="application/rss+xml" title="step by step" href="http://localhost:4000/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -40,7 +40,7 @@
       var _hmt = _hmt || [];
       (function() {
         var hm = document.createElement("script");
-        hm.src = "//hm.baidu.com/hm.js?1e7593df0fda4cc448d5135bc564147c";
+        hm.src = "//hm.baidu.com/hm.js?31e7e464935c949d7589af5dc97b8c48";
         var s = document.getElementsByTagName("script")[0]; 
         s.parentNode.insertBefore(hm, s);
       })();
@@ -164,7 +164,7 @@
         <div class="content-wrapper__inner">
             <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">turn web to app on mac</h1>
+    <h1 class="post-title">bashrc 、~/.bashrc、profile、~/.profile</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/> 
       <time datetime="2018-09-22 16:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2018-09-22</time>  
@@ -175,14 +175,20 @@
   </header>
 
   <section class="post">
-    <h1 id="just-two-commands-turn-web-to-app-on-mac">just two commands, turn web to app on mac</h1>
+    <p>Interactive (<strong>non-login</strong>) shells, then the config is read from these files:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   npm i -g nativefier
-   
-   nativefier "https://www.ximalaya.com/"
+<pre><code class="language-$HOME/.bashrc```">
 
-</code></pre></div></div>
+For **login** shells, the config is read from these files:
 
+</code></pre>
+<p>/etc/profile (Always sourced)
+$HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
+$HOME/.bash_login
+$HOME/.profile
+```</p>
+
+<p><code class="highlighter-rouge">~/.bash_profile</code> only load once after login</p>
 
 
   </section>
@@ -258,7 +264,7 @@
         
         
         <li class="next">
-            <a href="/2018/10/git-commands/" data-toggle="tooltip" data-placement="top" title="Git commands">下一篇：  <span>Git commands</span>
+            <a href="/2018/10/git-commands/" data-toggle="tooltip" data-placement="top" title="git commands record">下一篇：  <span>git commands record</span>
             </a>
         </li>
         

@@ -1,0 +1,23 @@
+---
+layout: post
+title:  "bashrc 、~/.bashrc、profile、~/.profile"
+date:   2018-09-22 16:29:41 +0800
+categories: linux
+---
+
+
+Interactive (**non-login**) shells, then the config is read from these files:
+
+```$HOME/.bashrc```
+
+
+For **login** shells, the config is read from these files:
+
+```
+/etc/profile (Always sourced)
+$HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
+$HOME/.bash_login
+$HOME/.profile
+```
+
+```~/.bash_profile``` only load once after login
