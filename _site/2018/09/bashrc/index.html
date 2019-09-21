@@ -177,16 +177,16 @@
   <section class="post">
     <p>Interactive (<strong>non-login</strong>) shells, then the config is read from these files:</p>
 
-<pre><code class="language-$HOME/.bashrc```">
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $HOME/.bashrc
+</code></pre></div></div>
 
-For **login** shells, the config is read from these files:
+<p>For <strong>login</strong> shells, the config is read from these files:</p>
 
-</code></pre>
-<p>/etc/profile (Always sourced)
-$HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
-$HOME/.bash_login
-$HOME/.profile
-```</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  /etc/profile (Always sourced)
+  $HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
+  $HOME/.bash_login
+  $HOME/.profile
+</code></pre></div></div>
 
 <p><code class="highlighter-rouge">~/.bash_profile</code> only load once after login</p>
 

@@ -3,19 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f39f581d-6094-4875-a965-40109dbe339e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/head.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/head.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2018/09/about-regex/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2018/09/about-regex/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_site/2018/09/bashrc/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2018/09/bashrc/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2018/10/git-commands/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2018/10/git-commands/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2019/01/selenium_problems_collection/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2019/01/selenium_problems_collection/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2019/01/turn-web-to-app-on-mac/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2019/01/turn-web-to-app-on-mac/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/about/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/about/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/archive/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/archive/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_site/feed.xml" beforeDir="false" afterPath="$PROJECT_DIR$/_site/feed.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_site/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/tags/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/tags/index.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -59,15 +50,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="page.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/_layouts/page.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="15" column="1" lean-forward="true" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="post.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_layouts/post.html">
           <provider selected="true" editor-type-id="text-editor">
@@ -77,11 +59,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="footer.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="footer.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_includes/footer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="538">
-              <caret line="90" selection-start-line="90" selection-end-line="90" />
+            <state relative-caret-position="245">
+              <caret line="84" column="54" lean-forward="true" selection-start-line="84" selection-start-column="54" selection-end-line="84" selection-end-column="54" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="2019-01-04-bashrc.markdown" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="280">
+                <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -135,8 +129,8 @@
       <find>Copyright</find>
       <find>leo</find>
       <find>busuanzi_container_site_pv</find>
-      <find>busuanzi_value_site_pv</find>
       <find>busuanzi</find>
+      <find>busuanzi_value_site_pv</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/css</dir>
@@ -155,7 +149,6 @@
         <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/css/main.css" />
         <option value="$PROJECT_DIR$/_posts/2019-01-01-selenium_study.markdown" />
-        <option value="$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown" />
         <option value="$PROJECT_DIR$/_posts/2019-01-02-turn web to app on mac.markdown" />
         <option value="$PROJECT_DIR$/_posts/2019-01-01-selenium_problems_collection.markdown" />
         <option value="$PROJECT_DIR$/_posts/2018-10-01-git commands.markdown" />
@@ -164,6 +157,7 @@
         <option value="$PROJECT_DIR$/_config.yml" />
         <option value="$PROJECT_DIR$/_site/index.html" />
         <option value="$PROJECT_DIR$/_includes/footer.html" />
+        <option value="$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown" />
       </list>
     </option>
   </component>
@@ -197,7 +191,7 @@
             <path>
               <item name="claudia1204.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="claudia1204.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="_includes" type="462c0819:PsiDirectoryNode" />
+              <item name="_posts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -253,25 +247,25 @@
       <workItem from="1568861180775" duration="499000" />
       <workItem from="1568957414712" duration="481000" />
       <workItem from="1568957901011" duration="45000" />
-      <workItem from="1569031848463" duration="518000" />
+      <workItem from="1569031848463" duration="889000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17209000" />
+    <option name="totallyTimeSpent" value="17580000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="777" extended-state="0" />
+    <frame x="-309" y="-1080" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.20413026" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20379147" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3291506" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.7172996" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.49227798" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1399,16 +1393,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="198">
-            <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/archive.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -1487,8 +1471,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/_includes/footer.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="538">
-          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        <state relative-caret-position="245">
+          <caret line="84" column="54" lean-forward="true" selection-start-line="84" selection-start-column="54" selection-end-line="84" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_posts/2019-01-04-bashrc.markdown">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="280">
+            <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
