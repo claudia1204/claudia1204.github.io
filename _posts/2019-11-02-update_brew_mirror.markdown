@@ -1,13 +1,13 @@
- ---
- layout: post
- title:  "update brew repo"
- date:   2019-11-02 16:29:41 +0800
- categories: mac
- ---
- 
-  update brew repo
- =======
- 
+---
+layout: post
+title:  "update brew repo"
+date:   2019-11-02 16:29:41 +0800
+categories: mac
+---
+
+update brew repo
+=======
+
  
 ```
    cd `brew --repo`
