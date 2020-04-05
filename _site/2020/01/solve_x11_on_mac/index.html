@@ -6,17 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>bashrc 、~/.bashrc、profile、~/.profile</title>
-  <meta name="description" content="Interactive (non-login) shells, then the config is read from these files:">
+  <title>solve the Problems with X11 - Can&#39;t open display on MAC</title>
+  <meta name="description" content="how to solve the Problems with X11 - Can’t open display on MAC">
   <meta name="author" content="leopardpan">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="bashrc 、~/.bashrc、profile、~/.profile">
-  <meta name="twitter:description" content="Interactive (non-login) shells, then the config is read from these files:">
+  <meta name="twitter:title" content="solve the Problems with X11 - Can&#39;t open display on MAC">
+  <meta name="twitter:description" content="how to solve the Problems with X11 - Can’t open display on MAC">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="bashrc 、~/.bashrc、profile、~/.profile">
-  <meta property="og:description" content="Interactive (non-login) shells, then the config is read from these files:">
+  <meta property="og:title" content="solve the Problems with X11 - Can&#39;t open display on MAC">
+  <meta property="og:description" content="how to solve the Problems with X11 - Can’t open display on MAC">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2018/09/bashrc/">
+  <link rel="canonical" href="http://localhost:4000/2020/01/solve_x11_on_mac/">
   <link rel="alternate" type="application/rss+xml" title="step by step" href="http://localhost:4000/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -164,10 +164,10 @@
         <div class="content-wrapper__inner">
             <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">bashrc 、~/.bashrc、profile、~/.profile</h1>
+    <h1 class="post-title">solve the Problems with X11 - Can't open display on MAC</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2018-09-22 16:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2018-09-22</time>  
+      <time datetime="2020-01-01 16:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2020-01-01</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -175,20 +175,28 @@
   </header>
 
   <section class="post">
-    <p>Interactive (<strong>non-login</strong>) shells, then the config is read from these files:</p>
+    <h1 id="how-to-solve-the-problems-with-x11---cant-open-display-on-mac">how to solve the Problems with X11 - Can’t open display on MAC</h1>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $HOME/.bashrc
-</code></pre></div></div>
+<p>how to solve the Problems with X11 - Can’t open display on MAC</p>
 
-<p>For <strong>login</strong> shells, the config is read from these files:</p>
+<ol>
+  <li>do commands on  mac:
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>defaults write com.apple.x11 nolisten_tcp -boolean false
+defaults write org.X.x11 nolisten_tcp -boolean false
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>install xquartz
+download and install from https://www.xquartz.org/</p>
+  </li>
+  <li>open xterm in xquartz and ssh to your target pc
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh -X root@x.x.x.x
+firefox #do your commands to start a gui app
+</code></pre></div>    </div>
+  </li>
+</ol>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  /etc/profile (Always sourced)
-  $HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
-  $HOME/.bash_login
-  $HOME/.profile
-</code></pre></div></div>
-
-<p><code class="highlighter-rouge">~/.bash_profile</code> only load once after login</p>
+<p>thanks solution from Robert Jansen’s comments in <a href="https://discussions.apple.com/thread/2048176">app discussions</a></p>
 
 
   </section>
@@ -258,15 +266,10 @@
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2018/09/about-regex/" data-toggle="tooltip" data-placement="top" title="about regex">上一篇：  <span>about regex</span>
+            <a href="/2019/11/update_brew_mirror/" data-toggle="tooltip" data-placement="top" title="update brew repo">上一篇：  <span>update brew repo</span>
             </a>
         </li>
         
-        
-        <li class="next">
-            <a href="/2018/10/git-commands/" data-toggle="tooltip" data-placement="top" title="git commands record">下一篇：  <span>git commands record</span>
-            </a>
-        </li>
         
     </ul>
 </section>
@@ -309,7 +312,7 @@
 
         <div class = "footer_div">  
            <p class="copyright text-muted">
-            Copyright &copy; step by step 2019 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            Copyright &copy; step by step 2020 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
             <iframe
                 style="margin-left: 2px; margin-bottom:-5px;"
                 frameborder="0" scrolling="0" width="91px" height="20px"

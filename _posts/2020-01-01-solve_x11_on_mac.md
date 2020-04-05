@@ -26,4 +26,4 @@ ssh -X root@x.x.x.x
 firefox #do your commands to start a gui app
 ```
 
-thanks solution from Robert Jansen's comments in https://discussions.apple.com/thread/2048176
+thanks solution from Robert Jansen's comments in [app discussions](https://discussions.apple.com/thread/2048176)

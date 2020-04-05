@@ -5,9 +5,93 @@
     <description>small place</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 21 Sep 2019 15:54:22 +0800</pubDate>
-    <lastBuildDate>Sat, 21 Sep 2019 15:54:22 +0800</lastBuildDate>
+    <pubDate>Sun, 05 Apr 2020 17:51:01 +0800</pubDate>
+    <lastBuildDate>Sun, 05 Apr 2020 17:51:01 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>solve the Problems with X11 - Can't open display on MAC</title>
+        <description>&lt;h1 id=&quot;how-to-solve-the-problems-with-x11---cant-open-display-on-mac&quot;&gt;how to solve the Problems with X11 - Can’t open display on MAC&lt;/h1&gt;
+
+&lt;p&gt;how to solve the Problems with X11 - Can’t open display on MAC&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;do commands on  mac:
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;defaults write com.apple.x11 nolisten_tcp -boolean false
+defaults write org.X.x11 nolisten_tcp -boolean false
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;install xquartz
+download and install from https://www.xquartz.org/&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;open xterm in xquartz and ssh to your target pc
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh -X root@x.x.x.x
+firefox #do your commands to start a gui app
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;thanks solution from Robert Jansen’s comments in &lt;a href=&quot;https://discussions.apple.com/thread/2048176&quot;&gt;app discussions&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 01 Jan 2020 16:29:41 +0800</pubDate>
+        <link>http://localhost:4000/2020/01/solve_x11_on_mac/</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/01/solve_x11_on_mac/</guid>
+        
+        
+        <category>mac</category>
+        
+      </item>
+    
+      <item>
+        <title>update brew repo</title>
+        <description>&lt;h1 id=&quot;update-brew-repo&quot;&gt;update brew repo&lt;/h1&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   cd `brew --repo`
+   git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
+   brew update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;some mirrors:
+ https://git.coding.net/homebrew/homebrew.git - Coding
+ https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git - tsinghua
+ https://mirrors.ustc.edu.cn/brew.git  -ustc&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 02 Nov 2019 16:29:41 +0800</pubDate>
+        <link>http://localhost:4000/2019/11/update_brew_mirror/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/11/update_brew_mirror/</guid>
+        
+        
+        <category>mac</category>
+        
+      </item>
+    
+      <item>
+        <title>bashrc 、~/.bashrc、profile、~/.profile</title>
+        <description>&lt;p&gt;Interactive (&lt;strong&gt;non-login&lt;/strong&gt;) shells, then the config is read from these files:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $HOME/.bashrc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For &lt;strong&gt;login&lt;/strong&gt; shells, the config is read from these files:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  /etc/profile (Always sourced)
+  $HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
+  $HOME/.bash_login
+  $HOME/.profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;~/.bash_profile&lt;/code&gt; only load once after login&lt;/p&gt;
+</description>
+        <pubDate>Fri, 04 Jan 2019 16:29:41 +0800</pubDate>
+        <link>http://localhost:4000/2019/01/bashrc/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/01/bashrc/</guid>
+        
+        
+        <category>linux</category>
+        
+      </item>
     
       <item>
         <title>turn web to app on mac</title>
@@ -25,7 +109,7 @@
         <guid isPermaLink="true">http://localhost:4000/2019/01/turn-web-to-app-on-mac/</guid>
         
         
-        <category>fun</category>
+        <category>mac</category>
         
       </item>
     
@@ -124,32 +208,6 @@ ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  #generate rsa file
         
         
         <category>git</category>
-        
-      </item>
-    
-      <item>
-        <title>bashrc 、~/.bashrc、profile、~/.profile</title>
-        <description>&lt;p&gt;Interactive (&lt;strong&gt;non-login&lt;/strong&gt;) shells, then the config is read from these files:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $HOME/.bashrc
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;For &lt;strong&gt;login&lt;/strong&gt; shells, the config is read from these files:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  /etc/profile (Always sourced)
-  $HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
-  $HOME/.bash_login
-  $HOME/.profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;~/.bash_profile&lt;/code&gt; only load once after login&lt;/p&gt;
-</description>
-        <pubDate>Sat, 22 Sep 2018 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2018/09/bashrc/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/09/bashrc/</guid>
-        
-        
-        <category>linux</category>
         
       </item>
     

@@ -6,17 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>about regex</title>
-  <meta name="description" content="正则组成普通字符        +     元字符a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!pattern) (?=pattern)  [] [^] \b">
+  <title>update brew repo</title>
+  <meta name="description" content="update brew repo">
   <meta name="author" content="leopardpan">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="about regex">
-  <meta name="twitter:description" content="正则组成普通字符        +     元字符a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!pattern) (?=pattern)  [] [^] \b">
+  <meta name="twitter:title" content="update brew repo">
+  <meta name="twitter:description" content="update brew repo">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="about regex">
-  <meta property="og:description" content="正则组成普通字符        +     元字符a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!pattern) (?=pattern)  [] [^] \b">
+  <meta property="og:title" content="update brew repo">
+  <meta property="og:description" content="update brew repo">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2018/09/about-regex/">
+  <link rel="canonical" href="http://localhost:4000/2019/11/update_brew_mirror/">
   <link rel="alternate" type="application/rss+xml" title="step by step" href="http://localhost:4000/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -164,10 +164,10 @@
         <div class="content-wrapper__inner">
             <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">about regex</h1>
+    <h1 class="post-title">update brew repo</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2018-09-22 16:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2018-09-22</time>  
+      <time datetime="2019-11-02 16:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2019-11-02</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -175,114 +175,17 @@
   </header>
 
   <section class="post">
-    <h1 id="正则组成">正则组成</h1>
-<p>普通字符        +     元字符
-a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!pattern) (?=pattern)  [] [^] \b</p>
+    <h1 id="update-brew-repo">update brew repo</h1>
 
-<h1 id="元字符详细">元字符详细</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">字符</th>
-      <th style="text-align: left">描述</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">\</td>
-      <td style="text-align: left">标记下一个字符为特殊字符/原义字符/向后引用/八进制转义符。e.g. \n 代表换行符</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">^</td>
-      <td style="text-align: left">匹配输入字符串开始位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之后的位置。 ^ss 代表字符串以ss开始</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">$</td>
-      <td style="text-align: left">匹配输入字符串的结束位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之前的位置。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">.</td>
-      <td style="text-align: left">匹配单个任意字符，除了\n。 可使用[.\n]匹配任意字符</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">?</td>
-      <td style="text-align: left">匹配前面的表达式或者字符的0次或者1次。等价于{0,1}。e.g. test(as)+ 可以匹配test或者是testas.  testa+ 可以匹配test或者testa。<br /> 备注：当?跟在次数限定符（*，+，？，{m,n},{n}）后面时，匹配模式是非贪婪的，即尽可能少匹配所搜索的字符串。<br />e.g. ‘o+?’ 将只会匹配’hellooooo’中的单个’o’而不是’ooooo’</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">*</td>
-      <td style="text-align: left">匹配前面的表达式的0次或者多次。 等价于{0,}。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">+</td>
-      <td style="text-align: left">匹配前面的表达式的1次或者多次。等价于{1,}。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">|</td>
-      <td style="text-align: left">匹配两边表达式。<br />e.g. test|hello \d\d, 等价于 (test|hello \d\d)，因此只会匹配’test 22’中的test以及匹配’hello 22’中的’hello 22’. 如果想要匹配’test 22’则可用括号限定两边的表达式，例如(test|hello) \d\d.</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">{n}</td>
-      <td style="text-align: left">匹配前面表达式n次</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">{m,n}</td>
-      <td style="text-align: left">匹配前面表达式最小m次，最多n次，m&lt;=n</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">(…..)</td>
-      <td style="text-align: left">匹配…..且获取匹配…..的结果。将括号中的表达式作为一个分组，匹配后可根据$index,index为该分组的序号可获取该匹配结果。例如$5</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">(?:…)</td>
-      <td style="text-align: left">匹配…..但不存储匹配结果。将括号中的表达式作为一个分组，匹配后无法根据$index获取结果，为非获取匹配</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">(?=…)</td>
-      <td style="text-align: left">正向预查（肯定顺序环视）。从左往右在匹配…..字符串,且不消耗匹配字符。<br />如’windows(?=2000)’,则匹配windows2000中的windows，但是不匹配windows300中的windows。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">(?&lt;…)</td>
-      <td style="text-align: left">肯定逆序环视。同上，方向为从右往左。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">(?!…)</td>
-      <td style="text-align: left">负向预查。在任何不匹配…..的字符串开始处匹配查找字符串。 如’wdinwos (?!2000)’,代表获取’window ‘字符串且该字符串必须满足后面不带’2000’.<br />备注，此匹配不消耗该预查字符…..，即下一次搜索会window空格后开始查找。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">(?&lt;!…)</td>
-      <td style="text-align: left">否定逆序环视。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">[….]</td>
-      <td style="text-align: left">匹配在字符集合….里的单个字符。例如Chapter [123]，可以匹配Chapter 1， Chapter 2。 如果希望表示范围的话可以用[1-5]，此时表示匹配1-5内的任意单个数字。</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">[^….]</td>
-      <td style="text-align: left">匹配不在字符集合….里的单个字符。例如Chater [^123],可以匹配Chater 4，但是不能匹配Chapter 1</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">\b</td>
-      <td style="text-align: left">匹配单词边界。例如never say never，可以用ver\b 匹配never中的verb 。</td>
-    </tr>
-  </tbody>
-</table>
-
-<h1 id="优先级">优先级</h1>
-<p>转义符 &gt; ()、[]  &gt; 限定符 &gt; 位置和顺序 &gt; |</p>
-
-<h1 id="python分组使用命名分组">Python分组使用–命名分组</h1>
-<p>(?P<name>) 其中name代表该分组的另外一个别名</name></p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>s = 'debug 10:01:01 11:11:11:hello word'
-import re
-
-result = re.search(r'debug\s(?P&lt;time&gt;\d+:\d+:\d+\s\d+:\d+:\d+):.*', s).group('time')
-
-print(result)	
-
-10:01:01 11:11:11
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   cd `brew --repo`
+   git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
+   brew update
 </code></pre></div></div>
+
+<p>some mirrors:
+ https://git.coding.net/homebrew/homebrew.git - Coding
+ https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git - tsinghua
+ https://mirrors.ustc.edu.cn/brew.git  -ustc</p>
 
 
 
@@ -352,9 +255,14 @@ print(result)
 
        <ul class="pager">
         
+        <li class="previous">
+            <a href="/2019/01/bashrc/" data-toggle="tooltip" data-placement="top" title="bashrc 、~/.bashrc、profile、~/.profile">上一篇：  <span>bashrc 、~/.bashrc、profile、~/.profile</span>
+            </a>
+        </li>
+        
         
         <li class="next">
-            <a href="/2018/10/git-commands/" data-toggle="tooltip" data-placement="top" title="git commands record">下一篇：  <span>git commands record</span>
+            <a href="/2020/01/solve_x11_on_mac/" data-toggle="tooltip" data-placement="top" title="solve the Problems with X11 - Can't open display on MAC">下一篇：  <span>solve the Problems with X11 - Can't open display on MAC</span>
             </a>
         </li>
         
