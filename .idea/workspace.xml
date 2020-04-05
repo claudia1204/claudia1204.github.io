@@ -2,21 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f39f581d-6094-4875-a965-40109dbe339e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-01-01_solve_x11_on_mac.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-01-01-solve_x11_on_mac.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2018/09/about-regex/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2018/09/about-regex/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2018/09/bashrc/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2018/10/git-commands/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2018/10/git-commands/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2019/01/selenium_problems_collection/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2019/01/selenium_problems_collection/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/2019/01/turn-web-to-app-on-mac/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/2019/01/turn-web-to-app-on-mac/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/about/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/about/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/archive/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/archive/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/feed.xml" beforeDir="false" afterPath="$PROJECT_DIR$/_site/feed.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/_site/sitemap.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_site/tags/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_site/tags/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_posts/2020-01-01-solve_x11_on_mac.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-01-01-solve_x11_on_mac.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -34,8 +20,8 @@
         <entry file="file://$PROJECT_DIR$/_posts/2020-01-01-solve_x11_on_mac.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="FIRST">
-              <first_editor relative-caret-position="330">
-                <caret line="28" column="111" selection-start-line="28" selection-start-column="111" selection-end-line="28" selection-end-column="111" />
+              <first_editor relative-caret-position="258">
+                <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
               </first_editor>
               <second_editor />
             </state>
@@ -201,25 +187,25 @@
       <workItem from="1568957414712" duration="481000" />
       <workItem from="1568957901011" duration="45000" />
       <workItem from="1569031848463" duration="1098000" />
-      <workItem from="1586076932930" duration="2172000" />
+      <workItem from="1586076932930" duration="2275000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19961000" />
+    <option name="totallyTimeSpent" value="20064000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.30738682" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30738682" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3291506" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3531746" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3531746" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1424,8 +1410,8 @@
     <entry file="file://$PROJECT_DIR$/_posts/2020-01-01-solve_x11_on_mac.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="330">
-            <caret line="28" column="111" selection-start-line="28" selection-start-column="111" selection-end-line="28" selection-end-column="111" />
+          <first_editor relative-caret-position="258">
+            <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
           </first_editor>
           <second_editor />
         </state>

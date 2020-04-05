@@ -16,7 +16,8 @@ defaults write com.apple.x11 nolisten_tcp -boolean false
 defaults write org.X.x11 nolisten_tcp -boolean false
 ```
 
-2. install xquartz
+2.install xquartz
+
 download and install from https://www.xquartz.org/
 
 
