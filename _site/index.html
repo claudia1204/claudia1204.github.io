@@ -40,7 +40,7 @@
       var _hmt = _hmt || [];
       (function() {
         var hm = document.createElement("script");
-        hm.src = "//hm.baidu.com/hm.js?31e7e464935c949d7589af5dc97b8c48";
+        hm.src = "//hm.baidu.com/hm.js?625129f6a6c1cc07fc945a8fb5dbc0b4";
         var s = document.getElementsByTagName("script")[0]; 
         s.parentNode.insertBefore(hm, s);
       })();
@@ -167,6 +167,195 @@
   <ol class="post-list">
     
     <li>
+      <h2 class="post-list__post-title post-title"><a href="/2022/04/tcp_study/" title="访问 tcp三次握手连接+四次挥手断开">tcp三次握手连接+四次挥手断开</a></h2>
+      <p class="excerpt">学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。三次握手备注：此图来源于https://segmentfault.com/a/1190000039165592一些标志符意义：SYN: 连接请求ACK: 确认报文段seq: 报文序号ack： 期望收到的下一个字节号| 序列号     | client                | 数据流向     |  server                     | ...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2022-04-23 20:20:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2022-04-23</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2022/04/tcp_study/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2022/04/source_code_tidevice_study_cn/" title="访问 tidevice的魔法： 跨平台吊起webdriver agent runner源码学习">tidevice的魔法： 跨平台吊起webdriver agent runner源码学习</a></h2>
+      <p class="excerpt">根据tidevice git文档 ,tidevice可以实现跨平台(windows/linux/mac)自动化测试。在windows上，tidevice可以脱离Xcode唤起ios上已经安装好的webdriveragent runner app。tidevice是怎么实现脱离Xcode吊起webdriver agent runner的呢？让我们来读一读源码。由一条命令tidevice wdaproxy -B com.facebook.wda.WebDriverAgent.Runner --...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2022-04-22 19:40:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2022-04-22</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2022/04/source_code_tidevice_study_cn/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2022/04/usbmux/" title="访问 Usbmux">Usbmux</a></h2>
+      <p class="excerpt">usbmux intro refThis is a system for multiplexing several "connections" over one USB pipe. Conceptually, it provides a TCP-like system-processes on the host machine open up connections to specific, numbered ports on the mobile device.Communication...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2022-04-21 12:40:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2022-04-21</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2022/04/usbmux/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2022/03/socket_little_endian_big_endian/" title="访问 socket 编程：大小端数据">socket 编程：大小端数据</a></h2>
+      <p class="excerpt">大小端数据：0X12345678内存地址从低到高 0x0001    0x0002   0x0003  0x0004大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址小端: 0x78      0x56     0x34    0x12                                低位数据在低位地址由于发送端接送端主机可能存在主机序列模式不同，故发送出去数据时，统一转换为...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2022-03-29 20:40:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2022-03-29</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2022/03/socket_little_endian_big_endian/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2022/01/unicode_to_utf-8/" title="访问 transfer from unicode to utf-8 encoding">transfer from unicode to utf-8 encoding</a></h2>
+      <p class="excerpt">Chinese character:      汉its Unicode value:        U+6C49convert 6C49 to binary:   01101100 01001001                           1101100 01001001h= "汉"# hex to binary, unicode valueh.encode("unicode_escape")Out[112]: b'\\u6c49'  #hex decimalint('6c4...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2022-01-10 20:01:11 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2022-01-10</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2022/01/unicode_to_utf-8/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2021/09/guide_libimobiledevice/" title="访问 libimobiledevice guide to control iphone">libimobiledevice guide to control iphone</a></h2>
+      <p class="excerpt">libimobiledevice github docstep1 install libimobiledevice    brew update    brew uninstall --ignore-dependencies libimobiledevice    brew uninstall --ignore-dependencies usbmuxd    brew install --HEAD usbmuxd    brew unlink usbmuxd    brew link us...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2021-09-22 20:01:11 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2021-09-22</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2021/09/guide_libimobiledevice/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2021/09/appium_mac_config_guide/" title="访问 Appium mac config guide">Appium mac config guide</a></h2>
+      <p class="excerpt">appium mac config guide1. install appiumAppium can be installed in one of two ways: via NPM or by downloading Appium Desktop, which is a graphical, desktop-based way to launch the Appium server.here we use the npm to install appium. firstly confir...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2021-09-20 19:40:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2021-09-20</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2021/09/appium_mac_config_guide/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2020/01/config_cygwin/" title="访问 install cygwin and ssh service on windows record">install cygwin and ssh service on windows record</a></h2>
+      <p class="excerpt">1. install ssh server(cygwin) on Windows1) download setup-x86_64.exe on cygwin.com2) run  setup-x86_64.exe and setup as follow steps, click next until to select packages.ps: if pc can not get access to internet, can chose local(you should download...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2020-01-20 16:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2020-01-20</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2020/01/config_cygwin/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2020/01/selenium_robot_python_demo/" title="访问 selenium robot/python demo">selenium robot/python demo</a></h2>
+      <p class="excerpt">Selenium is an open source automated testing suite for web applications.Selenium has four components:Selenium Integrated Development Environment (IDE)Selenium Remote Control (RC)WebdriverSelenium GridSelenium IDEa firefox extension, support record...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2020-01-02 20:01:11 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2020-01-02</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2020/01/selenium_robot_python_demo/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
       <h2 class="post-list__post-title post-title"><a href="/2020/01/solve_x11_on_mac/" title="访问 solve the Problems with X11 - Can't open display on MAC">solve the Problems with X11 - Can't open display on MAC</a></h2>
       <p class="excerpt">how to solve the Problems with X11 - Can’t open display on MAChow to solve the Problems with X11 - Can’t open display on MAC  do commands on  mac:    defaults write com.apple.x11 nolisten_tcp -boolean falsedefaults write org.X.x11 nolisten_tcp -bo...&hellip;</p>
       <div class="post-list__meta">
@@ -189,7 +378,7 @@
     
     <li>
       <h2 class="post-list__post-title post-title"><a href="/2019/11/update_brew_mirror/" title="访问 update brew repo">update brew repo</a></h2>
-      <p class="excerpt">update brew repo   cd `brew --repo`   git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git   brew updatesome mirrors: https://git.coding.net/homebrew/homebrew.git - Coding https://mirrors.tuna.tsinghua.edu.cn/git/ho...&hellip;</p>
+      <p class="excerpt">update brew repo   cd `brew --repo`   git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git   brew update##some mirrors:##https://git.coding.net/homebrew/homebrew.git/https://mirrors.tuna.tsinghua.edu.cn/git/homebrew...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2019-11-02 16:29:41 +0800" class="post-list__meta--date date">
           <img src="/images/calendar.png" width="20px" />
@@ -203,6 +392,69 @@
           </div>
           <div class = "post-list-small-mate">
           <a class="btn-border-small" href=/2019/11/update_brew_mirror/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2019/10/flaskbb_quick_start/" title="访问 FlaskBB guide">FlaskBB guide</a></h2>
+      <p class="excerpt">clone and start:git clone https://github.com/sh4nks/flaskbb.gitcd flaskbbgit checkout 2.0.0virtualenv .venvsource .venv/bin/activatepip install -r requirements.txtflaskbb makeconfigflaskbb --config flaskbb.cfg installflaskbb --config flaskbb.cfg r...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2019-10-24 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2019-10-24</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2019/10/flaskbb_quick_start/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2019/02/jupyterlab_and_robot_extension-installation/" title="访问 jupyterlab and extension installation on mac">jupyterlab and extension installation on mac</a></h2>
+      <p class="excerpt">pre network settingour internal network has some limitations, so firstly we should set the proxy of network.export https_proxy=http://x.x.x.x:8080export http_proxy=http://x.x.x.x:8080install conda and jupyter labinstall conda, you can follow theco...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2019-02-03 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2019-02-03</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2019/02/jupyterlab_and_robot_extension-installation/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2019/02/robot_demo/" title="访问 robot demo record">robot demo record</a></h2>
+      <p class="excerpt">*** Settings ***Documentation   ref: [robotframwork user guide link](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#variables)Library         SeleniumLibraryLibrary         String*** Variables ***${string_pass}    he...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2019-02-03 16:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2019-02-03</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2019/02/robot_demo/>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
@@ -313,6 +565,27 @@
       <hr class="post-list__divider" />
     </li>
     
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/02/mongodb_record/" title="访问 mongodb_test_record">mongodb_test_record</a></h2>
+      <p class="excerpt">1.install:brew services stop mongodbbrew uninstall mongodbbrew tap mongodb/brewbrew install mongodb-communitybrew services start mongodb-community2.add accounthttps://segmentfault.com/a/1190000011554055&gt; mongo&gt; use adminswitched to db admin&...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2018-02-03 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2018-02-03</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/02/mongodb_record/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
   </ol>
 
   <hr class="post-list__divider " />
@@ -324,7 +597,9 @@
 	</script>
 	
     
-    <span class="pagination__page-number">1 / 1</span>
+    <span class="pagination__page-number">1 / 2</span>
+    
+        <a class="older-posts pagination__older btn btn-small btn-tertiary" href="/page/2/#blog">更早 &rarr;</a>
     
 </nav>
 
@@ -362,7 +637,7 @@
 
         <div class = "footer_div">  
            <p class="copyright text-muted">
-            Copyright &copy; step by step 2020 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            Copyright &copy; step by step 2022 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
             <iframe
                 style="margin-left: 2px; margin-bottom:-5px;"
                 frameborder="0" scrolling="0" width="91px" height="20px"

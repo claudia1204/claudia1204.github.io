@@ -51,7 +51,7 @@ GEM
       jekyll-seo-tag (~> 2.1)
     pathutil (0.16.1)
       forwardable-extended (~> 2.6)
-    public_suffix (3.0.3)
+    public_suffix (3.1.1)
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
@@ -73,7 +73,8 @@ DEPENDENCIES
   jekyll-paginate
   jekyll-sitemap
   minima (~> 2.0)
+  public_suffix (~> 3.0, >= 3.0.2)
   tzinfo-data
 
 BUNDLED WITH
-   1.16.5
+   1.17.2

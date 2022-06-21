@@ -7,5 +7,3 @@ little girl
 <p> 
 
 
-{% include comments.html %}
-

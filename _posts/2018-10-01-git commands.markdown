@@ -18,3 +18,19 @@ git pull --allow-unrelated-histories   #solve allow-unrelated-histories problems
 
 ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  #generate rsa file
 ```
+
+## git problems
+1  RPC failed
+
+error msg:
+error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054
+
+solution:
+``` linux
+git config --global http.postBuffer 524288000
+```
+
+## gitlab api commands
+```
+   curl --header "PRIVATE-TOKEN: xxxxxxxxxxxxxx" https://gitlab.xx.xxxxxx.com/api/v4/projects/111/repository/branches
+```

@@ -5,9 +5,1145 @@
     <description>small place</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 05 Apr 2020 17:51:01 +0800</pubDate>
-    <lastBuildDate>Sun, 05 Apr 2020 17:51:01 +0800</lastBuildDate>
+    <pubDate>Tue, 21 Jun 2022 21:31:46 +0800</pubDate>
+    <lastBuildDate>Tue, 21 Jun 2022 21:31:46 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>tcp三次握手连接+四次挥手断开</title>
+        <description>&lt;p&gt;学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。&lt;/p&gt;
+&lt;h2 id=&quot;三次握手&quot;&gt;三次握手&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tcp/tcp_3_way_handshake.PNG&quot; alt=&quot;3_times_handshake&quot; /&gt;
+备注：此图来源于https://segmentfault.com/a/1190000039165592&lt;/p&gt;
+
+&lt;p&gt;一些标志符意义：
+SYN: 连接请求
+ACK: 确认报文段
+seq: 报文序号
+ack： 期望收到的下一个字节号&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tcp/tcp_0.PNG&quot; alt=&quot;1&quot; /&gt;
+&lt;img src=&quot;/images/tcp/tcp_1.PNG&quot; alt=&quot;2&quot; /&gt;
+&lt;img src=&quot;/images/tcp/tcp_2.PNG&quot; alt=&quot;3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;| 序列号     | client                | 数据流向     |  server                     | 备注                                                    |
+|———|————————-|————|——————————|——————————————————-|
+| step1   | SYN=1, seq=x            | —–&amp;gt;     |                              | client发起建立连接请求，server监听端口数据，接收到请求                     |
+| step2   |                         | &amp;lt;—–     | SYN=1, ACK=1, seq=y, ack=x+1 | server发送报文给client，接收到连接请求，确认建立连接，期望client下一个x+1序列号的报文 |
+| step3   | ACK=1, seq=x+1, ack=y+1 | —–&amp;gt;     |                              | client接收到报文后，回复确认连接，期望server端下一个y+1序列号的报文             |
+备注：我们抓包的x和y此时都是为0&lt;/p&gt;
+
+&lt;p&gt;建立连接后tcp端发送数据如图：
+PSH=1, client端发送显示所有设备信息&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tcp/tcp_req_list_devices.PNG&quot; alt=&quot;data&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;server返回设备信息&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tcp/tcp_return_devices.PNG&quot; alt=&quot;data&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;四次挥手&quot;&gt;四次挥手&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tcp/tcp_4_times_close.PNG&quot; alt=&quot;4_times_close&quot; width=&quot;713&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;备注：图片来源 &lt;a href=&quot;https://wiki.wireshark.org/TCP-4-times-close.md&quot;&gt;tcp 4 times close&lt;/a&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;client&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;arrow&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;server&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;备注&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;FIN=1, seq=x&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;—–&amp;gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;client发起断开连接请求，server监听端口数据，接收到请求&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&amp;lt;—–&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;ACK=1, seq=y, ack=x+1 &lt;br /&gt;FIN=1, ACK=1, seq=z, ack=x+1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;server发送报文给client，确认接收到请求，期望client下一个x+1序列号的报文 &lt;br /&gt;等待数据传输完毕，断开完成，返回断开FIN=1，确认断开. seq=z, 期待client下一个x+1序列号的报文&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;—–&amp;gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;ACK=1, seq=x+1, ack=z+1&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;client接收到报文后，回复ACK确认断开完成&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;备注：我们抓包的x和y,z此时都是为0
+&lt;img src=&quot;/images/tcp/tcp_close.PNG&quot; alt=&quot;1&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ref&quot;&gt;ref&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://wiki.wireshark.org/TCP_3_way_handshaking.md&quot;&gt;TCP_3_way_handshaking&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://wiki.wireshark.org/TCP-4-times-close.md&quot;&gt;TCP-4-times-close&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://segmentfault.com/a/1190000039165592&quot;&gt;三次握手&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 23 Apr 2022 20:20:41 +0800</pubDate>
+        <link>http://localhost:4000/2022/04/tcp_study/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/04/tcp_study/</guid>
+        
+        
+        <category>tcp</category>
+        
+        <category>network</category>
+        
+      </item>
+    
+      <item>
+        <title>tidevice的魔法： 跨平台吊起webdriver agent runner源码学习</title>
+        <description>&lt;p&gt;根据&lt;a href=&quot;https://github.com/alibaba/taobao-iphone-device&quot;&gt;tidevice git&lt;/a&gt;文档 ,tidevice可以实现跨平台(windows/linux/mac)自动化测试。&lt;/p&gt;
+
+&lt;p&gt;在windows上，tidevice可以脱离Xcode唤起ios上已经安装好的webdriveragent runner app。&lt;/p&gt;
+
+&lt;p&gt;tidevice是怎么实现脱离Xcode吊起webdriver agent runner的呢？让我们来读一读源码。&lt;/p&gt;
+
+&lt;p&gt;由一条命令&lt;code class=&quot;highlighter-rouge&quot;&gt;tidevice wdaproxy -B com.facebook.wda.WebDriverAgent.Runner --port 8200&lt;/code&gt;开始。&lt;/p&gt;
+
+&lt;h2 id=&quot;端口汇总和基本原理&quot;&gt;端口汇总和基本原理&lt;/h2&gt;
+
+&lt;p&gt;后续会有很多端口用到，这里拉出来前面说明下，避免后面看到的时候有点蒙：&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;27015&lt;/em&gt;&lt;/strong&gt;：   usbmux（127.0.0.1:27015）&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;62078&lt;/em&gt;&lt;/strong&gt;：   LOCKDOWN_PORT， ios 上的lockdown service，参见后者 lockdown&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;32498&lt;/em&gt;&lt;/strong&gt;：   socket.htons(62078) = 32498   lockdown_port转换为网络字节端口的结果，&lt;a href=&quot;/2022/03/socket_little_endian_big_endian/&quot;&gt;socket编程中的大端小端&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;8200,8100&lt;/em&gt;&lt;/strong&gt;： 8200（relay: tcp server, listen 8200）&amp;lt;—–&amp;gt;  8100 device(webdriveragent app: /screenshot)
+            后续会看到tidevice启动了一个端口转发的server，将pc端的8200数据转发到了ios设备8100端口
+            linux上有类似工具包&lt;a href=&quot;https://linuxcommandlibrary.com/man/iproxy&quot;&gt;iproxy&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;42015&lt;/em&gt;&lt;/strong&gt;：    socket.htons(8100) = 42015    webdriveragent runner监听的端口8100转换为网络字节端口。&lt;/p&gt;
+
+&lt;h3 id=&quot;webdriveragent-runner&quot;&gt;webdriveragent runner&lt;/h3&gt;
+&lt;p&gt;webdriveragent runner app是什么？由facebook提供的ios上可安装的webdriver server。该server启动后在iphone上监听一个端口（例如8100），接收指令来实现对ios设备的远程控制，如打开/安装/卸载其他app，截屏，通过settings设置手机，点击等等。&lt;/p&gt;
+
+&lt;p&gt;webdriveragent runner app: 本质是链接XCTest.framework调用苹果API直接执行命令，实现自动化测试的目的。Facebook的webdriver agent runner 已经停止维护，建议由appium的&lt;a href=&quot;https://github.com/appium/WebDriverAgent&quot;&gt;webdriveragent in appium github&lt;/a&gt;下载。
+具体webdriver agent runner安装详细参见blog&lt;a href=&quot;/2021/09/appium_mac_config_guide/&quot;&gt;appium mac config guide&lt;/a&gt;中的webdriver agent runner安装部分。&lt;/p&gt;
+
+&lt;p&gt;appium + webdriveragent_runner也是一种常见的移动端自动化测试方案。我们这里探讨tidevice+webdriveragent_runner。&lt;/p&gt;
+
+&lt;h3 id=&quot;lockdown-service&quot;&gt;lockdown service&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://gist.github.com/ddz/b6879ba86fc7ddc2e26f&quot;&gt;lockdown service介绍&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux#lockdownd_protocol&quot;&gt;lockdown service介绍2&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;lockdown 服务是ios上的守护进程，提供ios系统信息以及使用一些services.例如app的安装，手机备份，重装等。它需要root权限运行.
+使用lockdown service需要建立通过usb或者网络与ios设备建立一个SSL连接，连接过程中需要授权使用ios设备配对的一些keys。&lt;/p&gt;
+
+&lt;h3 id=&quot;usbmux&quot;&gt;usbmux&lt;/h3&gt;
+&lt;p&gt;usbmux是啥？itunes和iPhone通过usbmux进行通信。
+windows上iTunes能控制iPhone并且进行软件卸载，备份等就是通过的这个”usbmux”协议. about it, please see &lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux&quot;&gt;usbmux intro ref&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;instruments&quot;&gt;instruments&lt;/h3&gt;
+&lt;p&gt;源代码码中不乏instruments的身影.instruments 是什么?&lt;/p&gt;
+
+&lt;p&gt;根据dtxmsg格式
+&lt;a href=&quot;https://github.com/troybowman/dtxmsg/blob/master/slides.pdf&quot;&gt;dtx msg&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://bbs.pediy.com/thread-246139.htm&quot;&gt;中文版dtxmsg, dtx msg&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ios/instrument.PNG&quot; alt=&quot;instrument&quot; width=&quot;713&quot; /&gt;
+图片来源于以上dtx msg博文&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2019/411/&quot;&gt;wwdc关于instruments的介绍&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;我们了解到:&lt;/p&gt;
+
+&lt;p&gt;instruments是一个由Apple开发的一系列调试工具集,集合于Xcode:&lt;/p&gt;
+
+&lt;p&gt;时间耗时检测&lt;/p&gt;
+
+&lt;p&gt;泄露检测&lt;/p&gt;
+
+&lt;p&gt;跟踪文件 I/O&lt;/p&gt;
+
+&lt;p&gt;Apple实现了OSX上运行的一个用于提供iOS调试分析的server&lt;/p&gt;
+
+&lt;h3 id=&quot;前置知识总结&quot;&gt;前置知识总结&lt;/h3&gt;
+&lt;p&gt;根据理解画了幅图如下
+&lt;img src=&quot;/images/ios/tidevice_communication.PNG&quot; alt=&quot;tidevice通信&quot; width=&quot;713&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;step 1 .&lt;/p&gt;
+
+&lt;p&gt;tidevice 在pc上开启了一个tcp转发服务器，用于转发pc端8200数据到ios端8100数据。&lt;/p&gt;
+
+&lt;p&gt;tidevice和pc上（windows安装itunes获得， mac上自带）的usbmuxd进行通信，启动ios上lockdown/instrument相关服务,模拟xcode通信吊起webdriver agent runner&lt;/p&gt;
+
+&lt;p&gt;step 2.&lt;/p&gt;
+
+&lt;p&gt;tidevice发api命令（有统一的restful api标准定义）给（监听8200的）tcp server， server转发给ios上（监听8100的）webdriveragent runner， webdriveragent runner接受api，调用xctest框架实现自动化控制。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;程序入口&quot;&gt;程序入口&lt;/h2&gt;
+&lt;p&gt;setup.cfg中设定了入口为tidev中的__main__里的main函数&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[entry_points]
+console_scripts = 
+    tidevice = tidevice.__main__:main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;main()中本质是调用Usbmux生成了um对象，负责usbmux相关的通信。usbmux是啥？一个实现了usb连接的iPhone设备和pc端间，以类似tcp进行通信的系统。具体参见&lt;a href=&quot;/2022/04/usbmux/&quot;&gt;usbmux study&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    um = Usbmux(args.socket)
+    actions[args.subparser](args) # actually called: def cmd_wdaproxy(args: argparse.Namespace)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;cmd_wdaproxy在这里干了两件事:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;启动一个tcpserver: 实现端口转发 8200 &amp;lt;—&amp;gt; 8100, like &lt;a href=&quot;https://www.mankier.com/1/iproxy&quot;&gt;iproxy&lt;/a&gt;，通过给pc端8200发数据，转发到ios上的8100，也就是webdriver agent runner所监听的端口&lt;/li&gt;
+  &lt;li&gt;启动 WDAService, 开启 webdriveragent runner
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; if args.port:
+     cmds = [
+         sys.executable, '-m', 'tidevice', '-u', d.udid, 'relay',
+         str(args.port), '8100'
+     ]
+     p = subprocess.Popen(cmds, stdout=sys.stdout, stderr=sys.stderr)
+    
+ ...
+    
+ serv = WDAService(d, args.bundle_id, env) # start webdriveragent runner
+ ...
+ serv.start()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;WDAService实际调用子进程，执行tidevce xctest命令 ```subprocess.Popen(“python -m tidevice -u {udid} xctest –bundle_id {bundle_id}”)”&lt;/p&gt;
+
+&lt;p&gt;xctest里我理解就是对Xcode和iPhone的通信过程进行了逆向工程,模拟其Xcode通信的流程和数据，驱动xctest project start，可以看到核心代码如下:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+    ## IDE 1st connection
+    ##
+
+    x1 = self._connect_testmanagerd_lockdown()    #通过usbmux连接 com.apple.testmanagerd.lockdown服务
+    data = s.send_recv_packet({
+                    &quot;Request&quot;: &quot;StartService&quot;,
+                    &quot;Service&quot;: name,
+                    &quot;Label&quot;: PROGRAM_NAME,
+                })
+    x1_daemon_chan = x1.make_channel(
+        'dtxproxy:XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface' #创建channel
+    )
+    identifier = '_IDE_initiateControlSessionWithProtocolVersion:'
+    aux = AUXMessageBuffer()
+    aux.append_obj(XCODE_VERSION)
+    x1.call_message(x1_daemon_chan, identifier, aux) #对channel发送对应的二进制数据
+
+
+    ##
+    ## IDE 2nd connection
+    x2 = self._connect_testmanagerd_lockdown()
+    x2_deamon_chan = x2.make_channel(
+        'dtxproxy:XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface'
+    )
+    x2.register_callback(Event.FINISHED, lambda _: quit_event.set())
+    #
+    identifier = '_IDE_initiateSessionWithIdentifier:forClient:atPath:protocolVersion:'
+    aux = AUXMessageBuffer()
+    aux.append_obj(session_identifier)
+    aux.append_obj(str(session_identifier) + '-6722-000247F15966B083')
+    aux.append_obj(
+        '/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild')
+    aux.append_obj(XCODE_VERSION)
+    result = x2.call_message(x2_deamon_chan, identifier, aux)
+
+
+    ###launch app
+    xctest_path = f&quot;/tmp/{target_name}-{str(session_identifier).upper()}.xctestconfiguration&quot;  # yapf: disable
+    xctest_content = bplist.objc_encode(bplist.XCTestConfiguration({
+        &quot;testBundleURL&quot;: bplist.NSURL(None, f&quot;file://{app_info['Path']}/PlugIns/{target_name}.xctest&quot;),
+        &quot;sessionIdentifier&quot;: session_identifier,
+        &quot;targetApplicationBundleID&quot;: target_app_bundle_id,
+    }))  # yapf: disable
+
+    # service: com.apple.instruments.remoteserver
+    conn = self.connect_instruments() # start service &quot;com.apple.instruments.remoteserver.DVTSecureSocketProxy&quot;  # for iOS 14.0
+    channel = conn.make_channel(InstrumentsService.ProcessControl)
+    conn.call_message(channel, &quot;processIdentifierForBundleIdentifier:&quot;,
+                      [bundle_id])
+    pid = conn.call_message(
+        channel, identifier,
+        [app_path, bundle_id, app_env, app_args, app_options])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;流程总结：
+  流程中我们看到#1 和#2 两次启动并且连接lockdown服务，创建channel，通过channel发送数据进行了初始化控制session的操作（_IDE_initiateControlSessionWithProtocolVersion 和 XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface）。
+  猜测是Xcode启动ios上对应的xcuitest framework的时候前置初始化操作。#3 吊起webdriver runner app，主要是启动instrument服务（InstrumentsRemoteServer = “com.apple.instruments.remoteserver”），创建channel然后发送DTXMessage启动app.&lt;/p&gt;
+
+&lt;h2 id=&quot;代码流程分步解析&quot;&gt;代码流程分步解析&lt;/h2&gt;
+
+&lt;p&gt;下面来看下方法connect_testmanagerd_lockdown，通过查看代码发现本质是socket连接usbmuxd，通过该connection发送start service指令，启动lockdown service（ssl连接）.&lt;/p&gt;
+
+&lt;p&gt;分步骤看下最常见的start service并且连接到该service包含哪些内容。&lt;/p&gt;
+
+&lt;p&gt;1 其中启动一次service 完整流程包括&lt;/p&gt;
+
+&lt;p&gt;usbmuxd connection1 —&amp;gt; connection1 send info:connect—&amp;gt; querType—&amp;gt; GetValue—&amp;gt; StartSession—&amp;gt; StartService—&amp;gt; StopSession&lt;/p&gt;
+
+&lt;p&gt;2 开启service后，下次连接，根据返回的信息例如{‘EnableServiceSSL’: True, ‘Port’: 53190, ‘Request’: ‘StartService’, ‘Service’: ‘com.apple.testmanagerd.lockdown.secure’}信息，connect返回的端口，即可连接该service&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_connect_testmanagerd_lockdown:
+	conn = start_service(LockdownService.TestmanagerdLockdownSecure=com.apple.testmanagerd.lockdown.secure)
+		create_session as s:		
+				create_inner_connection as s:
+						conn = self._usbmux.create_connection()
+						conn send ('MessageType': 'Connect', port=LOCKDOWN_PORT)
+						return conn
+						
+					QueryType
+					GetValue
+					StartSession
+					yield s
+					StopSession
+				
+								
+		    data = s.send_recv_packet({
+                &quot;Request&quot;: &quot;StartService&quot;,
+                &quot;Service&quot;: name,
+                &quot;Label&quot;: PROGRAM_NAME,
+            })
+				
+				
+		conn = self.create_inner_connection(data['Port'], _ssl=_ssl, ssl_dial_only=ssl_dial_only)
+		return conn
+		 
+	return DTXService(conn)	 
+
+...
+	
+    make_channel:
+	    result = self.call_message(0, '_requestChannelWithCode:identifier:', aux)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;一部分log步骤大致如下&quot;&gt;一部分log步骤大致如下&lt;/h4&gt;
+
+&lt;p&gt;As tested form code, follow steps happened during webdriveragent runner app started:&lt;/p&gt;
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    1. SEND(1): {'MessageType': 'ListDevices', 'ClientVersionString': 'libusbmuxd 1.1.0', 'ProgName': 'tidevice', 'kLibUSBMuxVersion': 3}
+    2. send payload: {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 32498, 'ProgName': 'tidevice'} 
+    connected to port: 32498    # why here is 32498 instead of 62078? socket.htons(62078) = 32498
+    3. &quot;Request&quot;: &quot;QueryType&quot;
+    {'Request': 'QueryType', 'Type': 'com.apple.mobile.lockdown'}
+    
+    4. 'Request': 'GetValue'
+       {'Key': 'ProductVersion', 'Request': 'GetValue', 'Value': '14.2'}
+    
+    5. {'MessageType': 'ReadPairRecord', 'PairRecordID': 'bac123dc8ed3a3cdd491ab4e4699f60b136e7bca', 'ClientVersionString': 'libusbmu
+    xd 1.1.0', 'ProgName': 'tidevice', 'kLibUSBMuxVersion': 3} 
+    
+    6. {'Request': 'StartSession', 'HostID': '3096123013660573123119811848', 'SystemBUID': '30961229-7292436981136919796', 'ProgName'
+    : 'tidevice'}
+       {'EnableSessionSSL': True, 'Request': 'StartSession', 'SessionID': 'A56A6BFD-5D97-4083-8950-4228FA67E29C'}
+    
+    7. {'Request': 'StartService', 'Service': 'com.apple.mobile.installation_proxy', 'Label': 'tidevice'}
+       {'Port': 53184, 'Request': 'StartService', 'Service': 'com.apple.mobile.installation_proxy'}
+    
+    8. {'Request': 'StopSession'}
+       CLOSE
+    
+    9. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 49359, 'ProgName': 'tidevice'}
+       {'MessageType': 'Result', 'Number': 0}
+       connected to port: 49359
+    
+    10. {'Command': 'Browse', 'ClientOptions': {'ApplicationType': 'User', 'ReturnAttributes': ['CFBundleIdentifier']}}
+        {'CurrentIndex': 0, 'CurrentAmount': 10, 'Status': 'BrowsingApplications', 'CurrentList': [{'CFBundleIdentifier': 'x.x.x'}, {'CFBundleIdentifier': 'x.x.x'}, ..., {'CFBundleIdentifier': 'x.x.x'}]}
+        RECV(5): {'Status': 'Complete'}
+    
+    11. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 32498, 'ProgName': 'tidevice'}
+        {'MessageType': 'Result', 'Number': 0}
+        connected to port: 32498
+    
+    12. {'Request': 'QueryType'}
+       {'Request': 'QueryType', 'Type': 'com.apple.mobile.lockdown'}
+    
+    13. {'Request': 'GetValue', 'Key': 'ProductVersion', 'Label': 'tidevice'}
+       {'Key': 'ProductVersion', 'Request': 'GetValue', 'Value': '14.2'}
+    
+    14. {'Request': 'StartSession', 'HostID': '3096123013660573123119811848', 'SystemBUID': '30961229-7292436981136919796', 'ProgName': 'tidevice'}
+       {'EnableSessionSSL': True, 'Request': 'StartSession', 'SessionID': '553E60ED-73B1-4E84-AF87-330E59E7B266'}
+    
+    15. {'Request': 'StopSession', 'ProtocolVersion': '2', 'Label': 'tidevice', 'SessionID': '553E60ED-73B1-4E84-AF87-330E59E7B266'}
+       {'Request': 'StopSession'}
+       CLOSE(7)
+    
+    16. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 42015, 'ProgName': 'tidevice'}
+       {'MessageType': 'Result', 'Number': 3}
+    
+    17. {'Request': 'StartService', 'Service': &amp;lt;LockdownService.TestmanagerdLockdownSecure: 'com.apple.testmanagerd.lockdown.secure'&amp;gt;,
+    'Label': 'tidevice'}
+       {'EnableServiceSSL': True, 'Port': 53190, 'Request': 'StartService', 'Service': 'com.apple.testmanagerd.lockdown.secure'} 
+       备注：开启lockdown service，socket返回需要ssl连接，请连接端口号53190. socket.htons(53190)=50895
+    18. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 50895, 'ProgName': 'tidevice'}
+       {'MessageType': 'Result', 'Number': 0}
+       connected to port: 50895
+       进行连接lockdown(50895),连接成功
+    19. SEND DTXMessage: channel:0 expect_reply:0 data_length:619, data...
+       SEND DTXMessage: channel:0 expect_reply:1 data_length:478, data...
+       RECV DTXMessage: expects_reply:0 flags:2 conv:0 ('_notifyOfPublishedCapabilities:', [{'com.apple.private.DTXBlockCompression': 2, 'com.
+    apple.private.DTXConnection': 1}])
+       RECV DTXMessage: expects_reply:0 flags:0 conv:1 None
+    ...
+    20. {'Command': 'Lookup', 'ClientOptions': {'BundleIDs': ['com.facebook.WebDriverAgentRunner.xctrunner']}}
+     {'Status': 'Complete', 'LookupResult': {'com.facebook.WebDriverAgentRunner.xctrunner': {'CFBundlePackageType': 'APPL', 'NSCon
+    tactsUsageDescription': 'Access is necessary for automated testing.', 'NSBluetoothAlwaysUsageDescription': 'Access is necessary for automated testing.', 'DTPlatformVersion'
+    : '14.2', 'DTSDKBuild': '18B58', 'NFCReaderUsageDescription': 'Access is necessary for automated testing.', 'NSSiriUsageDescription': 'Access is necessary for automated tes
+    ting.', 'LSRequiresIPhoneOS': True, 'NSCameraUsageDescription': 'Access is necessary for automated testing.', 'ProfileValidated': True, 'CFBundleDisplayName': 'WebDriverAge
+    ntRunner-Runner', 'SignerIdentity': 'Apple Development: ...', 'DTXcodeBuild': '12B42a', 'NSRemindersUsageDescription': 'Access is necessary for automat
+    ed testing.', 'EnvironmentVariables': {'CFFIXED_USER_HOME': '/private/var/mobile/Containers/Data/Application/D01XX616-XXXX-XXXX-XXXX-7B2749AFC1E6', 'TMPDIR': '/private/var/
+    mobile/Containers/Data/Application/D01XX616-XXXX-XXXX-XXXX-7B2749AFC1E6/tmp', 'HOME': '/private/var/mobile/Containers/Data/Application/D01AB616-XXXX-XXXX-XXXX-7B2749AFC1E6'
+    }, 'CFBundleNumericVersion': 16809984, 'SequenceNumber': 3604, 'IsDemotedApp': False, 'Path': '/private/var/containers/Bundle/Application/A557E8E0-XXXX-XXXX-XXXX-49A9183F1B
+    B3/WebDriverAgentRunner-Runner.app', 'CFBundleIdentifier': 'com.facebook.WebDriverAgentRunner.xctrunner', 'NSHealthClinicalHealthRecordsShareUsageDescription': 'Access is n
+    ecessary for automated testing.', 'UIDeviceFamily': [1, 2], 'CFBundleSignature': '????', 'CFBundleInfoDictionaryVersion': '6.0', 'IsUpgradeable': True, 'CFBundleSupportedPl
+    atforms': ['iPhoneOS'], 'NSHealthUpdateUsageDescription': 'Access is necessary for automated testing.', 'UIRequiresFullScreen': True, 'NSMotionUsageDescription': 'Access is
+    necessary for automated testing.', 'MinimumOSVersion': '9.0', 'NSPhotoLibraryAddUsageDescription': 'Access is necessary for automated testing.', 'CFBundleName': 'WebDriver
+    AgentRunner-Runner', 'CFBundleShortVersionString': '1.0', 'UIBackgroundModes': ['continuous'], 'UIRequiredDeviceCapabilities': ['armv7'], 'CFBundleExecutable': 'WebDriverAg
+    entRunner-Runner', 'NSHealthShareUsageDescription': 'Access is necessary for automated testing.', 'ApplicationType': 'User', 'NSAppleMusicUsageDescription': 'Access is nece
+    ssary for automated testing.', 'NSSpeechRecognitionUsageDescription': 'Access is necessary for automated testing.', 'Container': '/private/var/mobile/Containers/Data/Applic
+    ation/D01AB616-FF64-43F1-B9E7-7B2749AFC1E6', 'NSLocationUsageDescription': 'Access is necessary for automated testing.', 'BuildMachineOSBuild': '20A2371', 'NSCalendarsUsage
+    Description': 'Access is necessary for automated testing.', 'DTPlatformName': 'iphoneos', 'NSMicrophoneUsageDescription': 'Access is necessary for automated testing.', 'CFB
+    undleAllowMixedLocalizations': True, 'NSLocationWhenInUseUsageDescription': 'Access is necessary for automated testing.', 'CFBundleVersion': '1', 'CFBundleDevelopmentRegion
+    ': 'en', 'NSFaceIDUsageDescription': 'Access is necessary for automated testing.', 'DTCompiler': 'com.apple.compilers.llvm.clang.1_0', 'NSLocationAlwaysAndWhenInUseUsageDes
+    cription': 'Access is necessary for automated testing.', 'NSHomeKitUsageDescription': 'Access is necessary for automated testing.', 'DTSDKName': 'iphoneos14.2.internal', 'N
+    SAppTransportSecurity': {'NSAllowsArbitraryLoads': True}, 'Entitlements': {'keychain-access-groups': ['T3TLXX99XX.com.facebook.WebDriverAgentRunner.xctrunner'], 'applicatio
+    n-identifier': 'T3TLXX99XX.com.facebook.WebDriverAgentRunner.xctrunner', 'get-task-allow': True, 'com.apple.developer.team-identifier': 'T3TLXX99XX'}, 'DTPlatformBuild': '1
+    8B58', 'NSPhotoLibraryUsageDescription': 'Access is necessary for automated testing.', 'IsAppClip': False, 'UISupportedInterfaceOrientations': ['UIInterfaceOrientationPortr
+    ait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'], 'DTXcode': '1220'}}}
+  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;参考&quot;&gt;参考&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://jon-gabilondo-angulo-7635.medium.com/understanding-usbmux-and-the-ios-lockdown-service-7f2a1dfd07ae&quot;&gt;understanding-usbmux-and-the-ios-lockdown-service&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux&quot;&gt;iphonewiki: Usbmux&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://testerhome.com/topics/27159&quot;&gt;tidevice intro&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 22 Apr 2022 19:40:41 +0800</pubDate>
+        <link>http://localhost:4000/2022/04/source_code_tidevice_study_cn/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/04/source_code_tidevice_study_cn/</guid>
+        
+        
+        <category>webdriver</category>
+        
+      </item>
+    
+      <item>
+        <title>Usbmux</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux&quot;&gt;usbmux intro ref&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;br /&gt;
+This is a system for multiplexing several &quot;connections&quot; over one USB pipe. 
+
+Conceptually, it provides a TCP-like system-processes on the host machine open up connections to specific, numbered ports on the mobile device.
+
+Communications between the host (generally, iTunes running on a Mac or Windows machine) and the device (an iPhone, iPad or iPod touch) take place using a complicated scheme of nested layers. From lowest level to highest, they are:
+USB protocol: multiplexes multiple data streams over one pair of bulk endpoints &lt;br /&gt;
+
+usbmuxd protocol: provides a way of opening connections to TCP ports on the device&lt;br /&gt; 
+
+lockdownd protocol: tbd &lt;br /&gt;
+
+iTunesHelper? &lt;br /&gt;
+
+AFC?&lt;br /&gt;
+&lt;br /&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;this description is from https://www.theiphonewiki.com/wiki/Usbmux. But on my side, usbmuxd communicate with ios device like tcp, so I think we should put it at TCP layer. 
+I think the layer from lowerest to highest may be like this:&lt;/p&gt;
+
+&lt;p&gt;usbmuxd protocol: provides a way of opening connections to TCP ports on the device&lt;/p&gt;
+
+&lt;p&gt;lockdownd protocol: tbd&lt;/p&gt;
+
+&lt;p&gt;iTunesHelper?&lt;/p&gt;
+
+&lt;p&gt;AFC?&lt;/p&gt;
+
+&lt;p&gt;USB protocol: multiplexes multiple data streams over one pair of bulk endpoints&lt;/p&gt;
+
+&lt;p&gt;If you have any idea about this layer, you can contact with me or leave your comments.&lt;/p&gt;
+
+&lt;h2 id=&quot;usbmuxd-location&quot;&gt;usbmuxd location:&lt;/h2&gt;
+&lt;p&gt;code is from tidevice&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import os
+if os.name == &quot;posix&quot;:  # linux or darwin
+    address = &quot;/var/run/usbmuxd&quot;
+elif os.name == &quot;nt&quot;:  # windows
+    address = ('127.0.0.1', 27015)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;on Mac:&lt;/p&gt;
+&lt;blockquote&gt;
+/System/Library/PrivateFrameworks/MobileDevice.framework/Resources/usbmuxd, a daemon that is started by launchd (see /System/Library/LaunchDaemons/com.apple.usbmuxd.plist Catalina: /Library/Apple/System/Library/LaunchDaemons/com.apple.usbmuxd.plist)
+&lt;br /&gt;
+
+&lt;/blockquote&gt;
+
+&lt;p&gt;on windows:
+install iTunes, and this usbmuxd is already installed.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 21 Apr 2022 12:40:41 +0800</pubDate>
+        <link>http://localhost:4000/2022/04/usbmux/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/04/usbmux/</guid>
+        
+        
+        <category>ios</category>
+        
+      </item>
+    
+      <item>
+        <title>socket 编程：大小端数据</title>
+        <description>&lt;h1 id=&quot;大小端&quot;&gt;大小端&lt;/h1&gt;
+&lt;p&gt;数据：0X12345678&lt;/p&gt;
+
+&lt;p&gt;内存地址从低到高&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; 0x0001    0x0002   0x0003  0x0004
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址&lt;/p&gt;
+
+&lt;p&gt;小端: 0x78      0x56     0x34    0x12                                低位数据在低位地址&lt;/p&gt;
+
+&lt;p&gt;由于发送端接送端主机可能存在主机序列模式不同，故发送出去数据时，统一转换为大端发送，接收端可统一按照大端解析。网络字节序统一为大端序。&lt;/p&gt;
+
+&lt;p&gt;常见的网络字节转换函数有：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;htons()  #host to network short，将short类型数据从主机字节序转换为网络字节序。
+
+ntohs()  #network to host short，将short类型数据从网络字节序转换为主机字节序。
+
+htonl()  #host to network long，将long类型数据从主机字节序转换为网络字节序。
+
+ntohl()  #network to host long，将long类型数据从网络字节序转换为主机字节序。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ref:
+&lt;a href=&quot;ttps://www.cnblogs.com/cyx-b/p/12454495.html&quot;&gt;大小端&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 29 Mar 2022 20:40:41 +0800</pubDate>
+        <link>http://localhost:4000/2022/03/socket_little_endian_big_endian/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/03/socket_little_endian_big_endian/</guid>
+        
+        
+        <category>webdriver</category>
+        
+      </item>
+    
+      <item>
+        <title>transfer from unicode to utf-8 encoding</title>
+        <description>&lt;p&gt;Chinese character:      汉&lt;/p&gt;
+
+&lt;p&gt;its Unicode value:        U+6C49&lt;/p&gt;
+
+&lt;p&gt;convert 6C49 to binary:   01101100 01001001
+                           1101100 01001001&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;汉&quot;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# hex to binary, unicode value&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;unicode_escape&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;112&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;u6c49'&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#hex decimal&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'6c49'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;121&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;27721&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;bin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;27721&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'0b110110001001001'&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#value of 6c49&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# utf-8 value&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;utf-8&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;113&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\xe6\xb1\x89&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;bin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'e6b189'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;129&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'0b111001101011000110001001'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;format of UTF-8 byte sequences table:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1st Byte&lt;/th&gt;
+      &lt;th&gt;2nd Byte&lt;/th&gt;
+      &lt;th&gt;3rd Byte&lt;/th&gt;
+      &lt;th&gt;4th Byte&lt;/th&gt;
+      &lt;th&gt;Number of Free Bits&lt;/th&gt;
+      &lt;th&gt;Maximum Expressible Unicode Value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0xxxxxxx&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;007F hex (127)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;110xxxxx&lt;/td&gt;
+      &lt;td&gt;10xxxxxx&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;(5+6)=11&lt;/td&gt;
+      &lt;td&gt;07FF hex (2047)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1110xxxx&lt;/td&gt;
+      &lt;td&gt;10xxxxxx&lt;/td&gt;
+      &lt;td&gt;10xxxxxx&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;(4+6+6)=16&lt;/td&gt;
+      &lt;td&gt;FFFF hex (65535)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;11110xxx&lt;/td&gt;
+      &lt;td&gt;10xxxxxx&lt;/td&gt;
+      &lt;td&gt;10xxxxxx&lt;/td&gt;
+      &lt;td&gt;10xxxxxx&lt;/td&gt;
+      &lt;td&gt;(3+6+6+6)=21&lt;/td&gt;
+      &lt;td&gt;10FFFF hex (1,114,111)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;our Chinese character unicode is “6c49”, 07FF&amp;lt;6c49&amp;lt;FFFF, so we should use third format to convert.&lt;/p&gt;
+
+&lt;p&gt;template:       1110xxxx    10xxxxxx    10xxxxxx
+value of 6c49   01101100    01001001
+result:         11100110    10110001    10001001&lt;/p&gt;
+
+&lt;h1 id=&quot;ref&quot;&gt;ref&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/643694/what-is-the-difference-between-utf-8-and-unicode&quot;&gt;difference between utf-8 and unicode&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.fileformat.info/info/unicode/utf8.htm&quot;&gt;utf-8&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 10 Jan 2022 20:01:11 +0800</pubDate>
+        <link>http://localhost:4000/2022/01/unicode_to_utf-8/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/01/unicode_to_utf-8/</guid>
+        
+        
+        <category>encoding</category>
+        
+      </item>
+    
+      <item>
+        <title>libimobiledevice guide to control iphone</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/libimobiledevice/libimobiledevice&quot;&gt;libimobiledevice github doc&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step1-install-libimobiledevice&quot;&gt;step1 install libimobiledevice&lt;/h2&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    brew update
+    brew uninstall --ignore-dependencies libimobiledevice
+    brew uninstall --ignore-dependencies usbmuxd
+    brew install --HEAD usbmuxd
+    brew unlink usbmuxd
+    brew link usbmuxd
+    brew install --HEAD libimobiledevice
+    git clone https://github.com/JonGabilondoAngulo/idevicelocation.git
+    cd idevicelocation
+    ./autogen.sh
+    make
+    sudo make install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;step2-commands-test&quot;&gt;step2 commands test&lt;/h2&gt;
+&lt;p&gt;connect iphone to mac with usb, use commands from libimobiledevice api.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ideviceinfo -k ProductVersion
+12.2.3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2) copy dmg from xcode(DeveloperDiskImage.dmg          and DeveloperDiskImage.dmg.signature) to your folder(e.g. ~/Documents/xxx/ios/).
+folder path: &lt;code class=&quot;highlighter-rouge&quot;&gt;Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSup‌​port/7.1/&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;3) ideviceimagemounter ~/Documents/xxx/ios/DeveloperDiskImage.dmg&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ ideviceimagemounter ~/Documents/xxx/ios/DeveloperDiskImage.dmg
+Uploading /Users/zhaoting/Documents/xxx/ios/DeveloperDiskImage.dmg
+done.
+Mounting...
+Done.
+Status: Complete
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4) get app installed: &lt;code class=&quot;highlighter-rouge&quot;&gt;ideviceinstaller -l&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ ideviceinstaller -l
+CFBundleIdentifier, CFBundleVersion, CFBundleDisplayName
+com.skyjos.ftpmanagerfree, &quot;6201&quot;, &quot;FTPManager&quot;
+com.xxx.ultracaller, &quot;13&quot;, &quot;ultracaller&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;5) run app&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ idevicedebug run com.xx.xxx
+ERROR: Unspecified
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;6) observing notifications&lt;/p&gt;
+
+&lt;p&gt;https://github.com/libimobiledevice/libimobiledevice/issues/464&lt;/p&gt;
+
+&lt;p&gt;notification list:http://iphonedevwiki.net/index.php/SpringBoard.app/Notifications&lt;/p&gt;
+
+&lt;p&gt;command: &lt;code class=&quot;highlighter-rouge&quot;&gt;idevicenotificationproxy observe &quot;com.apple.springboard.lockcomplete&quot;&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ idevicenotificationproxy observe &quot;com.apple.springboard.lockcomplete&quot;
+! observing &quot;com.apple.springboard.lockcomplete&quot;
+&amp;gt; com.apple.springboard.lockcomplete
+&amp;gt; com.apple.springboard.lockcomplete
+^CExiting...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;7) restart iphone&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;idevicediagnostics restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;8）airplane mode&lt;/p&gt;
+
+&lt;p&gt;seems can not set airplane with libmobiledevice command, but we can set it by ios automation test framework like appium. pls ref &lt;a href=&quot;/2021/09/appium_mac_config_guide/&quot;&gt;appium mac config guide&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 22 Sep 2021 20:01:11 +0800</pubDate>
+        <link>http://localhost:4000/2021/09/guide_libimobiledevice/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/09/guide_libimobiledevice/</guid>
+        
+        
+        <category>appium</category>
+        
+      </item>
+    
+      <item>
+        <title>Appium mac config guide</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://appium.io/docs/en/about-appium/getting-started/&quot;&gt;appium mac config guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1-install-appium&quot;&gt;1. install appium&lt;/h2&gt;
+&lt;p&gt;Appium can be installed in one of two ways: via NPM or by downloading Appium Desktop, which is a graphical, desktop-based way to launch the Appium server.&lt;/p&gt;
+
+&lt;p&gt;here we use the npm to install appium. firstly confirm node installed.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install node      
+node -v  
+npm -v  
+npm install -g appium@1.18   #recommend 1.18, tested ok.  
+appium -v 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;then use appium-doctor to check if any dependencies install needed&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) xxxx@M-C02Q90LGFVH6:~/Documents/xxxxx/ios/code/appium/node_modules/appium-webdriveragent$ appium-doctor --ios  
+info AppiumDoctor Appium Doctor v.1.15.4  
+info AppiumDoctor ### Diagnostic for necessary dependencies starting ###  
+info AppiumDoctor  ✔ The Node.js binary was found at: /Users/xxxx/.nvm/versions/node/v14.5.0/bin/node  
+info AppiumDoctor  ✔ Node version is 14.5.0  
+info AppiumDoctor  ✔ Xcode is installed at: /Applications/Xcode.app/Contents/Developer  
+info AppiumDoctor  ✔ Xcode Command Line Tools are installed in: /Applications/Xcode.app/Contents/Developer  
+info AppiumDoctor  ✔ DevToolsSecurity is enabled.  
+info AppiumDoctor  ✔ The Authorization DB is set up properly.  
+info AppiumDoctor  ✔ Carthage was found at: /usr/local/bin/carthage. Installed version is: 0.36.0  
+info AppiumDoctor  ✔ HOME is set to: /Users/xxxx  
+info AppiumDoctor ### Diagnostic for necessary dependencies completed, no fix needed. ###  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;2-install--xcuitest-driver-on-ios-real-device&quot;&gt;2. install  XCUITest Driver on ios real device&lt;/h2&gt;
+
+&lt;h3 id=&quot;21-install-external-dependencies&quot;&gt;2.1 install external dependencies&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install carthage  
+gem install xcpretty   # For real devices we can use xcpretty to make Xcode output more reasonable.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;22-add-devices-on-appledevelopercom&quot;&gt;2.2 add devices on apple.developer.com&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/account/resources/devices/list&quot;&gt;apple developer device list management link&lt;/a&gt;
+  &lt;img src=&quot;/images/appium/apple_devices.PNG&quot; alt=&quot;apple developer devices&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;221-find-appium-path&quot;&gt;2.2.1 find appium path&lt;/h4&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+$ which appium  
+/Users/xxxx/.nvm/versions/node/v14.5.0/bin/appium  
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;222-find-webdriveragent-project-under-appium&quot;&gt;2.2.2 find WebDriverAgent project under appium&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cd /Users/xxxx/.nvm/versions/node/v14.5.0/bin/appium/node_modules/appium-webdriveragent  
+./Scripts/bootstrap.sh  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;223-open-webdriveragentxcodeproj-in-xcode&quot;&gt;2.2.3 open WebDriverAgent.xcodeproj in Xcode&lt;/h4&gt;
+&lt;p&gt;Before open project, login Xcode with your account(should be a developer account) and find your teamID later needed. (apple developer link: https://developer.apple.com/account/resources/identifiers )&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/appium/teamId.png&quot; alt=&quot;apple developer devices&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;And then add device to your resources list on the &lt;a href=&quot;https://developer.apple.com/account/resources/devices/list&quot;&gt;apple developer devices list&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;open WebDriverAgent.xcodeproj under &lt;code class=&quot;highlighter-rouge&quot;&gt;/Users/xxxx/.nvm/versions/node/v14.5.0/bin/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;For both the WebDriverAgentLib and WebDriverAgentRunner targets, select “signing” in “Build Settings”, and then select your Development Team. The outcome should look as shown below:
+&lt;img src=&quot;/images/appium/signing.png&quot; alt=&quot;teamid&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you add new device for test, you should delete provisioning file now used under &lt;code class=&quot;highlighter-rouge&quot;&gt;~/Library/MobileDevice/Provisioning Profiles.&lt;/code&gt;, then restart Xcode, it will automatically download provisioning files.
+&lt;img src=&quot;/images/appium/provisioning.png&quot; alt=&quot;provisioning files&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3test-with-appium&quot;&gt;3.Test with appium&lt;/h2&gt;
+&lt;p&gt;Prepare a iPhone and connect it with Mac through usb(please select “trust” if question “trust this computer or not?” poped up), then get basic info like “uuid” of iphone after libimobiledevice installed(you can also get udid from Xcode).
+  3.1-3.3 steps is not required, you can also get udid from Devices under Xcode.&lt;/p&gt;
+
+&lt;h3 id=&quot;31-install-libimobiledevice&quot;&gt;3.1 install libimobiledevice&lt;/h3&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Please see the guide and install lib libimobiledevice on mac. [libmobiledevice guide](todo) ### 3.2 get uuid with “idevice_id” provided by libimobiledevice ``` (base) xxxx@M-C02Q90LGFVH6:~/Documents/xxxxx/ios/code/appium/node_modules/appium-webdriveragent$ idevice_id   f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae (USB)   ``` ### 3.3 get app list installed on iphone with command “ideviceinstaller -l” ``` (base) xxxx@M-C02Q90LGFVH6:~/Documents/xxxxx/ios/code/appium/node_modules/appium-webdriveragent$ ideviceinstaller -l CFBundleIdentifier, CFBundleVersion, CFBundleDisplayName com.skyjos.ftpmanagerfree, &quot;6201&quot;, &quot;FTPManager&quot; com.xxxxx.ultracaller, &quot;13&quot;, &quot;ultracaller&quot;   com.foundry63.tailor, &quot;2.321246456&quot;, &quot;Tailor&quot;   pinterest, &quot;8&quot;, &quot;Pinterest&quot;   com.zhiliaoapp.musically, &quot;178023&quot;, &quot;TikTok&quot;   com.sogou.hotspot, &quot;711&quot;, &quot;今日十大热点&quot;   com.teapotapps.iperf, &quot;11&quot;, &quot;iPerf&quot;   com.facebook.WebDriverAgentRunner.xctrunner, &quot;1&quot;, &quot;WebDriverAgentRunner-Runner&quot;   ```    save the identifier of our target tested app like “iperf”: “com.teapotapps.iperf”   ### 3.4 start appium server 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Start appium server with command “appium” or  “appium –uuid uuid_number_of_iphone”.
+with –udid means you set the device you want to test, and if you do not set it, you can set in your test code like this:
+    ```  &lt;br /&gt;
+    from appium import webdriver&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;IOS_BASE_CAPBILITIES = {
+    # 'app': 'settings',
+    'app': 'com.teapotapps.iperf',
+    'automationName': 'xcuitest',
+    'platformName': 'iOS',
+    'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '12.3',
+    'deviceName': 'bigiphone',
+    'udid': 'f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae',
+    'showIOSLog': True,
+}
+
+EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
+
+driver = webdriver.Remote(
+    command_executor=EXECUTOR,
+    desired_capabilities=IOS_BASE_CAPBILITIES
+)
+```
+
+
+```
+(base) xxxx@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ appium --udid f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae
+[Appium] Welcome to Appium v1.18.3
+[Appium] Non-default server args:
+[Appium]   udid: f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae
+[Appium] Deprecated server args:
+[Appium]   -U,--udid =&amp;gt; --default-capabilities '{&quot;udid&quot;:&quot;f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae&quot;}'
+[Appium] Default capabilities, which will be added to each request unless overridden by desired capabilities:
+[Appium]   udid: f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae
+[Appium] Appium REST http interface listener started on 0.0.0.0:4723
+```   ### 3.5 run your test code 
+```
+import time
+import copy
+import os
+from appium import webdriver
+
+
+EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
+
+#capabilities ref:http://appium.io/docs/en/writing-running-appium/caps/
+IOS_BASE_CAPBILITIES = {
+    # 'app': 'settings',
+    'app': 'com.teapotapps.iperf',
+    'automationName': 'xcuitest',
+    'platformName': 'iOS',
+    'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '12.3',
+    'deviceName': 'bigiphone',
+    'udid': 'f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae', #test iphone
+    'showIOSLog': True,
+}
+
+
+def config_settings(driver):
+    wifi_ele = driver.find_element_by_name('Wi-Fi')
+    print(wifi_ele)
+    print(wifi_ele.text)
+    # wifi_ele.click()
+
+    ele = driver.find_element_by_name('Airplane Mode')
+    print(ele)
+    print(ele.text)
+    ele.click()
+
+    time.sleep(5)
+    ele.click()
+    print('click finished')
+
+
+def get_window_size(driver):
+    size = driver.get_window_size()
+    print('*********size:')
+    print(size)
+
+
+def config_iperf(driver):
+    ele = driver.find_element_by_name('Server port')
+    print(ele)
+
+    print(driver.page_source)
+
+    eles = driver.find_elements_by_xpath('//XCUIElementTypeTextField')
+    for ele in eles:
+        print(ele.get_attribute('value'))
+        ele.clear()
+        ele.set_value('222')
+
+    start_btn = driver.find_element_by_name('Start')
+    start_btn.click()
+
+
+if __name__ == &quot;__main__&quot;:
+    caps = copy.copy(IOS_BASE_CAPBILITIES)
+    print(caps['app'])
+
+    driver = webdriver.Remote(
+        command_executor=EXECUTOR,
+        desired_capabilities=caps
+    )
+
+    config_iperf(driver)
+```
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;problems&quot;&gt;Problems&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;use another new iphone but errors occurred&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Problems: can not pair device.&lt;/p&gt;
+
+&lt;p&gt;Solution: reconnect to usb and choose “Trust” if question “Trust this computer or not?” poped up.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    [Appium] Appium v1.18.3 creating new XCUITestDriver (v3.29.0) session
+    [debug] [BaseDriver] W3C capabilities and MJSONWP desired capabilities were provided
+    [debug] [BaseDriver] Creating session with W3C capabilities: {
+    [debug] [BaseDriver]   &quot;alwaysMatch&quot;: {
+    [debug] [BaseDriver]     &quot;platformName&quot;: &quot;iOS&quot;,  
+    [debug] [BaseDriver]     &quot;appium:showIOSLog&quot;: true,
+    [debug] [BaseDriver]     &quot;appium:app&quot;: &quot;settings&quot;,  
+    [debug] [BaseDriver]     &quot;appium:automationName&quot;: &quot;xcuitest&quot;,  
+    [debug] [BaseDriver]     &quot;appium:udid&quot;: &quot;bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca&quot;,  
+    [debug] [BaseDriver]     &quot;appium:deviceName&quot;: &quot;iPhone&quot;,  
+    [debug] [BaseDriver]     &quot;appium:platformVersion&quot;: &quot;12.3&quot;  
+    [debug] [BaseDriver]   },  
+    [debug] [BaseDriver]   &quot;firstMatch&quot;: [  
+    [debug] [BaseDriver]     {}  
+    [debug] [BaseDriver]   ]  
+    [debug] [BaseDriver] }  
+    [BaseDriver] Session created with session id: f5023dac-8ab4-487f-8090-ae1ab06a002e  
+    [debug] [XCUITest] Current user: 'xxxx'  
+    [debug] [XCUITest] Available devices: bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca  
+    [debug] [XCUITest] Creating iDevice object with udid 'bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca'  
+    [XCUITest] Determining device to run tests on: udid: 'bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca', real device: true  
+    [debug] [BaseDriver] Event 'xcodeDetailsRetrieved' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))  
+    [debug] [BaseDriver] Event 'appConfigured' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))  
+    [debug] [BaseDriver] Event 'resetStarted' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))  
+    [debug] [XCUITest] Reset: running ios real device reset flow  
+    [debug] [BaseDriver] Event 'resetComplete' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))
+    [WebDriverAgent] Using WDA path: '/Users/xxxx/.nvm/versions/node/v14.5.0/lib/node_modules/appium/node_modules/appium-webdriveragent'  
+    [WebDriverAgent] Using WDA agent: '/Users/xxxx/.nvm/versions/node/v14.5.0/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj'  
+    [XCUITest] Continuing without capturing device logs: Could not find a pair record for device 'bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca'. Please first pair with the device  
+    [XCUITest] Setting up real device  
+    [XCUITest] {}  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;/usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj Building for iOS, but the linked and embedded framework ‘YYCache.framework’ was built for iOS + iOS Simulator.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;ref https://github.com/appium/appium/issues/13996 , please try:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;```
+npm uninstall -g appium
+npm install -g appium@beta
+```
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 20 Sep 2021 19:40:41 +0800</pubDate>
+        <link>http://localhost:4000/2021/09/appium_mac_config_guide/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021/09/appium_mac_config_guide/</guid>
+        
+        
+        <category>appium</category>
+        
+      </item>
+    
+      <item>
+        <title>install cygwin and ssh service on windows record</title>
+        <description>&lt;h2 id=&quot;1-install-ssh-servercygwin-on-windows&quot;&gt;1. install ssh server(cygwin) on Windows&lt;/h2&gt;
+&lt;p&gt;1) download &lt;strong&gt;setup-x86_64.exe&lt;/strong&gt; on &lt;a href=&quot;https://cygwin.com/install.html&quot;&gt;cygwin.com&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;2) run  setup-x86_64.exe and setup as follow steps, click next until to select packages.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/cygwin/open_file.PNG&quot; alt=&quot;install cygwin&quot; width=&quot;450&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;ps: if pc can not get access to internet, can chose local(you should download all instalation files to this pc)&lt;/p&gt;
+
+&lt;p&gt;ps: openssh default is not selected ,you should select version and bin/src file to be installed.
+    if you want to use zip、unzip command in cygwin，you can select as same way as next:&lt;/p&gt;
+
+&lt;p&gt;3) finished installation&lt;/p&gt;
+
+&lt;h2 id=&quot;2-config-ssh-by-cygwin-on-windows&quot;&gt;2. config ssh by cygwin on Windows&lt;/h2&gt;
+
+&lt;p&gt;1) open cygwin terminal&lt;/p&gt;
+
+&lt;p&gt;2) input command: 
+   &lt;code&gt;ssh-host-config&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;3) type yes until CYGWIN value: input netsec tty&lt;/p&gt;
+
+&lt;p&gt;4) input a username according to your configuration. here we use ‘cv5g1_2’&lt;/p&gt;
+
+&lt;p&gt;5) enter password&lt;/p&gt;
+
+&lt;p&gt;6) finish the configuration&lt;/p&gt;
+
+&lt;h2 id=&quot;3-start-service-of-ssh&quot;&gt;3. start service of ssh&lt;/h2&gt;
+&lt;p&gt;1) open cygwin terminal&lt;/p&gt;
+
+&lt;p&gt;2) input command :
+&lt;strong&gt;&lt;code&gt;net start sshd&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;3) wait for successful message&lt;/p&gt;
+
+&lt;h2 id=&quot;4-test&quot;&gt;4. test&lt;/h2&gt;
+&lt;p&gt;find a pc and input &lt;strong&gt;&lt;code&gt;ssh  usernmame@ip&lt;/code&gt;&lt;/strong&gt; ,test over&lt;/p&gt;
+
+&lt;h2 id=&quot;problem-solution&quot;&gt;problem solution&lt;/h2&gt;
+&lt;p&gt;1) if there is some error made in ssh configuration , you can use the following commands:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;sc delete sshd&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;ssh-host-config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;2) net start sshd failed
+check whether there is another ssh server running or check /etc/config_sshd, config “AllowUsers myusername” in the config_sshd file.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 20 Jan 2020 16:29:41 +0800</pubDate>
+        <link>http://localhost:4000/2020/01/config_cygwin/</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/01/config_cygwin/</guid>
+        
+        
+        <category>cygwin</category>
+        
+      </item>
+    
+      <item>
+        <title>selenium robot/python demo</title>
+        <description>&lt;p&gt;Selenium is an open source automated testing suite for web applications.&lt;br /&gt;
+Selenium has four components:&lt;br /&gt;
+Selenium Integrated Development Environment (IDE)&lt;br /&gt;
+Selenium Remote Control (RC)&lt;br /&gt;
+Webdriver&lt;br /&gt;
+Selenium Grid&lt;/p&gt;
+
+&lt;h3 id=&quot;selenium-ide&quot;&gt;Selenium IDE&lt;/h3&gt;
+&lt;p&gt;a firefox extension, support record and playback.&lt;/p&gt;
+
+&lt;h3 id=&quot;selenium-rc&quot;&gt;Selenium RC&lt;/h3&gt;
+&lt;p&gt;Selenium Core: a js program, tests run directly in browser.
+ Cross Origin Problem: If the JS is not included from a HTML page on test.com, it can not access test.com resources.&lt;/p&gt;
+
+&lt;p&gt;Selenium RC: a web server, support remote control browser.
+  Trick web browser into believing selenium core and web application in the same origin.
+  Can communicate with browser.&lt;/p&gt;
+
+&lt;h3 id=&quot;selenium-grid&quot;&gt;Selenium Grid&lt;/h3&gt;
+&lt;p&gt;distribution of selenium tests, can reduce time of running tests.&lt;/p&gt;
+
+&lt;h3 id=&quot;webdriver&quot;&gt;Webdriver&lt;/h3&gt;
+
+&lt;p&gt;Webdriver is a standard to do operations on browser, like a bridge between tests and browser.&lt;br /&gt;
+Different browser has different implementation.&lt;br /&gt;
+&lt;a href=&quot;https://www.w3.org/TR/Webdriver1/&quot;&gt;Webdriver protocol defined by W3C&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;The Webdriver protocol is organised into commands.&lt;/li&gt;
+    &lt;li&gt;Each HTTP request with a method and template defined in this specification represents a single command,&lt;/li&gt;
+    &lt;li&gt;and therefore each command produces a single HTTP response. In response to a command,&lt;/li&gt;
+    &lt;li&gt;a remote end will run a series of actions against the browser.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*** Settings ***
+Documentation   ref: [robotframwork user guide link](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#variables)
+
+Library         SeleniumLibrary
+Library         String
+
+*** Variables ***
+${string_pass}    helloworld
+${web_url}    https://www.baidu.com
+${login_btn_xpath}    //*[@id=&quot;s-top-loginbtn&quot;]
+${chromedriver_path}    C:/taf/webdrivers/chromedriver_win32/chromedriver.exe
+
+*** Test Cases ***
+Open Browser To Login Page
+    Open Browser    browser= Chrome    url= ${web_url}    executable_path= ${chromedriver_path}
+    Title Should Be    Login Page
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!-encoding=utf-8-&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChromeOptions&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver.common.by&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;By&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver.common.action_chains&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChromeOptions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;--proxy-server=http://x.x.x.x:8080&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrome_options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   &lt;span class=&quot;n&quot;&gt;executable_path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/Applications/Google Chrome.app/Contents/MacOS/chromedriver&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'https://www.baidu.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'kw'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send_keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'my search content'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_link_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'地图'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_class_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'s_ipt'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_tag_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'input'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;By&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'kw'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#refresh, back&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;refresh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#set window size&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_window_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maximize_window&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#mouse events&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context_click&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#click baidu input and right click&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;double_click&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#click baidu input and right click&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;move_to_element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#click baidu input and right click&lt;/span&gt;
+
+
+
+
+
+
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Thu, 02 Jan 2020 20:01:11 +0800</pubDate>
+        <link>http://localhost:4000/2020/01/selenium_robot_python_demo/</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/01/selenium_robot_python_demo/</guid>
+        
+        
+        <category>selenium</category>
+        
+      </item>
     
       <item>
         <title>solve the Problems with X11 - Can't open display on MAC</title>
@@ -21,10 +1157,13 @@
 defaults write org.X.x11 nolisten_tcp -boolean false
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
   &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;install xquartz
-download and install from https://www.xquartz.org/&lt;/p&gt;
-  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;2.install xquartz&lt;/p&gt;
+
+&lt;p&gt;download and install from https://www.xquartz.org/&lt;/p&gt;
+
+&lt;ol&gt;
   &lt;li&gt;open xterm in xquartz and ssh to your target pc
     &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh -X root@x.x.x.x
 firefox #do your commands to start a gui app
@@ -40,295 +1179,6 @@ firefox #do your commands to start a gui app
         
         
         <category>mac</category>
-        
-      </item>
-    
-      <item>
-        <title>update brew repo</title>
-        <description>&lt;h1 id=&quot;update-brew-repo&quot;&gt;update brew repo&lt;/h1&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   cd `brew --repo`
-   git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
-   brew update
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;some mirrors:
- https://git.coding.net/homebrew/homebrew.git - Coding
- https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git - tsinghua
- https://mirrors.ustc.edu.cn/brew.git  -ustc&lt;/p&gt;
-
-</description>
-        <pubDate>Sat, 02 Nov 2019 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2019/11/update_brew_mirror/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/11/update_brew_mirror/</guid>
-        
-        
-        <category>mac</category>
-        
-      </item>
-    
-      <item>
-        <title>bashrc 、~/.bashrc、profile、~/.profile</title>
-        <description>&lt;p&gt;Interactive (&lt;strong&gt;non-login&lt;/strong&gt;) shells, then the config is read from these files:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $HOME/.bashrc
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;For &lt;strong&gt;login&lt;/strong&gt; shells, the config is read from these files:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  /etc/profile (Always sourced)
-  $HOME/.bash_profile(the rest of these files are checked in order until one is found, then no others are read)
-  $HOME/.bash_login
-  $HOME/.profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;~/.bash_profile&lt;/code&gt; only load once after login&lt;/p&gt;
-</description>
-        <pubDate>Fri, 04 Jan 2019 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2019/01/bashrc/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/bashrc/</guid>
-        
-        
-        <category>linux</category>
-        
-      </item>
-    
-      <item>
-        <title>turn web to app on mac</title>
-        <description>&lt;h1 id=&quot;just-two-commands-turn-web-to-app-on-mac&quot;&gt;just two commands, turn web to app on mac&lt;/h1&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   npm i -g nativefier
-   
-   nativefier &quot;https://www.ximalaya.com/&quot;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-</description>
-        <pubDate>Wed, 02 Jan 2019 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2019/01/turn-web-to-app-on-mac/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/turn-web-to-app-on-mac/</guid>
-        
-        
-        <category>mac</category>
-        
-      </item>
-    
-      <item>
-        <title>Selenium problems collection</title>
-        <description>&lt;h2 id=&quot;insert-value-to-input&quot;&gt;insert value to input&lt;/h2&gt;
-&lt;p&gt;When we want to use selenium to insert some value to input element in html, we follow steps as follow:
-   step1: clear the text in the input
-   step2: insert value&lt;/p&gt;
-
-&lt;p&gt;firstly, we get element:&lt;/p&gt;
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;c&quot;&gt;#!-encoding=utf-8-&lt;/span&gt;
-
-   &lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChromeOptions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrome_options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                       &lt;span class=&quot;n&quot;&gt;executable_path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/Applications/Google Chrome.app/Contents/MacOS/chromedriver&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'https://www.baidu.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'kw'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;on step1, we have multiple ways to clear text.find&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver.common.keys&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Keys&lt;/span&gt;
-   &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver.common.action_chains&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;
-
-   &lt;span class=&quot;c&quot;&gt;#by clear&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#some times no effect&lt;/span&gt;
-
-   &lt;span class=&quot;c&quot;&gt;#by actions&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_driver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;double_click&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;elem&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#no effect on firefox 69.0, [reference, solution no effect](https://github.com/bhecquet/seleniumRobot/issues/77)&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send_keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Keys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DELETE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-   &lt;span class=&quot;c&quot;&gt;#by Ctrl+A&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;elem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send_keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Keys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CONTROL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;elem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send_keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Keys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DELETE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;close-window&quot;&gt;close window&lt;/h2&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;quit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#Quits the driver and closes every associated window.&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#Closes the current window&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;if you want quit and close all, and safely ends the session with browser.&lt;/p&gt;
-
-&lt;h2 id=&quot;execute_script&quot;&gt;execute_script&lt;/h2&gt;
-&lt;p&gt;execute_script is a way for you to run some js which can not be implemented by selenium.&lt;/p&gt;
-
-&lt;h2 id=&quot;set-preference-for-download-dir-in-chrome&quot;&gt;set preference for download dir in chrome&lt;/h2&gt;
-&lt;p&gt;here are some demo for set preference of chrome.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;c&quot;&gt;# set download dir&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;chromeOptions&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;webdriver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ChromeOptions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;chromeOptions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'--user-agent=iphone'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#mock iphone or android&lt;/span&gt;
-
-   &lt;span class=&quot;n&quot;&gt;prefs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;download.default_directory&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/path/download&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;chromeOptions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_experimental_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;prefs&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prefs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;chrome-options-reference&quot;&gt;chrome options reference&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://chromium.googlesource.com/chromium/src/+/master/chrome/common/pref_names.cc&quot;&gt;links to chrome options list&lt;/a&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Tue, 01 Jan 2019 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2019/01/selenium_problems_collection/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/selenium_problems_collection/</guid>
-        
-        
-        <category>selenium</category>
-        
-      </item>
-    
-      <item>
-        <title>git commands record</title>
-        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config user.name &quot;username&quot;
-git config user.email &quot;mail&quot;
-
-git remote -v       #show remote git repository
-git remote add origin git://github.com/username/test.git
-git pull --allow-unrelated-histories   #solve allow-unrelated-histories problems
-
-
-
-ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  #generate rsa file
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-</description>
-        <pubDate>Mon, 01 Oct 2018 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2018/10/git-commands/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/10/git-commands/</guid>
-        
-        
-        <category>git</category>
-        
-      </item>
-    
-      <item>
-        <title>about regex</title>
-        <description>&lt;h1 id=&quot;正则组成&quot;&gt;正则组成&lt;/h1&gt;
-&lt;p&gt;普通字符        +     元字符
-a-z,A-z,0-9,_        \ ^ $ . ？ * + | {n} {m,n} (pattern) (?:pattern) (?!pattern) (?=pattern)  [] [^] \b&lt;/p&gt;
-
-&lt;h1 id=&quot;元字符详细&quot;&gt;元字符详细&lt;/h1&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;字符&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;描述&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;\&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;标记下一个字符为特殊字符/原义字符/向后引用/八进制转义符。e.g. \n 代表换行符&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;^&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配输入字符串开始位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之后的位置。 ^ss 代表字符串以ss开始&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;$&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配输入字符串的结束位置。如果加了RegeXP的Miltiline属性，^ 也匹配\n或者\r之前的位置。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;.&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配单个任意字符，除了\n。 可使用[.\n]匹配任意字符&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;?&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配前面的表达式或者字符的0次或者1次。等价于{0,1}。e.g. test(as)+ 可以匹配test或者是testas.  testa+ 可以匹配test或者testa。&lt;br /&gt; 备注：当?跟在次数限定符（*，+，？，{m,n},{n}）后面时，匹配模式是非贪婪的，即尽可能少匹配所搜索的字符串。&lt;br /&gt;e.g. ‘o+?’ 将只会匹配’hellooooo’中的单个’o’而不是’ooooo’&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;*&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配前面的表达式的0次或者多次。 等价于{0,}。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;+&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配前面的表达式的1次或者多次。等价于{1,}。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;|&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配两边表达式。&lt;br /&gt;e.g. test|hello \d\d, 等价于 (test|hello \d\d)，因此只会匹配’test 22’中的test以及匹配’hello 22’中的’hello 22’. 如果想要匹配’test 22’则可用括号限定两边的表达式，例如(test|hello) \d\d.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;{n}&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配前面表达式n次&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;{m,n}&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配前面表达式最小m次，最多n次，m&amp;lt;=n&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;(…..)&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配…..且获取匹配…..的结果。将括号中的表达式作为一个分组，匹配后可根据$index,index为该分组的序号可获取该匹配结果。例如$5&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;(?:…)&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配…..但不存储匹配结果。将括号中的表达式作为一个分组，匹配后无法根据$index获取结果，为非获取匹配&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;(?=…)&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;正向预查（肯定顺序环视）。从左往右在匹配…..字符串,且不消耗匹配字符。&lt;br /&gt;如’windows(?=2000)’,则匹配windows2000中的windows，但是不匹配windows300中的windows。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;(?&amp;lt;…)&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;肯定逆序环视。同上，方向为从右往左。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;(?!…)&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;负向预查。在任何不匹配…..的字符串开始处匹配查找字符串。 如’wdinwos (?!2000)’,代表获取’window ‘字符串且该字符串必须满足后面不带’2000’.&lt;br /&gt;备注，此匹配不消耗该预查字符…..，即下一次搜索会window空格后开始查找。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;(?&amp;lt;!…)&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;否定逆序环视。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;[….]&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配在字符集合….里的单个字符。例如Chapter [123]，可以匹配Chapter 1， Chapter 2。 如果希望表示范围的话可以用[1-5]，此时表示匹配1-5内的任意单个数字。&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;[^….]&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配不在字符集合….里的单个字符。例如Chater [^123],可以匹配Chater 4，但是不能匹配Chapter 1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;\b&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;匹配单词边界。例如never say never，可以用ver\b 匹配never中的verb 。&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h1 id=&quot;优先级&quot;&gt;优先级&lt;/h1&gt;
-&lt;p&gt;转义符 &amp;gt; ()、[]  &amp;gt; 限定符 &amp;gt; 位置和顺序 &amp;gt; |&lt;/p&gt;
-
-&lt;h1 id=&quot;python分组使用命名分组&quot;&gt;Python分组使用–命名分组&lt;/h1&gt;
-&lt;p&gt;(?P&lt;name&gt;) 其中name代表该分组的另外一个别名&lt;/name&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;s = 'debug 10:01:01 11:11:11:hello word'
-import re
-
-result = re.search(r'debug\s(?P&amp;lt;time&amp;gt;\d+:\d+:\d+\s\d+:\d+:\d+):.*', s).group('time')
-
-print(result)	
-
-10:01:01 11:11:11
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-</description>
-        <pubDate>Sat, 22 Sep 2018 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2018/09/about-regex/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/09/about-regex/</guid>
-        
-        
-        <category>regex</category>
         
       </item>
     

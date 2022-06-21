@@ -18,9 +18,9 @@ update brew repo
 
 
 
- some mirrors:
- https://git.coding.net/homebrew/homebrew.git - Coding
- https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git - tsinghua
- https://mirrors.ustc.edu.cn/brew.git  -ustc
+##some mirrors:##
+<https://git.coding.net/homebrew/homebrew.git/>
+<https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git/>
+<https://mirrors.ustc.edu.cn/brew.git/>
 
 

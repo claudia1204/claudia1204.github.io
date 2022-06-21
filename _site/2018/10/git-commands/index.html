@@ -40,7 +40,7 @@
       var _hmt = _hmt || [];
       (function() {
         var hm = document.createElement("script");
-        hm.src = "//hm.baidu.com/hm.js?31e7e464935c949d7589af5dc97b8c48";
+        hm.src = "//hm.baidu.com/hm.js?625129f6a6c1cc07fc945a8fb5dbc0b4";
         var s = document.getElementsByTagName("script")[0]; 
         s.parentNode.insertBefore(hm, s);
       })();
@@ -187,6 +187,20 @@ git pull --allow-unrelated-histories   #solve allow-unrelated-histories problems
 ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  #generate rsa file
 </code></pre></div></div>
 
+<h2 id="git-problems">git problems</h2>
+<p>1  RPC failed</p>
+
+<p>error msg:
+error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054</p>
+
+<p>solution:</p>
+<pre><code class="language-linux">git config --global http.postBuffer 524288000
+</code></pre>
+
+<h2 id="gitlab-api-commands">gitlab api commands</h2>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   curl --header "PRIVATE-TOKEN: xxxxxxxxxxxxxx" https://gitlab.xx.xxxxxx.com/api/v4/projects/111/repository/branches
+</code></pre></div></div>
+
 
   </section>
 </article>
@@ -306,7 +320,7 @@ ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  #generate rsa file
 
         <div class = "footer_div">  
            <p class="copyright text-muted">
-            Copyright &copy; step by step 2020 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            Copyright &copy; step by step 2022 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
             <iframe
                 style="margin-left: 2px; margin-bottom:-5px;"
                 frameborder="0" scrolling="0" width="91px" height="20px"

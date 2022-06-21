@@ -8,7 +8,7 @@ avatarDesc: frontend / python
 markdown: kramdown
 theme: minima
 baidu:
-    id: 31e7e464935c949d7589af5dc97b8c48
+    id: 625129f6a6c1cc07fc945a8fb5dbc0b4
 
 permalink: /:year/:month/:title/
 # Format
