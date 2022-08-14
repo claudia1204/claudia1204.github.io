@@ -9,7 +9,8 @@ markdown: kramdown
 theme: minima
 baidu:
     id: 625129f6a6c1cc07fc945a8fb5dbc0b4
-
+google:
+    ad-client: "ca-pub-2487558142971429"
 permalink: /:year/:month/:title/
 # Format
 highlighter: rouge

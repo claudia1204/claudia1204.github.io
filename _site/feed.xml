@@ -3,10 +3,10 @@
   <channel>
     <title>step by step</title>
     <description>small place</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 21 Jun 2022 22:04:36 +0800</pubDate>
-    <lastBuildDate>Tue, 21 Jun 2022 22:04:36 +0800</lastBuildDate>
+    <link>https://claudia1204.github.io/</link>
+    <atom:link href="https://claudia1204.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 14 Aug 2022 12:56:49 +0800</pubDate>
+    <lastBuildDate>Sun, 14 Aug 2022 12:56:49 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -92,8 +92,8 @@ PSH=1, client端发送显示所有设备信息&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://segmentfault.com/a/1190000039165592&quot;&gt;三次握手&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Sat, 23 Apr 2022 20:20:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/tcp_study/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/tcp_study/</guid>
+        <link>https://claudia1204.github.io/2022/04/tcp_study/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2022/04/tcp_study/</guid>
         
         
         <category>tcp</category>
@@ -432,8 +432,8 @@ console_scripts =
 &lt;p&gt;&lt;a href=&quot;https://testerhome.com/topics/27159&quot;&gt;tidevice intro&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 22 Apr 2022 19:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/source_code_tidevice_study_cn/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/source_code_tidevice_study_cn/</guid>
+        <link>https://claudia1204.github.io/2022/04/source_code_tidevice_study_cn/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2022/04/source_code_tidevice_study_cn/</guid>
         
         
         <category>webdriver</category>
@@ -499,8 +499,8 @@ elif os.name == &quot;nt&quot;:  # windows
 install iTunes, and this usbmuxd is already installed.&lt;/p&gt;
 </description>
         <pubDate>Thu, 21 Apr 2022 12:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/usbmux/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/usbmux/</guid>
+        <link>https://claudia1204.github.io/2022/04/usbmux/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2022/04/usbmux/</guid>
         
         
         <category>ios</category>
@@ -538,8 +538,8 @@ ntohl()  #network to host long，将long类型数据从网络字节序转换为�
 &lt;a href=&quot;ttps://www.cnblogs.com/cyx-b/p/12454495.html&quot;&gt;大小端&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 29 Mar 2022 20:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/03/socket_little_endian_big_endian/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/03/socket_little_endian_big_endian/</guid>
+        <link>https://claudia1204.github.io/2022/03/socket_little_endian_big_endian/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2022/03/socket_little_endian_big_endian/</guid>
         
         
         <category>webdriver</category>
@@ -634,8 +634,8 @@ result:         11100110    10110001    10001001&lt;/p&gt;
 
 </description>
         <pubDate>Mon, 10 Jan 2022 20:01:11 +0800</pubDate>
-        <link>http://localhost:4000/2022/01/unicode_to_utf-8/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/01/unicode_to_utf-8/</guid>
+        <link>https://claudia1204.github.io/2022/01/unicode_to_utf-8/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2022/01/unicode_to_utf-8/</guid>
         
         
         <category>encoding</category>
@@ -715,8 +715,8 @@ ERROR: Unspecified
 &lt;p&gt;seems can not set airplane with libmobiledevice command, but we can set it by ios automation test framework like appium. pls ref &lt;a href=&quot;/2021/09/appium_mac_config_guide/&quot;&gt;appium mac config guide&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Wed, 22 Sep 2021 20:01:11 +0800</pubDate>
-        <link>http://localhost:4000/2021/09/guide_libimobiledevice/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/09/guide_libimobiledevice/</guid>
+        <link>https://claudia1204.github.io/2021/09/guide_libimobiledevice/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2021/09/guide_libimobiledevice/</guid>
         
         
         <category>appium</category>
@@ -968,8 +968,8 @@ npm install -g appium@beta
 
 </description>
         <pubDate>Mon, 20 Sep 2021 19:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2021/09/appium_mac_config_guide/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/09/appium_mac_config_guide/</guid>
+        <link>https://claudia1204.github.io/2021/09/appium_mac_config_guide/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2021/09/appium_mac_config_guide/</guid>
         
         
         <category>appium</category>
@@ -1029,8 +1029,8 @@ npm install -g appium@beta
 check whether there is another ssh server running or check /etc/config_sshd, config “AllowUsers myusername” in the config_sshd file.&lt;/p&gt;
 </description>
         <pubDate>Mon, 20 Jan 2020 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2020/01/config_cygwin/</link>
-        <guid isPermaLink="true">http://localhost:4000/2020/01/config_cygwin/</guid>
+        <link>https://claudia1204.github.io/2020/01/config_cygwin/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2020/01/config_cygwin/</guid>
         
         
         <category>cygwin</category>
@@ -1137,8 +1137,8 @@ Open Browser To Login Page
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
         <pubDate>Thu, 02 Jan 2020 20:01:11 +0800</pubDate>
-        <link>http://localhost:4000/2020/01/selenium_robot_python_demo/</link>
-        <guid isPermaLink="true">http://localhost:4000/2020/01/selenium_robot_python_demo/</guid>
+        <link>https://claudia1204.github.io/2020/01/selenium_robot_python_demo/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2020/01/selenium_robot_python_demo/</guid>
         
         
         <category>selenium</category>
@@ -1174,8 +1174,8 @@ firefox #do your commands to start a gui app
 &lt;p&gt;thanks solution from Robert Jansen’s comments in &lt;a href=&quot;https://discussions.apple.com/thread/2048176&quot;&gt;app discussions&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Wed, 01 Jan 2020 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2020/01/solve_x11_on_mac/</link>
-        <guid isPermaLink="true">http://localhost:4000/2020/01/solve_x11_on_mac/</guid>
+        <link>https://claudia1204.github.io/2020/01/solve_x11_on_mac/</link>
+        <guid isPermaLink="true">https://claudia1204.github.io/2020/01/solve_x11_on_mac/</guid>
         
         
         <category>mac</category>
