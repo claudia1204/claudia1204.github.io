@@ -24,8 +24,8 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="https://claudia1204.github.io/2018/10/git-commands/">
-  <link rel="alternate" type="application/rss+xml" title="step by step" href="https://claudia1204.github.io/feed.xml">
+  <link rel="canonical" href="http://localhost:4000/2018/10/git-commands/">
+  <link rel="alternate" type="application/rss+xml" title="step by step" href="http://localhost:4000/feed.xml">
 
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
 
@@ -179,7 +179,6 @@ git pull --allow-unrelated-histories   #solve allow-unrelated-histories problems
 git remote set-url origin https://github.com/user/repo2.git
 
 
-
 ssh-keygen -t rsa -f ~/.ssh/id_rsa.test  -C "your_email@example.com"  #generate rsa file
 
 
@@ -187,7 +186,7 @@ git credential-osxkeychain erase
 </code></pre></div></div>
 
 <h2 id="git-problems">git problems</h2>
-<p>1  RPC failed</p>
+<h3 id="1--rpc-failed">1  RPC failed</h3>
 
 <p>error msg:
 error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054</p>
@@ -196,7 +195,7 @@ error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054</
 <pre><code class="language-linux">git config --global http.postBuffer 524288000
 </code></pre>
 
-<p>2 Error in the HTTP2 framing layer</p>
+<h3 id="2-error-in-the-http2-framing-layer">2 Error in the HTTP2 framing layer</h3>
 
 <p>fatal: unable to access ‘https://github.com/claudia1204/claudia1204.github.io.git/’: Error in the HTTP2 framing layer</p>
 
@@ -204,40 +203,47 @@ error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054</
 git config --global --unset https.proxy
 </code></pre></div></div>
 
-<p>3 HTTP/2 stream 1 was not closed cleanly before end of the underlying stream
-fatal: unable to access ‘https://github.com/claudia1204/claudia1204.github.io.git/’: HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</p>
+<h3 id="3-http2-stream-1-was-not-closed-cleanly-before-end-of-the-underlying-stream">3 HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</h3>
+<p>fatal: unable to access ‘https://github.com/claudia1204/claudia1204.github.io.git/’: HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git config --global http.version HTTP/1.1
 </code></pre></div></div>
 
-<p>4  ‘github.com (140.82.112.3)’ can’t be established
-The authenticity of host ‘github.com (140.82.112.3)’ can’t be established.
-ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
-This key is not known by any other names</p>
+<h3 id="4--githubcom-140821123-cant-be-established">4  ‘github.com (140.82.112.3)’ can’t be established</h3>
 
-<p>git@github.com: Permission denied (publickey).
-fatal: Could not read from remote repository.</p>
+<p>The authenticity of host ‘github.com (140.82.112.3)’ can’t be established.</p>
 
-<p>Please make sure you have the correct access rights
-and the repository exists.</p>
+<p>ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.</p>
 
-<p>solution:
-solution from <a href="https://blog.csdn.net/YanceChen2013/article/details/82218356">solution of permission denied</a>
-ssh -v git@github.com
-….
+<p>This key is not known by any other names</p>
+
+<p>git@github.com: Permission denied (publickey).</p>
+
+<p>fatal: Could not read from remote repository.</p>
+
+<p>Please make sure you have the correct access rights</p>
+
+<p>and the repository exists.</p>
+
+<p>solution from <a href="https://blog.csdn.net/YanceChen2013/article/details/82218356">solution of permission denied</a></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh -v git@github.com
+....
 debug1: No more authentication methods to try.
-git@github.com: Permission denied (publickey).</p>
+git@github.com: Permission denied (publickey).
 
-<p>ssh-agent -s
+ssh-agent -s
 SSH_AUTH_SOCK=/var/folders/rm/qsy1smdx3ls7pn3cd3rkdj840000gn/T//ssh-89Ngxttynm2J/agent.98164; export SSH_AUTH_SOCK;
 SSH_AGENT_PID=98165; export SSH_AGENT_PID;
-echo Agent pid 98165;</p>
+echo Agent pid 98165;
 
-<p>ssh-add ~/.ssh/id_rsa.test
-Identity added: /Users/xxxx/.ssh/id_rsa.test (xxxxx@gmail.com)</p>
+ssh-add ~/.ssh/id_rsa.test
+Identity added: /Users/xxxx/.ssh/id_rsa.test (xxxxx@gmail.com)
 
-<p>ssh -T git@github.com
-Hi xxxx! You’ve successfully authenticated, but GitHub does not provide shell access.</p>
+
+ssh -T git@github.com
+Hi xxxx! You've successfully authenticated, but GitHub does not provide shell access.
+</code></pre></div></div>
 
 <h2 id="gitlab-api-commands">gitlab api commands</h2>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   curl --header "PRIVATE-TOKEN: xxxxxxxxxxxxxx" https://gitlab.xx.xxxxxx.com/api/v4/projects/111/repository/branches
