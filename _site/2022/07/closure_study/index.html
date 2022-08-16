@@ -6,17 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>tcp三次握手连接+四次挥手断开</title>
-  <meta name="description" content="学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。三次握手备注：此图来源于https://segmentfault.com/a/1190000039165592一些标志符意义：SYN: 连接请求ACK: 确认报文段seq: 报文序号ack...">
+  <title>闭包</title>
+  <meta name="description" content="闭包概念在一个内部函数中，对外部作用域的变量进行引用，并且一般外部函数的返回值为内部函数，那么内部函数就被认为是闭包">
   <meta name="author" content="leopardpan">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="tcp三次握手连接+四次挥手断开">
-  <meta name="twitter:description" content="学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。三次握手备注：此图来源于https://segmentfault.com/a/1190000039165592一些标志符意义：SYN: 连接请求ACK: 确认报文段seq: 报文序号ack...">
+  <meta name="twitter:title" content="闭包">
+  <meta name="twitter:description" content="闭包概念在一个内部函数中，对外部作用域的变量进行引用，并且一般外部函数的返回值为内部函数，那么内部函数就被认为是闭包">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="tcp三次握手连接+四次挥手断开">
-  <meta property="og:description" content="学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。三次握手备注：此图来源于https://segmentfault.com/a/1190000039165592一些标志符意义：SYN: 连接请求ACK: 确认报文段seq: 报文序号ack...">
+  <meta property="og:title" content="闭包">
+  <meta property="og:description" content="闭包概念在一个内部函数中，对外部作用域的变量进行引用，并且一般外部函数的返回值为内部函数，那么内部函数就被认为是闭包">
 
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2022/04/tcp_study/">
+  <link rel="canonical" href="http://localhost:4000/2022/07/closure_study/">
   <link rel="alternate" type="application/rss+xml" title="step by step" href="http://localhost:4000/feed.xml">
 
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -158,10 +158,10 @@
         <div class="content-wrapper__inner">
             <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">tcp三次握手连接+四次挥手断开</h1>
+    <h1 class="post-title">闭包</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2022-04-23 20:20:41 +0800" itemprop="datePublished" class="post-meta__date date">2022-04-23</time>  
+      <time datetime="2022-07-16 22:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2022-07-16</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -169,85 +169,105 @@
   </header>
 
   <section class="post">
-    <p>学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。</p>
-<h2 id="三次握手">三次握手</h2>
+    <h2 id="闭包概念">闭包概念</h2>
+<p>在一个内部函数中，对外部作用域的变量进行引用，并且一般外部函数的返回值为内部函数，那么内部函数就被认为是闭包</p>
 
-<p><img src="/images/tcp/tcp_3_way_handshake.PNG" alt="3_times_handshake" />
-备注：此图来源于https://segmentfault.com/a/1190000039165592</p>
+<h2 id="闭包的作用">闭包的作用</h2>
+<ol>
+  <li>可以读取函数内部的变量</li>
+  <li>让内部变量始终保持在内存中</li>
+</ol>
 
-<p>一些标志符意义：
-SYN: 连接请求
-ACK: 确认报文段
-seq: 报文序号
-ack： 期望收到的下一个字节号</p>
+<h2 id="闭包demo">闭包demo</h2>
+<h3 id="js-demo">js demo：</h3>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//此处可以将闭包理解成能够读取其它函数内部变量的函数。f2就是闭包</span>
+<span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
+    <span class="kd">var</span> <span class="nx">n</span><span class="o">=</span><span class="mi">110</span><span class="p">;</span>
+    <span class="kd">function</span> <span class="nx">f2</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="c1">//子对象可以访问父对象的所有属性。父对象不能访问子对象属性</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">+</span><span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">f2</span>
+<span class="p">}</span>
+<span class="nx">f1_return</span> <span class="o">=</span> <span class="nx">f1</span><span class="p">()</span>
+<span class="nx">f1_return</span><span class="p">()</span>
+<span class="nx">f1_return</span><span class="p">()</span>
+</code></pre></div></div>
 
-<p><img src="/images/tcp/tcp_0.PNG" alt="1" />
-<img src="/images/tcp/tcp_1.PNG" alt="2" />
-<img src="/images/tcp/tcp_2.PNG" alt="3" /></p>
+<h3 id="python-demo">python demo</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">f1</span><span class="p">():</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">110</span>
+    <span class="k">def</span> <span class="nf">f2</span><span class="p">():</span>
+        <span class="n">nonlocal</span> <span class="n">n</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
 
-<p>| 序列号     | client                | 数据流向     |  server                     | 备注                                                    |
-|———|————————-|————|——————————|——————————————————-|
-| step1   | SYN=1, seq=x            | —–&gt;     |                              | client发起建立连接请求，server监听端口数据，接收到请求                     |
-| step2   |                         | &lt;—–     | SYN=1, ACK=1, seq=y, ack=x+1 | server发送报文给client，接收到连接请求，确认建立连接，期望client下一个x+1序列号的报文 |
-| step3   | ACK=1, seq=x+1, ack=y+1 | —–&gt;     |                              | client接收到报文后，回复确认连接，期望server端下一个y+1序列号的报文             |
-备注：我们抓包的x和y此时都是为0</p>
+    <span class="k">return</span> <span class="n">f2</span>
 
-<p>建立连接后tcp端发送数据如图：
-PSH=1, client端发送显示所有设备信息</p>
+<span class="n">f1_return</span> <span class="o">=</span> <span class="n">f1</span><span class="p">()</span>
+<span class="n">f1_return</span><span class="p">()</span>
+<span class="n">f1_return</span><span class="p">()</span>
+</code></pre></div></div>
 
-<p><img src="/images/tcp/tcp_req_list_devices.PNG" alt="data" /></p>
+<h2 id="闭包应用场景">闭包应用场景</h2>
+<p>计数器
+  封装对象的私有属性和方法</p>
 
-<p>server返回设备信息</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">name</span><span class="o">=</span><span class="nx">name</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">age</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+    <span class="kd">function</span> <span class="nx">getAge</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="nx">age</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">setAge</span><span class="p">(</span><span class="nx">n</span><span class="p">){</span>
+        <span class="nx">age</span> <span class="o">=</span> <span class="nx">n</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="na">name</span><span class="p">:</span> <span class="nx">name</span><span class="p">,</span>
+        <span class="na">age</span><span class="p">:</span> <span class="nx">age</span><span class="p">,</span>
+        <span class="na">getAge</span><span class="p">:</span> <span class="nx">getAge</span><span class="p">,</span>
+        <span class="na">setAge</span><span class="p">:</span> <span class="nx">setAge</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">person</span> <span class="o">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">"ladygaga"</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">getAge</span><span class="p">())</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">setAge</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">getAge</span><span class="p">())</span>
+</code></pre></div></div>
 
-<p><img src="/images/tcp/tcp_return_devices.PNG" alt="data" /></p>
+<h3 id="java-demo">java demo</h3>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Outer</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Outer</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">){</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">class</span> <span class="nc">Inner</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">){</span>
+            <span class="n">Outer</span><span class="o">.</span><span class="na">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+        <span class="o">}</span>
+		<span class="kd">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="o">(){</span>
+            <span class="k">return</span> <span class="n">Outer</span><span class="o">.</span><span class="na">this</span><span class="o">.</span><span class="na">age</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
 
-<h2 id="四次挥手">四次挥手</h2>
 
-<p><img src="/images/tcp/tcp_4_times_close.PNG" alt="4_times_close" width="713" /></p>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Outer</span> <span class="n">myOuter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Outer</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="n">Outer</span><span class="o">.</span><span class="na">Inner</span> <span class="n">myInner</span> <span class="o">=</span> <span class="n">myOuter</span><span class="o">.</span><span class="na">new</span> <span class="nf">Inner</span><span class="o">();</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">myInner</span><span class="o">.</span><span class="na">getAge</span><span class="o">());</span>
+    <span class="n">myInner</span><span class="o">.</span><span class="na">setAge</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">myInner</span><span class="o">.</span><span class="na">getAge</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
-<p>备注：图片来源 <a href="https://wiki.wireshark.org/TCP-4-times-close.md">tcp 4 times close</a></p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: center">client</th>
-      <th style="text-align: center">arrow</th>
-      <th style="text-align: center">server</th>
-      <th style="text-align: left">备注</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center">FIN=1, seq=x</td>
-      <td style="text-align: center">—–&gt;</td>
-      <td style="text-align: center"> </td>
-      <td style="text-align: left">client发起断开连接请求，server监听端口数据，接收到请求</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"> </td>
-      <td style="text-align: center">&lt;—–</td>
-      <td style="text-align: center">ACK=1, seq=y, ack=x+1 <br />FIN=1, ACK=1, seq=z, ack=x+1</td>
-      <td style="text-align: left">server发送报文给client，确认接收到请求，期望client下一个x+1序列号的报文 <br />等待数据传输完毕，断开完成，返回断开FIN=1，确认断开. seq=z, 期待client下一个x+1序列号的报文</td>
-    </tr>
-    <tr>
-      <td style="text-align: center"> </td>
-      <td style="text-align: center">—–&gt;</td>
-      <td style="text-align: center">ACK=1, seq=x+1, ack=z+1</td>
-      <td style="text-align: left">client接收到报文后，回复ACK确认断开完成</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>备注：我们抓包的x和y,z此时都是为0
-<img src="/images/tcp/tcp_close.PNG" alt="1" /></p>
-
-<h2 id="ref">ref</h2>
-
-<p><a href="https://wiki.wireshark.org/TCP_3_way_handshaking.md">TCP_3_way_handshaking</a></p>
-
-<p><a href="https://wiki.wireshark.org/TCP-4-times-close.md">TCP-4-times-close</a></p>
-
-<p><a href="https://segmentfault.com/a/1190000039165592">三次握手</a></p>
+<h2 id="使用闭包需要注意的事情">使用闭包需要注意的事情</h2>
+<ol>
+  <li>内存消耗大，不能滥用</li>
+  <li>闭包会改变父函数内部变量的值，使用时要小心</li>
+</ol>
 
 
   </section>
@@ -317,15 +337,10 @@ PSH=1, client端发送显示所有设备信息</p>
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2022/04/source_code_tidevice_study_cn/" data-toggle="tooltip" data-placement="top" title="tidevice的魔法： 跨平台吊起webdriver agent runner源码学习">上一篇：  <span>tidevice的魔法： 跨平台吊起webdriver agent runner源码学习</span>
+            <a href="/2022/04/tcp_study/" data-toggle="tooltip" data-placement="top" title="tcp三次握手连接+四次挥手断开">上一篇：  <span>tcp三次握手连接+四次挥手断开</span>
             </a>
         </li>
         
-        
-        <li class="next">
-            <a href="/2022/07/closure_study/" data-toggle="tooltip" data-placement="top" title="闭包">下一篇：  <span>闭包</span>
-            </a>
-        </li>
         
     </ul>
 </section>
