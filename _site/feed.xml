@@ -5,8 +5,8 @@
     <description>small place</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 16 Aug 2022 21:12:54 +0800</pubDate>
-    <lastBuildDate>Tue, 16 Aug 2022 21:12:54 +0800</lastBuildDate>
+    <pubDate>Tue, 16 Aug 2022 21:37:31 +0800</pubDate>
+    <lastBuildDate>Tue, 16 Aug 2022 21:37:31 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -619,6 +619,55 @@ install iTunes, and this usbmuxd is already installed.&lt;/p&gt;
       </item>
     
       <item>
+        <title>appium source code study</title>
+        <description>&lt;h2 id=&quot;running-appium-from-source&quot;&gt;Running Appium from Source&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/appium/appium/blob/master/docs/en/contributing-to-appium/appium-from-source.md&quot;&gt;appium link&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;npm&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;install&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;npm&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;build&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;node&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;debug-appium&quot;&gt;debug appium:&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://zhuanlan.zhihu.com/p/338287139&quot;&gt;ref link&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nx&quot;&gt;node&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;inspect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;brk&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4723&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;in chrome, open:    &lt;strong&gt;‘chrome://inspect/#devices’&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;source-code-analysis&quot;&gt;source code analysis&lt;/h2&gt;
+&lt;p&gt;packages:
+http://appium.io/docs/en/contributing-to-appium/appium-packages/index.html#appium-ios-driver&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;appium: main.js/appium.js&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;1) main.js: start server(https://www.processon.com/diagraming/602f72161e085321199d24ab)&lt;/p&gt;
+
+&lt;p&gt;2) appium.js: extend basedriver, custom methods&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;appium-basedriver&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;appium-xcuitest-driver
+start wda
+communicate with wda&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        <pubDate>Wed, 20 Apr 2022 22:00:41 +0800</pubDate>
+        <link>http://localhost:4000/2022/04/appium_source_code_study/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/04/appium_source_code_study/</guid>
+        
+        
+        <category>appium</category>
+        
+      </item>
+    
+      <item>
         <title>socket 编程：大小端数据</title>
         <description>&lt;h1 id=&quot;大小端&quot;&gt;大小端&lt;/h1&gt;
 &lt;p&gt;数据：0X12345678&lt;/p&gt;
@@ -1145,114 +1194,6 @@ check whether there is another ssh server running or check /etc/config_sshd, con
         
         
         <category>cygwin</category>
-        
-      </item>
-    
-      <item>
-        <title>selenium robot/python demo</title>
-        <description>&lt;p&gt;Selenium is an open source automated testing suite for web applications.&lt;br /&gt;
-Selenium has four components:&lt;br /&gt;
-Selenium Integrated Development Environment (IDE)&lt;br /&gt;
-Selenium Remote Control (RC)&lt;br /&gt;
-Webdriver&lt;br /&gt;
-Selenium Grid&lt;/p&gt;
-
-&lt;h3 id=&quot;selenium-ide&quot;&gt;Selenium IDE&lt;/h3&gt;
-&lt;p&gt;a firefox extension, support record and playback.&lt;/p&gt;
-
-&lt;h3 id=&quot;selenium-rc&quot;&gt;Selenium RC&lt;/h3&gt;
-&lt;p&gt;Selenium Core: a js program, tests run directly in browser.
- Cross Origin Problem: If the JS is not included from a HTML page on test.com, it can not access test.com resources.&lt;/p&gt;
-
-&lt;p&gt;Selenium RC: a web server, support remote control browser.
-  Trick web browser into believing selenium core and web application in the same origin.
-  Can communicate with browser.&lt;/p&gt;
-
-&lt;h3 id=&quot;selenium-grid&quot;&gt;Selenium Grid&lt;/h3&gt;
-&lt;p&gt;distribution of selenium tests, can reduce time of running tests.&lt;/p&gt;
-
-&lt;h3 id=&quot;webdriver&quot;&gt;Webdriver&lt;/h3&gt;
-
-&lt;p&gt;Webdriver is a standard to do operations on browser, like a bridge between tests and browser.&lt;br /&gt;
-Different browser has different implementation.&lt;br /&gt;
-&lt;a href=&quot;https://www.w3.org/TR/Webdriver1/&quot;&gt;Webdriver protocol defined by W3C&lt;/a&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;The Webdriver protocol is organised into commands.&lt;/li&gt;
-    &lt;li&gt;Each HTTP request with a method and template defined in this specification represents a single command,&lt;/li&gt;
-    &lt;li&gt;and therefore each command produces a single HTTP response. In response to a command,&lt;/li&gt;
-    &lt;li&gt;a remote end will run a series of actions against the browser.&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*** Settings ***
-Documentation   ref: [robotframwork user guide link](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#variables)
-
-Library         SeleniumLibrary
-Library         String
-
-*** Variables ***
-${string_pass}    helloworld
-${web_url}    https://www.baidu.com
-${login_btn_xpath}    //*[@id=&quot;s-top-loginbtn&quot;]
-${chromedriver_path}    C:/taf/webdrivers/chromedriver_win32/chromedriver.exe
-
-*** Test Cases ***
-Open Browser To Login Page
-    Open Browser    browser= Chrome    url= ${web_url}    executable_path= ${chromedriver_path}
-    Title Should Be    Login Page
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!-encoding=utf-8-&lt;/span&gt;
-
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChromeOptions&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver.common.by&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;By&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;selenium.webdriver.common.action_chains&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChromeOptions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;--proxy-server=http://x.x.x.x:8080&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrome_options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrome_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                   &lt;span class=&quot;n&quot;&gt;executable_path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/Applications/Google Chrome.app/Contents/MacOS/chromedriver&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'https://www.baidu.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'kw'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send_keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'my search content'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_link_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'地图'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_class_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'s_ipt'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element_by_tag_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'input'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;By&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'kw'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#refresh, back&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;refresh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#set window size&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_window_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maximize_window&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#mouse events&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context_click&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#click baidu input and right click&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;double_click&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#click baidu input and right click&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ActionChains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_chrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;move_to_element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baidu_text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#click baidu input and right click&lt;/span&gt;
-
-
-
-
-
-
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-</description>
-        <pubDate>Thu, 02 Jan 2020 20:01:11 +0800</pubDate>
-        <link>http://localhost:4000/2020/01/selenium_robot_python_demo/</link>
-        <guid isPermaLink="true">http://localhost:4000/2020/01/selenium_robot_python_demo/</guid>
-        
-        
-        <category>selenium</category>
         
       </item>
     
