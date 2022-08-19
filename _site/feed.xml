@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>step by step</title>
+    <title>keep moving</title>
     <description>small place</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 16 Aug 2022 21:37:31 +0800</pubDate>
-    <lastBuildDate>Tue, 16 Aug 2022 21:37:31 +0800</lastBuildDate>
+    <pubDate>Fri, 19 Aug 2022 21:49:12 +0800</pubDate>
+    <lastBuildDate>Fri, 19 Aug 2022 21:49:12 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -117,6 +117,56 @@
         
         
         <category>closure</category>
+        
+      </item>
+    
+      <item>
+        <title>send email with python</title>
+        <description>&lt;h2 id=&quot;python-demo&quot;&gt;python demo&lt;/h2&gt;
+
+&lt;p&gt;send email python demo code&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/python&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# -*- coding: UTF-8 -*-&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;email.mime.text&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MIMEText&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;email.header&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Header&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;smtplib&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SMTP_SSL&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Sender&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# smtp server of qq mail &lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;host_server&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'smtp.exmail.qq.com'&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# qq mail auth code&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;pwd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'xxxxxxx'&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sender_qq_mail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'xx@xx.com'&lt;/span&gt;
+
+        &lt;span class=&quot;c&quot;&gt;# ssl login&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smtp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SMTP_SSL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;host_server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# set_debuglevel(): 1 turn on the debug mode, 0 turn off the debug mode.&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smtp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_debuglevel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smtp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ehlo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;host_server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smtp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;login&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sender_qq_mail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;usd_cny&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mail_content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'xxx'&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mail_title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'this is title'&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;receiver&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sender_qq_mail&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MIMEText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mail_content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;plain&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'utf-8'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Subject&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Header&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mail_title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'utf-8'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;From&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sender_qq_mail&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;To&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;receiver&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smtp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendmail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sender_qq_mail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;receiver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smtp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;quit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Sun, 10 Jul 2022 11:00:12 +0800</pubDate>
+        <link>http://localhost:4000/2022/07/send_email_with_python/</link>
+        <guid isPermaLink="true">http://localhost:4000/2022/07/send_email_with_python/</guid>
+        
+        
+        <category>smtp</category>
         
       </item>
     
@@ -643,18 +693,19 @@ http://appium.io/docs/en/contributing-to-appium/appium-packages/index.html#appiu
   &lt;li&gt;appium: main.js/appium.js&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;1) main.js: start server(https://www.processon.com/diagraming/602f72161e085321199d24ab)&lt;/p&gt;
+&lt;p&gt;1) main.js: start server
+    &lt;img src=&quot;/images/appium/appium_main.png&quot; alt=&quot;appium main&quot; width=&quot;800&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;2) appium.js: extend basedriver, custom methods&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;
-    &lt;p&gt;appium-basedriver&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;appium-xcuitest-driver
-start wda
-communicate with wda&lt;/p&gt;
+    &lt;p&gt;appium-basedriver
+appium-xcuitest-driver:&lt;/p&gt;
+
+    &lt;p&gt;1) start wda&lt;/p&gt;
+
+    &lt;p&gt;2) communicate with wda&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
 </description>
@@ -1133,67 +1184,6 @@ npm install -g appium@beta
         
         
         <category>appium</category>
-        
-      </item>
-    
-      <item>
-        <title>install cygwin and ssh service on windows record</title>
-        <description>&lt;h2 id=&quot;1-install-ssh-servercygwin-on-windows&quot;&gt;1. install ssh server(cygwin) on Windows&lt;/h2&gt;
-&lt;p&gt;1) download &lt;strong&gt;setup-x86_64.exe&lt;/strong&gt; on &lt;a href=&quot;https://cygwin.com/install.html&quot;&gt;cygwin.com&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;2) run  setup-x86_64.exe and setup as follow steps, click next until to select packages.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/cygwin/open_file.PNG&quot; alt=&quot;install cygwin&quot; width=&quot;450&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;ps: if pc can not get access to internet, can chose local(you should download all instalation files to this pc)&lt;/p&gt;
-
-&lt;p&gt;ps: openssh default is not selected ,you should select version and bin/src file to be installed.
-    if you want to use zip、unzip command in cygwin，you can select as same way as next:&lt;/p&gt;
-
-&lt;p&gt;3) finished installation&lt;/p&gt;
-
-&lt;h2 id=&quot;2-config-ssh-by-cygwin-on-windows&quot;&gt;2. config ssh by cygwin on Windows&lt;/h2&gt;
-
-&lt;p&gt;1) open cygwin terminal&lt;/p&gt;
-
-&lt;p&gt;2) input command: 
-   &lt;code&gt;ssh-host-config&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;3) type yes until CYGWIN value: input netsec tty&lt;/p&gt;
-
-&lt;p&gt;4) input a username according to your configuration. here we use ‘cv5g1_2’&lt;/p&gt;
-
-&lt;p&gt;5) enter password&lt;/p&gt;
-
-&lt;p&gt;6) finish the configuration&lt;/p&gt;
-
-&lt;h2 id=&quot;3-start-service-of-ssh&quot;&gt;3. start service of ssh&lt;/h2&gt;
-&lt;p&gt;1) open cygwin terminal&lt;/p&gt;
-
-&lt;p&gt;2) input command :
-&lt;strong&gt;&lt;code&gt;net start sshd&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;3) wait for successful message&lt;/p&gt;
-
-&lt;h2 id=&quot;4-test&quot;&gt;4. test&lt;/h2&gt;
-&lt;p&gt;find a pc and input &lt;strong&gt;&lt;code&gt;ssh  usernmame@ip&lt;/code&gt;&lt;/strong&gt; ,test over&lt;/p&gt;
-
-&lt;h2 id=&quot;problem-solution&quot;&gt;problem solution&lt;/h2&gt;
-&lt;p&gt;1) if there is some error made in ssh configuration , you can use the following commands:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;sc delete sshd&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;ssh-host-config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;2) net start sshd failed
-check whether there is another ssh server running or check /etc/config_sshd, config “AllowUsers myusername” in the config_sshd file.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 20 Jan 2020 16:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2020/01/config_cygwin/</link>
-        <guid isPermaLink="true">http://localhost:4000/2020/01/config_cygwin/</guid>
-        
-        
-        <category>cygwin</category>
         
       </item>
     

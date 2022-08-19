@@ -41,6 +41,14 @@
 <lastmod>2019-02-03T19:29:41+08:00</lastmod>
 </url>
 <url>
+<loc>http://localhost:4000/2019/04/sftp/</loc>
+<lastmod>2019-04-01T21:11:41+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/2019/05/nc_study/</loc>
+<lastmod>2019-05-04T12:00:41+08:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/2019/10/flaskbb_quick_start/</loc>
 <lastmod>2019-10-24T19:29:41+08:00</lastmod>
 </url>
@@ -91,6 +99,10 @@
 <url>
 <loc>http://localhost:4000/2022/04/tcp_study/</loc>
 <lastmod>2022-04-23T20:20:41+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/2022/07/send_email_with_python/</loc>
+<lastmod>2022-07-10T11:00:12+08:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/2022/07/closure_study/</loc>

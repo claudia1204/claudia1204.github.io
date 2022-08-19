@@ -32,12 +32,15 @@ http://appium.io/docs/en/contributing-to-appium/appium-packages/index.html#appiu
 
 1. appium: main.js/appium.js
 
- 1) main.js: start server(https://www.processon.com/diagraming/602f72161e085321199d24ab)
+ 1) main.js: start server
+    ![appium main](/images/appium/appium_main.png){: width="800"}
+
+
+ 2) appium.js: extend basedriver, custom methods
  
-2) appium.js: extend basedriver, custom methods
- 
-2. appium-basedriver
-  
-3. appium-xcuitest-driver
-   start wda
-   communicate with wda  
+2.  appium-basedriver
+    appium-xcuitest-driver:
+    
+    1) start wda 
+       
+    2) communicate with wda  

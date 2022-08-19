@@ -6,17 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>socket 编程：大小端数据</title>
-  <meta name="description" content="大小端数据：0X12345678内存地址从低到高 0x0001    0x0002   0x0003  0x0004大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址小端: 0x78      0x56     ...">
+  <title>sftp command record</title>
+  <meta name="description" content="download files from remote">
   <meta name="author" content="leopardpan">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="socket 编程：大小端数据">
-  <meta name="twitter:description" content="大小端数据：0X12345678内存地址从低到高 0x0001    0x0002   0x0003  0x0004大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址小端: 0x78      0x56     ...">
+  <meta name="twitter:title" content="sftp command record">
+  <meta name="twitter:description" content="download files from remote">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="socket 编程：大小端数据">
-  <meta property="og:description" content="大小端数据：0X12345678内存地址从低到高 0x0001    0x0002   0x0003  0x0004大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址小端: 0x78      0x56     ...">
+  <meta property="og:title" content="sftp command record">
+  <meta property="og:description" content="download files from remote">
 
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2022/03/socket_little_endian_big_endian/">
+  <link rel="canonical" href="http://localhost:4000/2019/04/sftp/">
   <link rel="alternate" type="application/rss+xml" title="keep moving" href="http://localhost:4000/feed.xml">
 
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -158,10 +158,10 @@
         <div class="content-wrapper__inner">
             <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">socket 编程：大小端数据</h1>
+    <h1 class="post-title">sftp command record</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2022-03-29 20:40:41 +0800" itemprop="datePublished" class="post-meta__date date">2022-03-29</time>  
+      <time datetime="2019-04-01 21:11:41 +0800" itemprop="datePublished" class="post-meta__date date">2019-04-01</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -169,33 +169,13 @@
   </header>
 
   <section class="post">
-    <h1 id="大小端">大小端</h1>
-<p>数据：0X12345678</p>
+    <h2 id="download-files-from-remote">download files from remote</h2>
 
-<p>内存地址从低到高</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 0x0001    0x0002   0x0003  0x0004
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sftp user@remote_server
+ls
+get /remote/path/FILENAME /local/path/FILENAME
 </code></pre></div></div>
 
-<p>大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址</p>
-
-<p>小端: 0x78      0x56     0x34    0x12                                低位数据在低位地址</p>
-
-<p>由于发送端接送端主机可能存在主机序列模式不同，故发送出去数据时，统一转换为大端发送，接收端可统一按照大端解析。网络字节序统一为大端序。</p>
-
-<p>常见的网络字节转换函数有：</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>htons()  #host to network short，将short类型数据从主机字节序转换为网络字节序。
-
-ntohs()  #network to host short，将short类型数据从网络字节序转换为主机字节序。
-
-htonl()  #host to network long，将long类型数据从主机字节序转换为网络字节序。
-
-ntohl()  #network to host long，将long类型数据从网络字节序转换为主机字节序。
-</code></pre></div></div>
-
-<p>ref:
-<a href="ttps://www.cnblogs.com/cyx-b/p/12454495.html">大小端</a></p>
 
 
   </section>
@@ -265,13 +245,13 @@ ntohl()  #network to host long，将long类型数据从网络字节序转换为�
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2022/01/unicode_to_utf-8/" data-toggle="tooltip" data-placement="top" title="transfer from unicode to utf-8 encoding">上一篇：  <span>transfer from unicode to utf-8 encoding</span>
+            <a href="/2019/02/jupyterlab_and_robot_extension-installation/" data-toggle="tooltip" data-placement="top" title="jupyterlab and extension installation on mac">上一篇：  <span>jupyterlab and extension installation on mac</span>
             </a>
         </li>
         
         
         <li class="next">
-            <a href="/2022/04/appium_source_code_study/" data-toggle="tooltip" data-placement="top" title="appium source code study">下一篇：  <span>appium source code study</span>
+            <a href="/2019/05/nc_study/" data-toggle="tooltip" data-placement="top" title="nc study">下一篇：  <span>nc study</span>
             </a>
         </li>
         
