@@ -3,6 +3,7 @@ layout: post
 title:  "django quick start"
 date:   2018-01-20 19:29:41 +0800
 categories: css
+tags: css
 ---
 
 

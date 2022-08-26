@@ -2,7 +2,8 @@
 layout: post
 title:  "jupyterlab and extension installation on mac"
 date:   2019-02-03 19:29:41 +0800
-categories: jupyter extension
+categories: jupyter
+tags: jupyter
 ---
 
 ## pre network setting ##

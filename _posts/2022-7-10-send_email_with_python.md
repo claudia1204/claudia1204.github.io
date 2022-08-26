@@ -2,7 +2,9 @@
 layout: post
 title:  "send email with python"
 date:   2022-7-10 11:00:12 +0800
-categories: smtp
+categories: python
+tags: python
+
 ---
 
 

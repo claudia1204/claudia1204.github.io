@@ -3,6 +3,8 @@ layout: post
 title:  "闭包"
 date:   2022-07-16 22:29:41 +0800
 categories: closure
+tags: closure
+
 ---
 
 ## 闭包概念

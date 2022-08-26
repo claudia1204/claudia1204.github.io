@@ -3,6 +3,8 @@ layout: post
 title:  "FlaskBB guide"
 date:   2019-10-24 19:29:41 +0800
 categories: flaskbb forum
+tags: flaskbb
+
 ---
 
 

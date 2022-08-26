@@ -3,6 +3,8 @@ layout: post
 title:  "Selenium study"
 date:   2021-04-11 20:01:11 +0800
 categories: selenium
+tags: selenium
+
 ---
 
 

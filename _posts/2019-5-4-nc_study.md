@@ -2,7 +2,9 @@
 layout: post
 title:  "nc study"
 date:   2019-5-4 12:00:41 +0800
-categories: linux command netcat
+categories: linux
+tags: linux
+
 ---
 
 

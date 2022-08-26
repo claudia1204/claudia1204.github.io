@@ -3,6 +3,7 @@ layout: post
 title:  "robot demo record"
 date:   2019-2-3 16:29:41 +0800
 categories: robotframework
+tags: robotframework
 ---
 ```robotframework
 

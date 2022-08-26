@@ -3,6 +3,7 @@ layout: post
 title:  "solve the Problems with X11 - Can't open display on MAC"
 date:   2020-01-01 16:29:41 +0800
 categories: mac
+tags: mac
 ---
 
 how to solve the Problems with X11 - Can't open display on MAC

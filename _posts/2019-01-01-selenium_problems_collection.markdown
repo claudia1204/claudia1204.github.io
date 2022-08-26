@@ -3,6 +3,7 @@ layout: post
 title:  "Selenium problems collection"
 date:   2019-01-01 16:29:41 +0800
 categories: selenium
+tags: selenium
 ---
 
 ## insert value to input

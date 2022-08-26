@@ -3,6 +3,8 @@ layout: post
 title:  "install cygwin and ssh service on windows record"
 date:   2020-01-20 16:29:41 +0800
 categories: cygwin
+tags: cygwin
+
 ---
 
 

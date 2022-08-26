@@ -3,6 +3,7 @@ layout: post
 title:  "git commands record"
 date:   2018-10-01 16:29:41 +0800
 categories: git
+tags: git
 ---
 
 

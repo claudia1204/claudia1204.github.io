@@ -3,6 +3,7 @@ layout: post
 title:  "mongodb_test_record"
 date:   2018-02-03 19:29:41 +0800
 categories: mongodb
+tags: mongodb
 ---
 
 1.install:

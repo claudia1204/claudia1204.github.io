@@ -3,6 +3,8 @@ layout: post
 title:  "Appium mac config guide"
 date:   2021-09-20 19:40:41 +0800
 categories: appium
+tags: appium
+
 ---
 
 

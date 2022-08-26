@@ -3,6 +3,8 @@ layout: post
 title:  "tcp三次握手连接+四次挥手断开"
 date:   2022-04-23 20:20:41 +0800
 categories: tcp network
+tags: tcp
+
 ---
 
 学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。

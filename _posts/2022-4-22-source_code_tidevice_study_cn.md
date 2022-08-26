@@ -2,7 +2,9 @@
 layout: post
 title:  "tidevice的魔法： 跨平台吊起webdriver agent runner源码学习"
 date:   2022-04-22 19:40:41 +0800
-categories: webdriver
+categories: tidevice
+tags: tidevice
+
 ---
 
 

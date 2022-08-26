@@ -40,6 +40,7 @@ nav:
     - {title: 标签, description: tags, url: '/tags'}
     - {title: 关于我, description: about, url: '/about'}
 
+
 # Pagination
 plugins: [
 jekyll-paginate,jekyll-sitemap]

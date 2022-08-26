@@ -3,6 +3,8 @@ layout: post
 title:  "libimobiledevice guide to control iphone"
 date:   2021-09-22 20:01:11 +0800
 categories: appium
+tags: appium
+
 ---
 
 

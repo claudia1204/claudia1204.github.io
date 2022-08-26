@@ -2,7 +2,8 @@
 layout: post
 title:  "selenium robot/python demo"
 date:   2020-01-2 20:01:11 +0800
-categories: selenium 
+categories: selenium
+tags: selenium
 ---
 
 Selenium is an open source automated testing suite for web applications.  
