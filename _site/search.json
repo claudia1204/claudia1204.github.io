@@ -121,6 +121,14 @@
 } ,
 
 {
+"title"    : "robotframework study",
+"category" : "",
+"tags"     : "robotframework",
+"url"      : "/2020/01/robotframework_study/",
+"date"     : "2020-01-03 16:29:41 +0800"
+} ,
+
+{
 "title"    : "selenium robot/python demo",
 "category" : "",
 "tags"     : "selenium",
@@ -166,6 +174,14 @@
 "tags"     : "linux, command, sftp",
 "url"      : "/2019/04/sftp/",
 "date"     : "2019-04-01 21:11:41 +0800"
+} ,
+
+{
+"title"    : "python demo: set proxy on windows",
+"category" : "",
+"tags"     : "",
+"url"      : "/2019/03/python_demo_set_proxy_on_windows/",
+"date"     : "2019-03-12 16:29:41 +0800"
 } ,
 
 {

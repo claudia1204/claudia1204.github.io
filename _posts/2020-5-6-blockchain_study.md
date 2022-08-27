@@ -10,7 +10,7 @@ tags: blockchain
 ## blockchains types:
 1. Public blockchains: such as Bitcoin. open for anyone to participate at any leve, and have opens
 2. Permissioned blockchains: such as Ripple. control roles that individuals can play within the network.
-3. Private blockchains
+3. Private blockchains  
 
 
 
@@ -27,28 +27,30 @@ p2p网络协议，分布式一致性算法，加密签名算法，账户与存�
 
 
 ### p2p 网络
-应用领域：流媒体，点对点通讯，文件共享到协同处理...
-p2p网络协议：bittorrent，ed2k，gnutella，tor
-p2p特点:
-1. 非传统C/S结构，去中心化：每个节点既是client，也是server。文件分成多个资源块分散在各个节点中，每个节点既可以下载p2p网络中的资源块，也可以上传本地有的资源块。
-2.
-区块链基于TCP/IP协议，与http,smtp同一层
+应用领域：流媒体，点对点通讯，文件共享到协同处理...  
+p2p网络协议：bittorrent，ed2k，gnutella，tor  
+p2p特点:  
+1. 非传统C/S结构，去中心化：每个节点既是client，也是server。  
+2. 文件分成多个资源块分散在各个节点中，每个节点既可以下载p2p网络中的资源块，也可以上传本地有的资源块。  
+
+区块链基于TCP/IP协议，与http,smtp同一层  
 
 
-比特币全节点组成的网络是一种全分布式的拓扑结构，节点与节点之间的传输过程更接近”泛洪算法“
+比特币全节点组成的网络是一种全分布式的拓扑结构，节点与节点之间的传输过程更接近”泛洪算法“  
 
-POW:
-计算难题解的过程
-缺点：耗能源，51%攻击，
+POW:   
+计算难题解的过程     
+缺点：耗能源，51%攻击   
 
-POS：
-Hash (block_header) < Target * CoinAge
-不同矿工看到的target hash不同，币龄(持有币值不动时间)越长，难度越小
+POS：   
+Hash (block_header) < Target * CoinAge    
+不同矿工看到的target hash不同，币龄(持有币值不动时间)越长，难度越小    
 
 
 ### hash 函数  
-         hash函数   
-原始信息 -------------> 摘要信息   
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+hash函数      
+原始信息-------------> 摘要信息   
 
 
 
@@ -62,15 +64,15 @@ Hash (block_header) < Target * CoinAge
 
 ### 非对称加密  
 公钥+私钥  
-               加密
+               加密  
 公钥+money ------------> 私钥解密
 
-交易流程：私钥 保证 只有你能把属于你的钱支付出去
-比特币交易所开户： 生成比特币钱包，钱包用于存放公钥和私钥。 软件生成这两把钥匙，然后存放到钱包里
-公钥的长度512位，不方便传播---> 160位数指纹，26~35个字符
+**交易流程**：私钥 保证 只有你能把属于你的钱支付出去  
+比特币交易所开户： 生成比特币钱包，钱包用于存放公钥和私钥。 软件生成这两把钥匙，然后存放到钱包里  
+公钥的长度512位，不方便传播---> 160位数指纹，26~35个字符   
 
 ### 交易流程
-A 支付  B 10个比特币  
+A 支付  B 10个比特币    
 A需要提供数据：  
 1） 上次交易的hash（where you get your coins）  
 2） A 、 B 地址  
