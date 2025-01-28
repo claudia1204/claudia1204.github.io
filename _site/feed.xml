@@ -2,12 +2,1611 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>keep moving</title>
-    <description>small place</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 26 Aug 2022 14:01:52 +0800</pubDate>
-    <lastBuildDate>Fri, 26 Aug 2022 14:01:52 +0800</lastBuildDate>
+    <description>small world</description>
+    <link>http://localhost:8080/</link>
+    <atom:link href="http://localhost:8080/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 28 Jan 2025 23:04:45 +0800</pubDate>
+    <lastBuildDate>Tue, 28 Jan 2025 23:04:45 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>集合通信操作学习</title>
+        <description>&lt;p&gt;集合通信，指的是分布式进程中，多个进程同时进行某一项操作（也叫规约）时的动作。这个规约操作可以是执行加法、减法、乘法…&lt;/p&gt;
+
+&lt;p&gt;比如多机多gpu，执行数据的规约操作。&lt;/p&gt;
+
+&lt;p&gt;其中每个进程有一个唯一id，rank，以0为起始。例如2个进程，则分为rank为0和1&lt;/p&gt;
+
+&lt;h2 id=&quot;1-规约操作分类&quot;&gt;1. 规约操作分类&lt;/h2&gt;
+
+&lt;p&gt;规约操作根据规约的形式分为几类：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;allgather,&lt;/li&gt;
+  &lt;li&gt;allreduce&lt;/li&gt;
+  &lt;li&gt;reduce&lt;/li&gt;
+  &lt;li&gt;reducescatter&lt;/li&gt;
+  &lt;li&gt;sendrecv&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;11-allgather&quot;&gt;1.1 allgather&lt;/h3&gt;
+
+&lt;p&gt;收集所有进程的数据，每个进程都存储一份gather后的结果&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../images/2025-1-27-collective_communications.assets/allgather.png&quot; alt=&quot;../_images/allgather.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
+
+def run_all_gather(rank, world_size):
+    # 初始化分布式环境
+    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size)
+
+    # 创建一个随机张量作为起始值
+    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
+    print(f&quot;Rank {rank} before all_gather: {tensor}&quot;)
+
+    # 准备接收结果的张量列表
+    gather_list = [torch.zeros_like(tensor) for _ in range(world_size)]
+
+    # 执行all_gather操作
+    dist.all_gather(gather_list, tensor)
+
+    # 输出all_gather后的结果
+    print(f&quot;Rank {rank} after all_gather: {gather_list}&quot;)
+
+    # 清理资源
+    dist.destroy_process_group()
+
+def main():
+    world_size = 4  # 模拟4个进程
+    mp.spawn(run_all_gather,
+             args=(world_size,),
+             nprocs=world_size,
+             join=True)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;运行结果：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before all_gather: tensor([1.])
+Rank 1 before all_gather: tensor([2.])
+Rank 2 before all_gather: tensor([3.])
+Rank 3 before all_gather: tensor([4.])
+Rank 0 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+Rank 1 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+Rank 2 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;12-allreduce操作&quot;&gt;1.2 allreduce操作&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;将所有进程的数据进行规约（例如sum操作），然后广播回到每个进程&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;allreduce代码：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
+
+def run_all_reduce(rank, world_size):
+    # 初始化分布式环境
+    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size) # 初始化分布式环境，gloo作为后端。如果有多个gpu可用可以改为nccl
+
+    # 创建一个随机张量作为起始值
+    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
+    print(f&quot;Rank {rank} before all_reduce: {tensor}&quot;)
+
+    # 执行all_reduce操作（求和）
+    dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
+
+    # 输出all_reduce后的结果
+    print(f&quot;Rank {rank} after all_reduce: {tensor}&quot;)
+
+    # 清理资源
+    dist.destroy_process_group()
+
+def main():
+    world_size = 4  # 模拟4个进程
+    mp.spawn(run_all_reduce,
+             args=(world_size,),
+             nprocs=world_size,
+             join=True)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;运行结果：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before all_reduce: tensor([1.])
+Rank 1 before all_reduce: tensor([2.])
+Rank 2 before all_reduce: tensor([3.])
+Rank 3 before all_reduce: tensor([4.])
+Rank 0 after all_reduce: tensor([10.])
+Rank 1 after all_reduce: tensor([10.])
+Rank 2 after all_reduce: tensor([10.])
+Rank 3 after all_reduce: tensor([10.])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13-reduce操作&quot;&gt;1.3 reduce操作&lt;/h3&gt;
+
+&lt;p&gt;所有进程执行reduce操作，最终结果发送到根进程&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
+
+def run_reduce(rank, world_size):
+    # 初始化分布式环境
+    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size)
+
+    # 创建一个随机张量作为起始值
+    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
+    print(f&quot;Rank {rank} before reduce: {tensor}&quot;)
+
+    # 指定根进程为0
+    root_rank = 0
+
+    # 执行reduce操作（求和）
+    if rank == root_rank:
+        print(f&quot;Rank {rank} is the root.&quot;)
+        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
+        print(f&quot;Rank {rank} after reduce: {tensor}&quot;)
+    else:
+        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
+        print(f&quot;Rank {rank} after reduce: (unchanged) {tensor}&quot;)
+
+    # 清理资源
+    dist.destroy_process_group()
+
+def main():
+    world_size = 4  # 模拟4个进程
+    mp.spawn(run_reduce,
+             args=(world_size,),
+             nprocs=world_size,
+             join=True)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;运行结果：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before reduce: tensor([1.])
+Rank 1 before reduce: tensor([2.])
+Rank 2 before reduce: tensor([3.])
+Rank 3 before reduce: tensor([4.])
+Rank 0 is the root.
+Rank 0 after reduce: tensor([10.])
+Rank 1 after reduce: (unchanged) tensor([2.])
+Rank 2 after reduce: (unchanged) tensor([3.])
+Rank 3 after reduce: (unchanged) tensor([4.])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;14-reducescatter-操作&quot;&gt;1.4 reducescatter 操作&lt;/h3&gt;
+
+&lt;p&gt;每个进程拥有相同大小的张量数据，reducescatter会先对所有数据执行reduce 操作，然后每个进程接收一部分结果&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../images/2025-1-27-collective_communications.assets/reducescatter.png&quot; alt=&quot;../_images/reducescatter.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
+
+def run_reduce_scatter(rank, world_size):
+    # 初始化分布式环境
+    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size)
+
+    # 创建一个初始张量列表，每个进程都有相同大小的部分
+    tensor_size = 2  # 每个进程创建的张量大小
+    input_tensor = torch.ones(tensor_size * world_size) * (rank + 1)
+    print(f&quot;Rank {rank} before reduce_scatter: {input_tensor}&quot;)
+
+    # 准备接收结果的张量
+    output_tensor = torch.empty(tensor_size)
+
+    # 执行reduce_scatter操作（求和）
+    dist.reduce_scatter(output_tensor, [input_tensor], op=dist.ReduceOp.SUM)
+
+    # 输出reduce_scatter后的结果
+    print(f&quot;Rank {rank} after reduce_scatter: {output_tensor}&quot;)
+
+    # 清理资源
+    dist.destroy_process_group()
+
+def main():
+    world_size = 4  # 模拟4个进程
+    mp.spawn(run_reduce_scatter,
+             args=(world_size,),
+             nprocs=world_size,
+             join=True)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+    
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;运行结果：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before reduce_scatter: tensor([1., 1., 1., 1., 1., 1., 1., 1.])
+Rank 1 before reduce_scatter: tensor([2., 2., 2., 2., 2., 2., 2., 2.])
+Rank 2 before reduce_scatter: tensor([3., 3., 3., 3., 3., 3., 3., 3.])
+Rank 3 before reduce_scatter: tensor([4., 4., 4., 4., 4., 4., 4., 4.])
+Rank 0 after reduce_scatter: tensor([10., 10.])
+Rank 1 after reduce_scatter: tensor([10., 10.])
+Rank 2 after reduce_scatter: tensor([10., 10.])
+Rank 3 after reduce_scatter: tensor([10., 10.])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 27 Jan 2025 14:29:41 +0800</pubDate>
+        <link>http://localhost:8080/2025/collective_communications.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2025/collective_communications.html</guid>
+        
+        <category>collective</category>
+        
+        
+        <category>collective-communications</category>
+        
+      </item>
+    
+      <item>
+        <title>c语言：二维数组传参</title>
+        <description>&lt;p&gt;二维数组传参数时需要注意的是告诉编译器传递的是一个数组指针。有3种写法&lt;/p&gt;
+
+&lt;h2 id=&quot;写法1传递int-array3&quot;&gt;写法1：传递&lt;code class=&quot;highlighter-rouge&quot;&gt;int (*array)[3]&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;含有3个元素的一维数组指针地址&lt;/p&gt;
+
+&lt;p&gt;在C语言中，虽然不能直接传递二维数组作为指针的指针（即&lt;code class=&quot;highlighter-rouge&quot;&gt;int**&lt;/code&gt;类型），但可以通过传递指向数组第一维的指针和行数来实现对二维数组的操作。由于二维数组实际上是按行连续存储的一维数组，因此可以通过一维指针间接操作整个二维数组。&lt;/p&gt;
+
+&lt;p&gt;下面是一个通过“指针的指针”方式模拟二维数组传参的示例，但实际上内部处理的是一维数组：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// 定义一个处理二维数组的函数原型，这里使用一级指针数组表示二维数组&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;process_2d_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 通过(*array)[j]的方式访问元素，实际上等同于array[i][j]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Element at [%d][%d]: %d&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 定义一个3x3的二维数组&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 虽然不直接传递二级指针，但我们可以通过类型转换将二维数组名视为指向一维数组的指针，并传递给函数&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;process_2d_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]));&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在这段代码中，我们并没有真正传递指针的指针，而是将二维数组名强制类型转换为指向具有固定列数的一维数组的指针，并将其传递给函数。注意这种方式仅适用于列数固定的二维数组。对于列数可变的情况，通常需要传递额外的信息以描述二维数组的结构。&lt;/p&gt;
+
+&lt;h2 id=&quot;写法2-传二维数组进来int-array3&quot;&gt;写法2 传二维数组进来，&lt;code class=&quot;highlighter-rouge&quot;&gt;int array[][3]&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;在C语言中，传递二维数组给函数时，通常需要通过指针来完成。这里是一个二维数组传参的简单示例：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// 定义一个处理二维数组的函数原型&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;process_2d_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 遍历二维数组并打印元素&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Element at [%d][%d]: %d&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 定义一个3x3的二维数组&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 调用函数，传递二维数组和行数&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;process_2d_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]));&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在这个例子中，&lt;code class=&quot;highlighter-rouge&quot;&gt;process_2d_array&lt;/code&gt; 函数接收一个指向整型数组的指针（在这里是二维数组的第一维），以及二维数组的行数。由于C语言编译器能够根据数组定义推断出数组第一维的大小（在这种情况下每一行有3个元素），所以在函数内部可以使用这个信息来遍历整个二维数组。&lt;/p&gt;
+
+&lt;p&gt;注意：如果数组的列数不固定，则必须作为参数传递给函数。上述代码中的二维数组列数固定为3，因此不需要额外传递列数参数。若列数动态可变，则可以将函数声明修改为接受行数和每行元素数量两个参数。例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;process_2d_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;COLS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这里的 &lt;code class=&quot;highlighter-rouge&quot;&gt;COLS&lt;/code&gt; 应该在调用函数前已知，并作为实参传递进去。&lt;/p&gt;
+
+&lt;h2 id=&quot;写法3-传递数组指针进来int-arr&quot;&gt;写法3 传递数组指针进来，&lt;code class=&quot;highlighter-rouge&quot;&gt;int *arr&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;此时只能使用arr[0~11]来取值。因为不是一维数组&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;
+
+int main(){
+    int my_array[2][3] = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    //int (*p)[3] = my_array;
+    int (*p) = my_array;
+    //printf(&quot;p[0][1]=%d\n&quot;, p[0][1]);
+    printf(&quot;p[0]=%d\n p[3]=%d\n&quot;, p[0], p[4]);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;区分int-arr3-和-intarr3&quot;&gt;区分int &lt;em&gt;arr[3] 和 int(&lt;/em&gt;arr)[3]&lt;/h2&gt;
+
+&lt;p&gt;是的，编译器对 &lt;code class=&quot;highlighter-rouge&quot;&gt;int *arr[3]&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;int (*arr)[3]&lt;/code&gt; 的解析确实不同：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;int *arr[3]&lt;/strong&gt;：
+    &lt;ul&gt;
+      &lt;li&gt;编译器将其解析为一个包含三个元素的数组（arr），而每个元素都是指向整型变量的指针。&lt;/li&gt;
+      &lt;li&gt;类型可以理解为“指针数组”，即数组中的每一个元素都是 &lt;code class=&quot;highlighter-rouge&quot;&gt;int*&lt;/code&gt; 类型。&lt;/li&gt;
+      &lt;li&gt;示例声明等同于有三个指针变量，分别可以存储整型变量的地址。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;int (*arr)[3]&lt;/strong&gt;：
+    &lt;ul&gt;
+      &lt;li&gt;编译器将其解析为一个指向具有三个整型元素的一维数组的指针（arr）。&lt;/li&gt;
+      &lt;li&gt;类型可以理解为“指向数组的指针”，即这个指针指向的是一个大小为3的整数数组。&lt;/li&gt;
+      &lt;li&gt;示例声明相当于一个指针，该指针可以指向二维数组的第一行或者其他任何含有三个连续 &lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt; 类型数据的内存区域。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;总结来说，两者的主要区别在于：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;int *arr[3]&lt;/code&gt; 是一个数组，其中每个元素是一个指针。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;int (*arr)[3]&lt;/code&gt; 是一个指针，它指向一个含有三个整型元素的数组。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;语法解析&quot;&gt;语法解析&lt;/h2&gt;
+
+&lt;p&gt;在C语言中，编译器解析声明时通常遵循一定的优先级和约定俗成的“右结合性”规则。对于复杂类型的声明，编译器会从左向右逐步分析，并根据遇到的关键字调整解析路径。以下是一个一般的解析顺序：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;基本类型&lt;/strong&gt;：首先识别基本类型关键字，如 &lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;float&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;char&lt;/code&gt; 等。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;指针与数组&lt;/strong&gt;：当遇到星号 &lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt; 时，知道这是一个指针声明；当遇到方括号 &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; 时，开始处理数组部分。这里有个特殊规则是，数组维度可以出现在类型名后，也可以紧跟在变量名后（例如 &lt;code class=&quot;highlighter-rouge&quot;&gt;int arr[3]&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;int [3] arr&lt;/code&gt; 在效果上是相同的）。&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;对于 &lt;code class=&quot;highlighter-rouge&quot;&gt;int *arr[3]&lt;/code&gt;，编译器首先看到 &lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt;，知道这是整型，然后看到星号 &lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt;，理解为指针，最后是方括号 &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt;，由于数组维度跟在了变量名之后，因此整个表达式被解释为一个包含三个元素的数组，每个元素都是一个指向整型的指针。&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;对于 &lt;code class=&quot;highlighter-rouge&quot;&gt;int (*arr)[3]&lt;/code&gt;，编译器同样首先看到 &lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt;，然后立即遇到括号 &lt;code class=&quot;highlighter-rouge&quot;&gt;(*arr)&lt;/code&gt;，其中星号说明它是指针，但因为括号的存在，使得数组维度 &lt;code class=&quot;highlighter-rouge&quot;&gt;[3]&lt;/code&gt; 结合到这个指针类型上，所以整体被解释为一个指向含有三个整数元素的一维数组的指针。&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;函数指针&lt;/strong&gt;：如果在声明中遇到了圆括号 &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt;，则编译器会将其视为函数指针声明的一部分，先解析函数参数列表，然后再处理返回类型和其他修饰符。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;其他类型修饰符&lt;/strong&gt;：例如 &lt;code class=&quot;highlighter-rouge&quot;&gt;const&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;volatile&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;restrict&lt;/code&gt; 等，它们通常位于类型关键字和指针符号之间，用来描述该类型的属性。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;结构体、联合体与枚举&lt;/strong&gt;：编译器还会处理 &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;union&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;enum&lt;/code&gt; 关键字及其定义的内容，以及它们可能构成的指针或数组类型。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;总的来说，在处理复杂的类型声明时，编译器会按照上述步骤逐渐构建类型信息，最终确定完整的数据类型定义。在某些情况下，为了清晰起见，人们可能会选择使用类型别名 (&lt;code class=&quot;highlighter-rouge&quot;&gt;typedef&lt;/code&gt;) 或者将复杂的类型定义放在另一个地方并通过指针来间接声明变量，这样可以使代码更易读。&lt;/p&gt;
+</description>
+        <pubDate>Thu, 25 Jan 2024 19:29:41 +0800</pubDate>
+        <link>http://localhost:8080/2024/c_2d_array.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2024/c_2d_array.html</guid>
+        
+        <category>c</category>
+        
+        <category>array</category>
+        
+        
+        <category>c</category>
+        
+      </item>
+    
+      <item>
+        <title>《Linux设备驱动程序》读书笔记</title>
+        <description>&lt;h2 id=&quot;1-设备和模块分类&quot;&gt;1. 设备和模块分类&lt;/h2&gt;
+
+&lt;h3 id=&quot;11-驱动分类&quot;&gt;1.1 驱动分类&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;字符设备：可以当做一个字节流来存取设备，一个字符驱动负责实现这种行为。驱动常常至少实现open，close，read，write系统调用。&lt;strong&gt;一个字符设备和普通文件区别&lt;/strong&gt;：普通文件可以移来移去，但是大部分字符设备仅仅是数据通道，只能顺序存取。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;块设备：通过/dev目录的文件系统节点来存取。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;网络接口&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;7--linux设备驱动中的并发控制&quot;&gt;7  Linux设备驱动中的并发控制&lt;/h2&gt;
+
+&lt;h3 id=&quot;71-信号量和互斥锁的区别&quot;&gt;7.1 信号量和互斥锁的区别&lt;/h3&gt;
+
+&lt;p&gt;信号量和自旋锁是两种不同的同步机制，用于保护共享资源不被多个并发线程或进程同时访问。它们在实现并发控制时的主要区别如下：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;睡眠与非睡眠&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;信号量&lt;/strong&gt;：当一个线程试图获取已被占用的信号量时，如果该信号量的值小于0，则线程会被挂起（即“睡眠”），并放入等待队列中，直到其他线程释放信号量从而唤醒它。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;自旋锁&lt;/strong&gt;：持有自旋锁的线程不会睡眠，而是在无法获取锁时进入循环等待状态（称为“自旋”），持续不断地检查锁是否可用。这意味着持有自旋锁的线程会消耗CPU时间，而不是被调度器挂起。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;上下文切换&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;信号量&lt;/strong&gt;：可能导致上下文切换，因为线程在等待信号量时可能需要切换到其他可运行的线程。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;自旋锁&lt;/strong&gt;：由于不涉及线程睡眠和唤醒，所以一般不会发生上下文切换，但在持有锁期间可能会阻止其他处理器核心上的任务进行有效执行。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;信号量&lt;/strong&gt;：适用于临界区代码执行时间较长的情况，或者在用户空间和内核空间之间同步时，适合于任何可以等待的上下文，包括进程上下文。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;自旋锁&lt;/strong&gt;：适用于临界区代码执行非常快且预期锁定时间极短的情况，通常只在内核空间内部使用，特别是中断处理程序、高速缓存一致性操作等场合，因为在这些情况下，上下文切换的开销远大于快速获取锁的成本。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;性能和资源消耗&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;信号量&lt;/strong&gt;：当临界区中的操作确实需要较长时间时，信号量通过让出CPU给其他任务提高了整体系统效率，但增加了上下文切换的开销。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;自旋锁&lt;/strong&gt;：对于锁保护区域执行时间很短的情况，自旋锁能避免上下文切换开销，但如果自旋时间过长，则会导致CPU空转和能耗增加。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;递归性&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;信号量&lt;/strong&gt;：有些信号量实现允许递归调用（同一线程可以多次获得同一个信号量）。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;自旋锁&lt;/strong&gt;：通常不允许递归持有，即一旦一个线程获取了自旋锁，就不能再次获取它，否则会导致死锁。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;多持有者&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;信号量&lt;/strong&gt;：可以有任意数量的锁持有者，取决于其设计类型（如二进制信号量只能有一个持有者，而计数信号量可以允许多个）。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;自旋锁&lt;/strong&gt;：在同一时刻最多只能有一个任务持有自旋锁。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;总结起来，选择使用信号量还是自旋锁主要依赖于预期的临界区执行时间和上下文的要求。如果临界区执行时间不确定或可能较长，以及上下文可能是可以睡眠的，应优先考虑使用信号量；如果临界区执行时间短且必须在不能睡眠的上下文中执行，比如中断服务例程中，则应采用自旋锁。&lt;/p&gt;
+
+&lt;h3 id=&quot;72-信号量和互斥体区别&quot;&gt;7.2 信号量和互斥体区别&lt;/h3&gt;
+
+&lt;p&gt;信号量和互斥体（Mutex，也称为互斥锁）都是用于同步线程访问共享资源的机制，但它们在功能和使用上有明显的区别：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;互斥体（Mutex）&lt;/strong&gt;：
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;基本特征&lt;/strong&gt;：互斥体是一种二进制信号量（值只能为0或1），它提供了一种排他性的锁机制。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：主要用于实现对共享资源的互斥访问，确保任何时刻只有一个线程能够进入临界区（即执行保护的代码段）。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;加锁与解锁&lt;/strong&gt;：一个线程获取互斥锁后，其他试图获取该锁的线程将被阻塞，直到拥有锁的线程释放该锁。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：当需要确保数据完整性、避免竞态条件时，比如在单个全局变量或者复杂的多步骤操作中防止多个线程同时修改。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;信号量（Semaphore）&lt;/strong&gt;：
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;基本特征&lt;/strong&gt;：信号量可以有任意非负整数值，而不局限于0和1。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：不仅可以用来实现互斥，还可以控制同时访问某一资源的线程数量。例如，如果信号量的值表示可用资源的数量，则每次P（wait）操作会减少信号量的值，当值为0时阻止更多的线程；V（signal）操作则增加信号量的值，可能唤醒等待的线程。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;同步机制&lt;/strong&gt;：信号量可用于实现更复杂的同步模式，如生产者-消费者问题中的缓冲区满空控制，或者限制并发执行的任务数等。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：当需要控制资源池大小、管理有限资源或多路同步时。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;总结来说，互斥体用于保证一次只有一个线程访问资源，而信号量提供了更灵活的并发控制手段，允许一定数量的线程同时访问资源。&lt;/p&gt;
+
+&lt;p&gt;第二条没看懂？？&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116100841614.png&quot; alt=&quot;image-20240116100841614&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116100956801.png&quot; alt=&quot;image-20240116100956801&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116101137399.png&quot; alt=&quot;image-20240116101137399&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116101441798.png&quot; alt=&quot;image-20240116101441798&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116101457519.png&quot; alt=&quot;image-20240116101457519&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116101625698.png&quot; alt=&quot;image-20240116101625698&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116101701744.png&quot; alt=&quot;image-20240116101701744&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116102605354.png&quot; alt=&quot;image-20240116102605354&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116102703987.png&quot; alt=&quot;image-20240116102703987&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116104734969.png&quot; alt=&quot;image-20240116104734969&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116105525419.png&quot; alt=&quot;image-20240116105525419&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116110711468.png&quot; alt=&quot;image-20240116110711468&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;MCU是Microcontroller Unit（微控制器）的缩写，也称为单片机或微控制单元。它是一种将中央处理器（CPU）、随机存取存储器（RAM）、只读存储器（ROM）、输入/输出（I/O）接口、定时器/计数器、模数转换器（ADC）、数模转换器（DAC）、串行通信接口（如UART、SPI、I²C等）以及其他外围设备集成在一块芯片上的计算机系统。&lt;/p&gt;
+
+&lt;p&gt;MCU的设计目标是为了实现对特定应用系统的控制功能，并且具有体积小、功耗低、成本经济、易于嵌入到各种产品中的特点。MCU广泛应用于各类电子设备和工业控制系统中，例如家用电器、汽车电子、智能仪器仪表、消费类电子产品、医疗设备、安防系统以及工业自动化等领域，作为控制核心部件来执行数据处理、信号采集、实时控制等任务。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116111208132.png&quot; alt=&quot;image-20240116111208132&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116111150013.png&quot; alt=&quot;image-20240116111150013&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116111344633.png&quot; alt=&quot;image-20240116111344633&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116111543927.png&quot; alt=&quot;image-20240116111543927&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116111702296.png&quot; alt=&quot;image-20240116111702296&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116112617623.png&quot; alt=&quot;image-20240116112617623&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;vmalloc是Linux内核中的一种内存分配机制，用于在虚拟地址空间中分配连续的大块内存区域，不同于物理内存页直接映射到虚拟地址空间的kmalloc函数。vmalloc主要用于那些需要大量连续虚拟地址空间，但对物理内存不需要连续的需求场景。&lt;/p&gt;
+
+&lt;p&gt;以下是vmalloc的主要特点和用途：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;大内存分配&lt;/strong&gt;：当需要分配大于物理内存页面大小的连续地址空间时（比如分配一个大型设备驱动的数据缓冲区），vmalloc可以跨越多个不连续的物理页，并通过页表将这些物理页映射到连续的虚拟地址区间。&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;虚拟地址连续&lt;/strong&gt;：vmalloc保证返回的是虚拟地址空间中的连续区域，这有助于一些硬件接口或协议要求连续地址的应用场景。&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;非物理连续&lt;/strong&gt;：尽管虚拟地址连续，对应的物理内存页则可能是分散的，这样有助于更有效地利用物理内存碎片。&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;跨NUMA节点&lt;/strong&gt;：由于vmalloc分配的虚拟地址与物理地址解耦，因此可以在不同NUMA节点上的物理内存之间分配，适应复杂的多处理器系统。&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;性能开销&lt;/strong&gt;：vmalloc相比于kmalloc有更高的间接寻址开销，因为访问vmalloc分配的内存通常涉及额外的TLB（Translation Lookaside Buffer） miss以及页表查找。&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;安全性增强&lt;/strong&gt;：vmalloc提供的地址空间与其他内核空间或用户空间地址相隔离，有利于提高系统的安全性和稳定性。&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：适用于大规模数据结构、设备驱动的缓冲区分配、或者与物理地址无关的场合，如映射I/O资源等。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;在实现上，vmalloc通过维护独立于物理内存管理结构的vm_struct链表来记录虚拟内存区域的信息，并配合页表进行映射。由于涉及到页表的操作，所以vmalloc操作往往比kmalloc更加复杂且昂贵，但对于需要大量连续虚拟地址的情况来说是必需的&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116112836935.png&quot; alt=&quot;image-20240116112836935&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116142501414.png&quot; alt=&quot;image-20240116142501414&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116142819576.png&quot; alt=&quot;image-20240116142819576&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116142927926.png&quot; alt=&quot;image-20240116142927926&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116143149217.png&quot; alt=&quot;image-20240116143149217&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116143246989.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116143300363.png&quot; alt=&quot;image-20240116143300363&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116143444701.png&quot; alt=&quot;image-20240116143444701&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116143641036.png&quot; alt=&quot;image-20240116143641036&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116144051181.png&quot; alt=&quot;image-20240116144051181&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116144521966.png&quot; alt=&quot;image-20240116144521966&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116144713920.png&quot; alt=&quot;image-20240116144713920&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116150812621.png&quot; alt=&quot;image-20240116150812621&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116151103239.png&quot; alt=&quot;image-20240116151103239&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116151953238.png&quot; alt=&quot;image-20240116151953238&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116152632259.png&quot; alt=&quot;image-20240116152632259&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116152755151.png&quot; alt=&quot;image-20240116152755151&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116153023237.png&quot; alt=&quot;image-20240116153023237&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;流式DMA（Direct Memory Access）映射和普通DMA映射都是Linux内核中用于管理内存与外部设备之间直接数据传输的机制。这里的“普通”或“一致性”DMA映射通常指的是通过&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_alloc_coherent()&lt;/code&gt;等函数实现的一致性DMA映射，而“流式”DMA映射则指通过&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_map_single()&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_map_page()&lt;/code&gt;等函数进行的临时或单次数据传输时的DMA映射。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;一致性DMA映射&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;适用于长时间存在的内存区域，比如驱动程序为硬件分配的连续缓冲区。&lt;/li&gt;
+  &lt;li&gt;内存区域在物理地址空间上是连续的，并且保证了CPU缓存和DMA操作之间的数据一致性，即CPU和DMA控制器对同一块内存区域访问时不需要额外的手动同步。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_alloc_coherent()&lt;/code&gt;不仅分配内存，还会确保该内存符合DMA的要求，包括硬件一致性需求以及可能的特定地址约束（如在某些平台上需要从特定地址范围开始的内存）。&lt;/li&gt;
+  &lt;li&gt;当不再需要时，使用&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_free_coherent()&lt;/code&gt;来释放内存和相关的DMA映射。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;流式DMA映射&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;适用于临时或者一次性数据传输，可以是对单个连续内存区域或页面的映射。&lt;/li&gt;
+  &lt;li&gt;不像一致性DMA映射那样预先分配并保持一致性的内存区域，流式映射是在实际DMA传输前动态创建的，并且可以在完成传输后立即解除映射。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_map_single()&lt;/code&gt;将用户空间或内核空间的一个已经存在的内存区域映射到DMA可访问的物理地址空间。&lt;/li&gt;
+  &lt;li&gt;在传输完成后，必须调用&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_unmap_single()&lt;/code&gt;或&lt;code class=&quot;highlighter-rouge&quot;&gt;dma_unmap_page()&lt;/code&gt;来取消映射，并告知系统 DMA 操作已完成，以便系统处理潜在的 cache 同步问题。&lt;/li&gt;
+  &lt;li&gt;对于小批量或非频繁的数据传输来说，流式映射提供了一种更灵活的方式，因为它不需要为每次传输预先分配固定大小的连续内存。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;总结来说，一致性DMA映射主要面向长期存在的、需保持数据一致性的专用内存区域；而流式DMA映射则更适合于临时和灵活的内存映射场景，特别是当涉及非连续的内存页或者不需要保持一致性的数据传输时。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116153235930.png&quot; alt=&quot;image-20240116153235930&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116153314594.png&quot; alt=&quot;image-20240116153314594&quot; style=&quot;zoom:80%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116161022585.png&quot; alt=&quot;image-20240116161022585&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116161715185.png&quot; alt=&quot;image-20240116161715185&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I2C（Inter-Integrated Circuit）是一种串行通信总线标准，由飞利浦半导体（现恩智浦半导体）在1980年代初期开发。I2C总线用于连接微控制器和各种外围设备，如传感器、存储器、LCD驱动器等，在同一电路板上实现芯片间的低速数据传输。&lt;/p&gt;
+
+&lt;p&gt;I2C总线的特点包括：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;两线式&lt;/strong&gt;：仅使用两条线路进行通信，即数据线SDA（Serial Data Line）和时钟线SCL（Serial Clock Line）。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;多主从结构&lt;/strong&gt;：支持多个主设备和多个从设备，但在任何时刻只有一个主设备可以控制总线并发起通信。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;寻址方式&lt;/strong&gt;：每个连接到总线的设备都有一个唯一的7位或10位地址，使得主设备能够选择与特定从设备通信。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;同步通信&lt;/strong&gt;：数据传输是基于时钟信号SCL进行同步的，主设备负责生成时钟信号，所有设备都根据该时钟信号进行数据采样和移位操作。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;双向通信&lt;/strong&gt;：数据线SDA上的信息既可发送也可接收，因此支持全双工通信模式，但实际上在同一时间内只有单方向的数据流动（类似半双工）。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;总线仲裁&lt;/strong&gt;：如果同时存在多个主设备尝试控制总线，则通过硬件自动进行总线仲裁，确保不会发生数据冲突。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;开放标准&lt;/strong&gt;：I2C总线规范对所有制造商开放，并且被广泛应用于众多嵌入式系统中，因其简单性和低成本而备受青睐。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;速度范围&lt;/strong&gt;：I2C总线的速度可以根据需要配置，支持标准模式、快速模式、快速加模式以及高速模式等多种速率等级，最高速率可达每秒几兆比特。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I2C总线通常用于短距离、低速率的场合，特别适合于低功耗设备间的小型化设计和通信需求。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116162123442.png&quot; alt=&quot;image-20240116162123442&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116164023429.png&quot; alt=&quot;image-20240116164023429&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116164638077.png&quot; alt=&quot;image-20240116164638077&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116170709753.png&quot; alt=&quot;image-20240116170709753&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116170734375.png&quot; alt=&quot;image-20240116170734375&quot; style=&quot;zoom: 33%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2024-01-16-linux_device_driver.assets/image-20240116171740130.png&quot; alt=&quot;image-20240116171740130&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 16 Jan 2024 19:29:41 +0800</pubDate>
+        <link>http://localhost:8080/2024/linux_device_driver.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2024/linux_device_driver.html</guid>
+        
+        <category>driver</category>
+        
+        <category>linux</category>
+        
+        
+        <category>linux</category>
+        
+        <category>driver</category>
+        
+      </item>
+    
+      <item>
+        <title>build source code of cpython record</title>
+        <description>&lt;h2 id=&quot;env&quot;&gt;env&lt;/h2&gt;
+
+&lt;p&gt;env: ubuntu 1804&lt;/p&gt;
+
+&lt;h2 id=&quot;guide&quot;&gt;guide&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;git clone cpython from github&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;cd cpython-main and run commands:  ref(https://devguide.python.org/)&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./configure --with-pydebug &amp;amp;&amp;amp; make -j
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.1 some errors occur, remind us some modules need to be installed:&lt;/p&gt;
+
+&lt;p&gt;found the guide from https://devguide.python.org/getting-started/setup-building/#install-dependencies&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-12-24-build source code of cpython record.assets/image-20231224110901781.png&quot; alt=&quot;image-20231227110901781&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;run this command, some error occurs&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get build-dep python3
+Reading package lists... Done
+Picking 'python3-defaults' as source package instead of 'python3'
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:python3-defaults : Depends: python3.10 (&amp;gt;= 3.10.4-1~) but it is not installable
+E: Unable to correct problems, you have held broken packages.
+
+sudo apt --fix-broken install// run this to solve
+sudo apt upgrade
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get install build-essential gdb lcov pkg-config \
+      libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev \
+      libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev \
+      lzma lzma-dev tk-dev uuid-dev zlib1g-dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;run this command, and tk-dev can not be installed&lt;/p&gt;
+</description>
+        <pubDate>Sun, 24 Dec 2023 19:29:41 +0800</pubDate>
+        <link>http://localhost:8080/2023/build-source-code-of-cpython-record.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2023/build-source-code-of-cpython-record.html</guid>
+        
+        <category>cpython</category>
+        
+        
+        <category>cpython</category>
+        
+      </item>
+    
+      <item>
+        <title>Operating System study</title>
+        <description>&lt;p&gt;《Computer Systems: A Programmer’s Perspective》 reading records&lt;/p&gt;
+
+&lt;h3 id=&quot;17-operating-systems-2-primary-purposes&quot;&gt;1.7 operating systems 2 primary purposes&lt;/h3&gt;
+
+&lt;p&gt;1）protect the hardware form misuse by applications&lt;/p&gt;
+
+&lt;p&gt;2）provide applications with simple and uniform mechanisms for manipulating hardware devices&lt;/p&gt;
+
+&lt;h3 id=&quot;171-processes&quot;&gt;1.7.1 Processes&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027150242608.png&quot; alt=&quot;image-20231027150242608&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;172-threads&quot;&gt;1.7.2 Threads&lt;/h3&gt;
+
+&lt;p&gt;process can be consist of multiple threads.&lt;/p&gt;
+
+&lt;p&gt;it’s easier to share data between multiple threads than between multiple processes.&lt;/p&gt;
+
+&lt;h3 id=&quot;173-virtual-memory&quot;&gt;1.7.3 Virtual Memory&lt;/h3&gt;
+
+&lt;p&gt;Each process has same uniform view of memory, which known as its virtual address space.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027150751863.png&quot; alt=&quot;image-20231027150751863&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Program code and data： code start from same fixed address for all processes.&lt;/p&gt;
+
+&lt;p&gt;Heap: not fixed size. dynamically at run time as a result of calls to c lib such as  malloc and free.&lt;/p&gt;
+
+&lt;h3 id=&quot;174-files&quot;&gt;1.7.4 Files&lt;/h3&gt;
+
+&lt;p&gt;All I/O devices are modeled as files.&lt;/p&gt;
+
+&lt;h3 id=&quot;19-concurrency-and-parrallelism&quot;&gt;1.9 Concurrency and parrallelism&lt;/h3&gt;
+
+&lt;h3 id=&quot;23-twos-complement-encodings&quot;&gt;2.3 Two’s-complement Encodings&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027101213270.png&quot; alt=&quot;image-20231027101213270&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027111140688.png&quot; alt=&quot;image-20231027111140688&quot; style=&quot;zoom:50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027111637345.png&quot; alt=&quot;image-20231027111637345&quot; style=&quot;zoom:50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;mystore.c&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027153418370.png&quot; alt=&quot;image-20231027153418370&quot; style=&quot;zoom:50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027153653877.png&quot; alt=&quot;image-20231027153653877&quot; style=&quot;zoom:50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027153733554.png&quot; alt=&quot;image-20231027153733554&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;.o file and binary file:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027154004951.png&quot; alt=&quot;image-20231027154004951&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027154019564.png&quot; alt=&quot;image-20231027154019564&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027153151171.png&quot; alt=&quot;image-20231027153151171&quot; style=&quot;zoom: 67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027153849027.png&quot; alt=&quot;image-20231027153849027&quot; style=&quot;zoom: 67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027104441738.png&quot; alt=&quot;image-20231027104441738&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027104533733.png&quot; alt=&quot;image-20231027104533733&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027104602555.png&quot; alt=&quot;image-20231027104602555&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027140935835.png&quot; alt=&quot;image-20231027140935835&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027141609636.png&quot; alt=&quot;image-20231027141609636&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027142005775.png&quot; alt=&quot;image-20231027142005775&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027150751437.png&quot; alt=&quot;image-20231027150751437&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027161318575.png&quot; alt=&quot;image-20231027161318575&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;7-linking&quot;&gt;7 Linking&lt;/h2&gt;
+
+&lt;h3 id=&quot;71-compiler-drivers&quot;&gt;7.1 Compiler Drivers&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027145731936.png&quot; alt=&quot;image-20231027145731936&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;linux&amp;gt; gcc &lt;span class=&quot;nt&quot;&gt;-Og&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; prog main.c sum.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027145701129.png&quot; alt=&quot;image-20231027145701129&quot; style=&quot;zoom:80%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;compile steps:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cpp &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;other arguments] main.c /tmp/main.i  &lt;span class=&quot;c&quot;&gt;# replace include with file content&lt;/span&gt;
+cc1 /tmp/main.i &lt;span class=&quot;nt&quot;&gt;-Og&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;other arguments] &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /tmp/main.s &lt;span class=&quot;c&quot;&gt;#translate it into an ASCII assembly-language file&lt;/span&gt;
+as &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;other arguments] &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /tmp/main.o /tmp/main.s &lt;span class=&quot;c&quot;&gt;#assembler translate main.s to main.o&lt;/span&gt;
+ld &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; prog &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;system object files and args] /tmp/main.o /tmp/sum.o &lt;span class=&quot;c&quot;&gt;#combine main.o and sum.o, along with system the necessary system object files, to create bin exe object file&lt;/span&gt;
+linux&amp;gt; ./prog
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;72-static-linking&quot;&gt;7.2 static linking&lt;/h3&gt;
+
+&lt;p&gt;take as input a collection of relocatable object files and command-line arguments and generate as a output a fully linked executable object file that can be loaded and run.&lt;/p&gt;
+
+&lt;p&gt;linker build executable with 2 steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Symbol resolution&lt;/strong&gt;: associate each symbol reference with exactly one symbol definition&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Relocation&lt;/strong&gt;: linker relocates sections(code, data) by associating memory location with each symbol definition, and then modifying all of the references to those symbols so that they point to this memory location.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;73-relocatable-object-files&quot;&gt;7.3 Relocatable Object files&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027152416834.png&quot; alt=&quot;image-20231027152416834&quot; style=&quot;zoom:80%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027152532805.png&quot; alt=&quot;image-20231027152532805&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027152553562.png&quot; alt=&quot;image-20231027152553562&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;75-symbols-and-symbol-tables&quot;&gt;7.5 Symbols and symbol tables&lt;/h3&gt;
+
+&lt;h2 id=&quot;9-virtual-memory&quot;&gt;9 Virtual memory&lt;/h2&gt;
+
+&lt;h3 id=&quot;91-physical-and-virtual-address&quot;&gt;9.1 Physical and Virtual Address&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027164047574.png&quot; alt=&quot;image-20231027164047574&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Virtual address–&amp;gt; dedicated hardware on CPU chip called MMU(memory management unit)—&amp;gt;Physical address&lt;/p&gt;
+
+&lt;h3 id=&quot;93-vm-as-a-tool-for-caching&quot;&gt;9.3 VM as a Tool for Caching&lt;/h3&gt;
+
+&lt;h4 id=&quot;934-page-faults&quot;&gt;9.3.4 Page Faults&lt;/h4&gt;
+
+&lt;p&gt;swapping/paging: transfer a page between disk and Dram&lt;/p&gt;
+
+&lt;p&gt;swapped in: pages are swapped in from disk to DRAM&lt;/p&gt;
+
+&lt;p&gt;swapping out: pases are swapped out from DRAM to disk&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027094014806.png&quot; alt=&quot;image-20231027094014806&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;935-allocating-pages&quot;&gt;9.3.5 Allocating pages&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027094710388.png&quot; alt=&quot;image-20231027094710388&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027094802509.png&quot; alt=&quot;image-20231027094802509&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;936-address-translating&quot;&gt;9.3.6 Address Translating&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027095817348.png&quot; alt=&quot;image-20231027095817348&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027100551934.png&quot; alt=&quot;image-20231027100551934&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027100745368.png&quot; alt=&quot;image-20231027100745368&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;95-vm-as-a-tool-for-memory-protection&quot;&gt;9.5 VM as a Tool for Memory Protection&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027101047108.png&quot; alt=&quot;image-20231027101047108&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;98-memory-mapping&quot;&gt;9.8 Memory mapping&lt;/h3&gt;
+
+&lt;p&gt;Virtual memory areas can be mapped to one of &lt;strong&gt;two types of objects:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Regular file in the Linux file system&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;such as executable object file. The file section is divided into page-size pieces, with each piece containing the initial contents of a virtual page.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Anonymous file&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;created by kernel, that contains all binary zeros.&lt;/p&gt;
+
+&lt;p&gt;the first time the CPU touches a virtual page in such an area, the kernel finds an appropriate victim page in physical memory, swaps out the victim page if it is dirty, overwrites the page with binary zeros, and update page table to mark the page as resident.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;swap space&lt;/strong&gt;(maintained by the kernel) bounds the total amount of virtual pages that can be allocated by the currently running processes.&lt;/p&gt;
+
+&lt;h4 id=&quot;981-shared-objects-revisited&quot;&gt;9.8.1 shared objects revisited&lt;/h4&gt;
+
+&lt;p&gt;An object can be mapped into an area of virtual memory as either a &lt;strong&gt;shared object&lt;/strong&gt; or a &lt;strong&gt;private object&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;shared object&lt;/strong&gt;: any process make change to the object, other process will see the change.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;private object&lt;/strong&gt;: any process make change to the object, other process can not see the change.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027110555019.png&quot; alt=&quot;image-20231027110555019&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027110615193.png&quot; alt=&quot;image-20231027110615193&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;copy-on-write: different process share a same object with read only permission. When one process want to write on this object, then copy a new one and write to new object.&lt;/p&gt;
+
+&lt;h4 id=&quot;982-the-fork-function-revisited&quot;&gt;9.8.2 The fork Function revisited&lt;/h4&gt;
+
+&lt;p&gt;current process–&amp;gt;fork: create copies of current porcess’s &lt;strong&gt;mm_struct, area structs, and page tables.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;983-the-execve-function-revisited&quot;&gt;9.8.3 The execve Function revisited&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;execve(&quot;a.out&quot;, NULL, NULL);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027112606841.png&quot; alt=&quot;image-20231027112606841&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;delete existing user areas&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;map private areas&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;map shared areas&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;set the program counter(PC)&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;984-user-level-memory-mapping-with-the-mmap-function&quot;&gt;9.8.4 User-level memory mapping with the mmap function&lt;/h4&gt;
+
+&lt;p&gt;Linux process can use mmap to map an object into a new area of virtual memory&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027142418698.png&quot; alt=&quot;image-20231027142418698&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;start: start address is merely a hint. and is usually specified as NULL.&lt;/p&gt;
+
+&lt;p&gt;port: permission of mapped virtual memory area.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PROT_EXEC: pages in the area consist of instructions that may be executed by the CPU&lt;/li&gt;
+  &lt;li&gt;PROT_READ: Pages in the area may be read.&lt;/li&gt;
+  &lt;li&gt;PROT_WRITE: Pages in the area may be written.&lt;/li&gt;
+  &lt;li&gt;PROT_NONE: Pages in the area cannnot be accessed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;flags: the type of mapped object.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;MAP_ANON: anonymous object, virtual pages are demand-zero.&lt;/li&gt;
+  &lt;li&gt;MAP_PRIVATE: private copy-on-write object&lt;/li&gt;
+  &lt;li&gt;MAP_SHARED: shared object&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bufp = Mmap(NULL, size, PROT_READ, MAP_PRIVATE|MAP_ANON, 0, 0);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;delete the area: munmap delete the area starting at virtual address start with length bytes.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027143430622.png&quot; alt=&quot;image-20231027143430622&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;99-dynamic-memroy-allocation&quot;&gt;9.9 Dynamic memroy allocation&lt;/h3&gt;
+
+&lt;p&gt;A dynamic memory allocator maintains an area of process’s virtual memory known as heap.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;heap:&lt;/strong&gt; an area of demand-zero memory that begins immediately after the uninitialized data and grows upward(toward higher addresses.)&lt;/p&gt;
+
+&lt;p&gt;for each process, the kernel maintains a variable &lt;strong&gt;brk&lt;/strong&gt; that points to the top of the heap.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027150521036.png&quot; alt=&quot;image-20231027150521036&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Allocators come in two basic styles:&lt;/p&gt;
+
+&lt;p&gt;Explicit allocators:  malloc and free. new and delete(c++)&lt;/p&gt;
+
+&lt;p&gt;Implicit allocators:  garbage collectors.&lt;/p&gt;
+
+&lt;h4 id=&quot;991-the-malloc-and-free-functions&quot;&gt;9.9.1 The malloc and free Functions&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027151222990.png&quot; alt=&quot;image-20231027151222990&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;malloc:&lt;/strong&gt; return &lt;strong&gt;at least size bytes&lt;/strong&gt; that is suitably aligned for any kind of data object that might be contained in the block.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;malloc:&lt;/strong&gt; does not initialize the memory it returns.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;calloc&lt;/strong&gt;: a thin wrapper around the malloc function that &lt;strong&gt;initializes the allocated memory to zero&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;realloc:&lt;/strong&gt; change size of previously allocated block&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;sbrk:&lt;/strong&gt; grows or shrinks the heap by adding incr to the kernel’s brk pointer.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-27-operating_systems_study.assets/image-20231027151921552.png&quot; alt=&quot;image-20231027151921552&quot; style=&quot;zoom: 67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;992-why-dynamic-memory-allocation&quot;&gt;9.9.2 why dynamic memory allocation?&lt;/h4&gt;
+
+&lt;h4 id=&quot;994-fragmentation&quot;&gt;9.9.4 Fragmentation&lt;/h4&gt;
+
+&lt;h3 id=&quot;912-summary&quot;&gt;9.12 Summary&lt;/h3&gt;
+
+&lt;p&gt;Virtual memory, 3 important capabilities:&lt;/p&gt;
+
+&lt;p&gt;1) &lt;strong&gt;caches&lt;/strong&gt; recently used contents of the virtual address space stored on disk in main memory&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;page fault:&lt;/strong&gt;  a reference to a page on disk triggers a page fault that transfers control to a fault handler in the operating system.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;simplifies memory management&lt;/strong&gt;, which in turn simplifies linking, sharing data between processes, the allocation of memory for processes, and program loading.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;simplifies memory protection&lt;/strong&gt; by incorporating protection bits into every page table entry.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;mmap&lt;/strong&gt;: create and delete areas of virtual memory.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;malloc&lt;/strong&gt;: manages memory in an area of the virutal address space called the &lt;strong&gt;heap&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;dynamic memory allocators are application-level programs with a system-level feel, directly manipulating memory without much help from the type system.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Allocators&lt;/strong&gt; come in two flavors: &lt;strong&gt;Explicit allocators/ Implicit allocators&lt;/strong&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 27 Oct 2023 22:00:41 +0800</pubDate>
+        <link>http://localhost:8080/2023/operating_systems_study.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2023/operating_systems_study.html</guid>
+        
+        <category>operating</category>
+        
+        <category>system</category>
+        
+        <category>study</category>
+        
+        
+        <category>operating</category>
+        
+        <category>system</category>
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>《程序员的自我修养》读书笔记</title>
+        <description>&lt;h2 id=&quot;1-背景知识&quot;&gt;1 背景知识&lt;/h2&gt;
+
+&lt;p&gt;进程process p：&lt;/p&gt;
+
+&lt;p&gt;thread a&lt;/p&gt;
+
+&lt;p&gt;thread b&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;thread ab可共享进程p的数据：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;全局变量&lt;/li&gt;
+  &lt;li&gt;堆数据&lt;/li&gt;
+  &lt;li&gt;函数里的静态变量&lt;/li&gt;
+  &lt;li&gt;程序代码，任何线程都有权利读取并执行任何代码&lt;/li&gt;
+  &lt;li&gt;打开的文件，A线程打开的文件可由B线程读写&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;thread的私有空间：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;局部变量&lt;/li&gt;
+  &lt;li&gt;栈&lt;/li&gt;
+  &lt;li&gt;函数的参数&lt;/li&gt;
+  &lt;li&gt;TLS（线程局部存储）&lt;/li&gt;
+  &lt;li&gt;寄存器&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007141653498.png&quot; alt=&quot;image-20231007141653498&quot; style=&quot;zoom: 67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;fork一个进程，linux采用写时复制。因此在只读的情况下fork进程特别快。&lt;/p&gt;
+
+&lt;p&gt;fork：产生本任务的镜像，exec启动新任务。&lt;/p&gt;
+
+&lt;p&gt;clone：产生新的线程，从指定位置开始执行，(可选的)共享当前进程的内存空间、文件等。实际效果上产生一个线程。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007145636508.png&quot; alt=&quot;image-20231007145636508&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007145919899.png&quot; alt=&quot;image-20231007145919899&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2--静态链接&quot;&gt;2  静态链接&lt;/h2&gt;
+
+&lt;p&gt;gcc hello.c&lt;/p&gt;
+
+&lt;p&gt;a.out&lt;/p&gt;
+
+&lt;p&gt;上述过程分解为4个步骤：预处理、编译、汇编、链接&lt;/p&gt;
+
+&lt;h3 id=&quot;21-看不见的过程&quot;&gt;2.1 看不见的过程&lt;/h3&gt;
+
+&lt;h4 id=&quot;211-预编译&quot;&gt;2.1.1 预编译：&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;展开宏定义&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;替换include为文件内容，此处可能会递归调用&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;处理条件预编译指令，例如“#if”、“#ifdef”、“#elif”、“#else”、“endif”&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;删除所有的注释：“//”和“/* */”&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;添加行号和文件名标识，比如#2 “hello.c” 2, 以便于编译时产生调试用的行号信息以及用于编译时产生编译错误或者警告时能够显示行号&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;保留所有#pragma编译器指令&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcc -E hello.c -o hello.i
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007150927263.png&quot; alt=&quot;image-20231007150927263&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;212-编译&quot;&gt;2.1.2 编译&lt;/h4&gt;
+
+&lt;p&gt;把预处理完的文件—————(&lt;strong&gt;词法分析、语法分析、语义分析及优化后)&lt;/strong&gt;—————&amp;gt;生成汇编代码&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcc -S hello.i -o hello.s
+cat hello.s
+        .file   &quot;hello.c&quot;
+        .text
+        .globl  main
+        .type   main, @function
+main:
+.LFB0:
+        .cfi_startproc
+        pushq   %rbp
+        .cfi_def_cfa_offset 16
+        .cfi_offset 6, -16
+        movq    %rsp, %rbp
+        .cfi_def_cfa_register 6
+        movl    $0, %eax
+        popq    %rbp
+        .cfi_def_cfa 7, 8
+        ret
+        .cfi_endproc
+.LFE0:
+        .size   main, .-main
+        .ident  &quot;GCC: (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0&quot;
+        .section        .note.GNU-stack,&quot;&quot;,@progbits
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007151710553.png&quot; alt=&quot;image-20231007151710553&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;213-汇编&quot;&gt;2.1.3 汇编&lt;/h4&gt;
+
+&lt;p&gt;汇编代码S —–&amp;gt; 机器可执行的指令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcc -c hello.s -o hello.o
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;214-链接&quot;&gt;2.1.4 链接&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007152233218.png&quot; alt=&quot;image-20231007152233218&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;22-编译器&quot;&gt;2.2 编译器&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007152843683.png&quot; alt=&quot;image-20231007152843683&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;221-词法分析&quot;&gt;2.2.1 词法分析&lt;/h4&gt;
+
+&lt;p&gt;使用有限状态机的算法将源代码字符序列分割成一系列token。&lt;/p&gt;
+
+&lt;p&gt;词法分析产生的记号一般可分为以下几类：&lt;/p&gt;
+
+&lt;p&gt;关键字、标识符、字面量（数字、字符串）、特殊符号（+、=）&lt;/p&gt;
+
+&lt;p&gt;词法扫描现有工具：lex。根据词法规则将输入字符串分割成一个个记号。&lt;/p&gt;
+
+&lt;p&gt;C语言宏替换和文件包含等工作一般交给一个独立的预处理器&lt;/p&gt;
+
+&lt;h4 id=&quot;222-语法分析&quot;&gt;2.2.2 语法分析&lt;/h4&gt;
+
+&lt;p&gt;语法分析器产生语法树。分析过程采用上下文无关语法的分析手段。&lt;/p&gt;
+
+&lt;p&gt;语法分析现有工具：yacc。根据语法规则进行解析构造一颗语法树&lt;/p&gt;
+
+&lt;h4 id=&quot;223-语义分析&quot;&gt;2.2.3 语义分析&lt;/h4&gt;
+
+&lt;p&gt;静态语义：编译期就可以确定的语义。通常包括声明和类型的匹配，类型的转换。&lt;/p&gt;
+
+&lt;p&gt;动态语义：程序执行时才能确定的语义&lt;/p&gt;
+
+&lt;p&gt;编译器分析静态语义，比如一个浮点数赋值给整型表达式时，隐含包含了一个浮点型到整型的转换过程。类型转换是否合法。经过语义分析阶段后语法树表达式都被标识了类型。如果有些类型需要语法转换，则语义分析程序会在语法树中插入相应的转换节点。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007154512472.png&quot; alt=&quot;image-20231007154512472&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;224-链接&quot;&gt;2.2.4 链接&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007155519336.png&quot; alt=&quot;image-20231007155519336&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007155633302.png&quot; alt=&quot;image-20231007155633302&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3-可执行文件&quot;&gt;3 可执行文件&lt;/h2&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// &lt;span class=&quot;nt&quot;&gt;-h&lt;/span&gt;打印各个段的基本信息
+objdump &lt;span class=&quot;nt&quot;&gt;-h&lt;/span&gt; hello.o
+
+hello.o:     file format elf64-x86-64
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         00000017  0000000000000000  0000000000000000  00000040  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data         00000000  0000000000000000  0000000000000000  00000057  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  0000000000000000  0000000000000000  00000057  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  ALLOC
+  3 .rodata       0000000c  0000000000000000  0000000000000000  00000057  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .comment      0000002a  0000000000000000  0000000000000000  00000063  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, READONLY
+  5 .note.GNU-stack 00000000  0000000000000000  0000000000000000  0000008d  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, READONLY
+  6 .eh_frame     00000038  0000000000000000  0000000000000000  00000090  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;3
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+
+                  
+// &lt;span class=&quot;nt&quot;&gt;-x&lt;/span&gt;打印更详细的内容
+ objdump &lt;span class=&quot;nt&quot;&gt;-x&lt;/span&gt; hello.o
+
+hello.o:     file format elf64-x86-64
+hello.o
+architecture: i386:x86-64, flags 0x00000011:
+HAS_RELOC, HAS_SYMS
+start address 0x0000000000000000
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         00000017  0000000000000000  0000000000000000  00000040  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data         00000000  0000000000000000  0000000000000000  00000057  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  0000000000000000  0000000000000000  00000057  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  ALLOC
+  3 .rodata       0000000c  0000000000000000  0000000000000000  00000057  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .comment      0000002a  0000000000000000  0000000000000000  00000063  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, READONLY
+  5 .note.GNU-stack 00000000  0000000000000000  0000000000000000  0000008d  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;0
+                  CONTENTS, READONLY
+  6 .eh_frame     00000038  0000000000000000  0000000000000000  00000090  2&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt;3
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+SYMBOL TABLE:
+0000000000000000 l    &lt;span class=&quot;nb&quot;&gt;df&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;ABS&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;  0000000000000000 hello.c
+0000000000000000 l    d  .text  0000000000000000 .text
+0000000000000000 l    d  .data  0000000000000000 .data
+0000000000000000 l    d  .bss   0000000000000000 .bss
+0000000000000000 l    d  .rodata        0000000000000000 .rodata
+0000000000000000 l    d  .note.GNU-stack        0000000000000000 .note.GNU-stack
+0000000000000000 l    d  .eh_frame      0000000000000000 .eh_frame
+0000000000000000 l    d  .comment       0000000000000000 .comment
+0000000000000000 g     F .text  0000000000000017 main
+0000000000000000         &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;UND&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;  0000000000000000 _GLOBAL_OFFSET_TABLE_
+0000000000000000         &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;UND&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;  0000000000000000 puts
+
+
+RELOCATION RECORDS FOR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;.text]:
+OFFSET           TYPE              VALUE
+0000000000000007 R_X86_64_PC32     .rodata-0x0000000000000004
+000000000000000c R_X86_64_PLT32    puts-0x0000000000000004
+
+
+RELOCATION RECORDS FOR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;.eh_frame]:
+OFFSET           TYPE              VALUE
+0000000000000020 R_X86_64_PC32     .text
+
+
+// 以十六进制打印hello.o所有段的内容
+objdump &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; hello.o
+hello.o:     file format elf64-x86-64
+
+Contents of section .text:
+ 0000 554889e5 488d3d00 000000e8 00000000  UH..H.&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;.........
+ 0010 b8000000 005dc3                      .....].
+Contents of section .rodata:
+ 0000 68656c6c 6f20776f 726c6400           hello world.
+Contents of section .comment:
+ 0000 00474343 3a202855 62756e74 7520372e  .GCC: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Ubuntu 7.
+ 0010 352e302d 33756275 6e747531 7e31382e  5.0-3ubuntu1~18.
+ 0020 30342920 372e352e 3000               04&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.5.0.
+Contents of section .eh_frame:
+ 0000 14000000 00000000 017a5200 01781001  .........zR..x..
+ 0010 1b0c0708 90010000 1c000000 1c000000  ................
+ 0020 00000000 17000000 00410e10 8602430d  .........A....C.
+ 0030 06520c07 08000000                    .R......
+
+// 以十六进制打印hello.o所有段的内容。且“-d”对内容进行反汇编
+objdump &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; hello.o
+
+hello.o:     file format elf64-x86-64
+
+Contents of section .text:
+ 0000 554889e5 488d3d00 000000e8 00000000  UH..H.&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;.........
+ 0010 b8000000 005dc3                      .....].
+Contents of section .rodata:
+ 0000 68656c6c 6f20776f 726c6400           hello world.
+Contents of section .comment:
+ 0000 00474343 3a202855 62756e74 7520372e  .GCC: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Ubuntu 7.
+ 0010 352e302d 33756275 6e747531 7e31382e  5.0-3ubuntu1~18.
+ 0020 30342920 372e352e 3000               04&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.5.0.
+Contents of section .eh_frame:
+ 0000 14000000 00000000 017a5200 01781001  .........zR..x..
+ 0010 1b0c0708 90010000 1c000000 1c000000  ................
+ 0020 00000000 17000000 00410e10 8602430d  .........A....C.
+ 0030 06520c07 08000000                    .R......
+
+Disassembly of section .text:
+
+0000000000000000 &amp;lt;main&amp;gt;: // 左边一列偏移量。 中间十六进制表示，右边ascii码表示
+   0:   55                      push   %rbp
+   1:   48 89 e5                mov    %rsp,%rbp
+   4:   48 8d 3d 00 00 00 00    lea    0x0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rip&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,%rdi        &lt;span class=&quot;c&quot;&gt;# b &amp;lt;main+0xb&amp;gt;&lt;/span&gt;
+   b:   e8 00 00 00 00          callq  10 &amp;lt;main+0x10&amp;gt;
+  10:   b8 00 00 00 00          mov    &lt;span class=&quot;nv&quot;&gt;$0x0&lt;/span&gt;,%eax
+  15:   5d                      pop    %rbp
+  16:   c3                      retq
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;printf里的字符串为常量，放到rodata里，&lt;code class=&quot;highlighter-rouge&quot;&gt;rodata       0000000c&lt;/code&gt; 可以看到该字符串12字节长度。&lt;/p&gt;
+
+&lt;p&gt;rodata：只读数据。一般用来存储全局const常量或者字符串常量。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007105055689.png&quot; alt=&quot;image-20231007105055689&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;34-elf文件结构描述&quot;&gt;3.4 ELF文件结构描述&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007113746295.png&quot; alt=&quot;image-20231007113746295&quot; style=&quot;zoom: 50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;341-文件头&quot;&gt;3.4.1 文件头&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; readelf -h hello.o
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2's complement, little endian // 数据存储方式
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              REL (Relocatable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          0 (bytes into file)
+  Start of section headers:          760 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           0 (bytes)
+  Number of program headers:         0
+  Size of section headers:           64 (bytes)
+  Number of section headers:         13
+  Section header string table index: 12
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;342-符号&quot;&gt;3.4.2 符号&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 显示符号表信息。变量和函数都是符号
+readelf -s hello.o
+
+Symbol table '.symtab' contains 13 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS hello.c
+     2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1
+     3: 0000000000000000     0 SECTION LOCAL  DEFAULT    3
+     4: 0000000000000000     0 SECTION LOCAL  DEFAULT    4
+     5: 0000000000000000     0 SECTION LOCAL  DEFAULT    5
+     6: 0000000000000000     0 SECTION LOCAL  DEFAULT    7
+     7: 0000000000000000     0 SECTION LOCAL  DEFAULT    8
+     8: 0000000000000000     0 SECTION LOCAL  DEFAULT    6
+     9: 0000000000000000     4 OBJECT  GLOBAL DEFAULT    3 global_init_var
+    10: 0000000000000000    23 FUNC    GLOBAL DEFAULT    1 main
+    11: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND _GLOBAL_OFFSET_TABLE_
+    12: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND puts
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;6-可执行文件的装载&quot;&gt;6 可执行文件的装载&lt;/h2&gt;
+
+&lt;p&gt;静态编译成elf文件，然后查看信息&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcc &lt;span class=&quot;nt&quot;&gt;-static&lt;/span&gt; hello.o &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; hello.elf
+readelf &lt;span class=&quot;nt&quot;&gt;-S&lt;/span&gt; hello.elf
+There are 33 section headers, starting at offset 0xcdda0:
+
+Section Headers:
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 1] .note.ABI-tag     NOTE             0000000000400190  00000190
+       0000000000000020  0000000000000000   A       0     0     4
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 2] .note.gnu.build-i NOTE             00000000004001b0  000001b0
+       0000000000000024  0000000000000000   A       0     0     4
+readelf: Warning: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 3]: Link field &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; should index a symtab section.
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 3] .rela.plt         RELA             00000000004001d8  000001d8
+       0000000000000228  0000000000000018  AI       0    20     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 4] .init             PROGBITS         0000000000400400  00000400
+       0000000000000017  0000000000000000  AX       0     0     4
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 5] .plt              PROGBITS         0000000000400418  00000418
+       00000000000000b8  0000000000000000  AX       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 6] .text             PROGBITS         00000000004004d0  000004d0
+       000000000008f640  0000000000000000  AX       0     0     16
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 7] __libc_freeres_fn PROGBITS         000000000048fb10  0008fb10
+       0000000000001523  0000000000000000  AX       0     0     16
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 8] __libc_thread_fre PROGBITS         0000000000491040  00091040
+       00000000000010eb  0000000000000000  AX       0     0     16
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; 9] .fini             PROGBITS         000000000049212c  0009212c
+       0000000000000009  0000000000000000  AX       0     0     4
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10] .rodata           PROGBITS         0000000000492140  00092140
+       000000000001926c  0000000000000000   A       0     0     32
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;11] .stapsdt.base     PROGBITS         00000000004ab3ac  000ab3ac
+       0000000000000001  0000000000000000   A       0     0     1
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;12] .eh_frame         PROGBITS         00000000004ab3b0  000ab3b0
+       000000000000a5e8  0000000000000000   A       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;13] .gcc_except_table PROGBITS         00000000004b5998  000b5998
+       000000000000009e  0000000000000000   A       0     0     1
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;14] .tdata            PROGBITS         00000000006b6120  000b6120
+       0000000000000020  0000000000000000 WAT       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;15] .tbss             NOBITS           00000000006b6140  000b6140
+       0000000000000040  0000000000000000 WAT       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;16] .init_array       INIT_ARRAY       00000000006b6140  000b6140
+       0000000000000010  0000000000000008  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;17] .fini_array       FINI_ARRAY       00000000006b6150  000b6150
+       0000000000000010  0000000000000008  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;18] .data.rel.ro      PROGBITS         00000000006b6160  000b6160
+       0000000000002d94  0000000000000000  WA       0     0     32
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;19] .got              PROGBITS         00000000006b8ef8  000b8ef8
+       00000000000000f8  0000000000000000  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;20] .got.plt          PROGBITS         00000000006b9000  000b9000
+       00000000000000d0  0000000000000008  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;21] .data             PROGBITS         00000000006b90e0  000b90e0
+       0000000000001af0  0000000000000000  WA       0     0     32
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;22] __libc_subfreeres PROGBITS         00000000006babd0  000babd0
+       0000000000000048  0000000000000000  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;23] __libc_IO_vtables PROGBITS         00000000006bac20  000bac20
+       00000000000006a8  0000000000000000  WA       0     0     32
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;24] __libc_atexit     PROGBITS         00000000006bb2c8  000bb2c8
+       0000000000000008  0000000000000000  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;25] __libc_thread_sub PROGBITS         00000000006bb2d0  000bb2d0
+       0000000000000008  0000000000000000  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;26] .bss              NOBITS           00000000006bb2e0  000bb2d8
+       00000000000016f8  0000000000000000  WA       0     0     32
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;27] __libc_freeres_pt NOBITS           00000000006bc9d8  000bb2d8
+       0000000000000028  0000000000000000  WA       0     0     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;28] .comment          PROGBITS         0000000000000000  000bb2d8
+       0000000000000029  0000000000000001  MS       0     0     1
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;29] .note.stapsdt     NOTE             0000000000000000  000bb304
+       0000000000001638  0000000000000000           0     0     4
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;30] .symtab           SYMTAB           0000000000000000  000bc940
+       000000000000a9b0  0000000000000018          31   679     8
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;31] .strtab           STRTAB           0000000000000000  000c72f0
+       0000000000006938  0000000000000000           0     0     1
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;32] .shstrtab         STRTAB           0000000000000000  000cdc28
+       0000000000000176  0000000000000000           0     0     1
+Key to Flags:
+  W &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;write&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, A &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;alloc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, X &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;execute&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, M &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;merge&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, S &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;strings&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, I &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;info&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,
+  L &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;order&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, O &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;extra OS processing required&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, G &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;group&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, T &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;TLS&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,
+  C &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;compressed&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, x &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unknown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, o &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;OS specific&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, E &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;exclude&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,
+  l &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;large&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, p &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;processor specific&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  
+
+readelf &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; hello.elf
+
+Elf file &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;is EXEC &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Executable file&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Entry point 0x400a50
+There are 6 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
+                 0x00000000000b5a36 0x00000000000b5a36  R E    0x200000
+  LOAD           0x00000000000b6120 0x00000000006b6120 0x00000000006b6120
+                 0x00000000000051b8 0x00000000000068e0  RW     0x200000
+  NOTE           0x0000000000000190 0x0000000000400190 0x0000000000400190
+                 0x0000000000000044 0x0000000000000044  R      0x4
+  TLS            0x00000000000b6120 0x00000000006b6120 0x00000000006b6120
+                 0x0000000000000020 0x0000000000000060  R      0x8
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x10
+  GNU_RELRO      0x00000000000b6120 0x00000000006b6120 0x00000000006b6120
+                 0x0000000000002ee0 0x0000000000002ee0  R      0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .note.ABI-tag .note.gnu.build-id .rela.plt .init .plt .text __libc_freeres_fn __libc_thread_freeres_fn .fini .rodata .stapsdt.base .eh_frame .gcc_except_table
+   01     .tdata .init_array .fini_array .data.rel.ro .got .got.plt .data __libc_subfreeres __libc_IO_vtables __libc_atexit __libc_thread_subfreeres .bss __libc_freeres_ptrs
+   02     .note.ABI-tag .note.gnu.build-id
+   03     .tdata .tbss
+   04
+   05     .tdata .init_array .fini_array .data.rel.ro .got
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;动态链接：&lt;strong&gt;运行时&lt;/strong&gt;才将用到的lib so进行链接&lt;/p&gt;
+
+&lt;p&gt;静态链接：将所有模块使用的文件都链接到一起，形成一个可执行文件&lt;/p&gt;
+
+&lt;p&gt;动态链接好处：兼容性和扩展性&lt;/p&gt;
+
+&lt;p&gt;动态链接坏处：模块更新后，旧的模块接口和新模块接口不兼容则容易出现程序无法跑的情况&lt;/p&gt;
+
+&lt;p&gt;动态链接文件：dynamic shared objects。so文件&lt;/p&gt;
+
+&lt;p&gt;windows 动态链接文件：dll&lt;/p&gt;
+
+&lt;p&gt;判断dso是否为PIC文件&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcc &lt;span class=&quot;nt&quot;&gt;-fPIC&lt;/span&gt; hello.c &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; hello.so
+readelf &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; hello.so | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;TEXTREL //无输出则是PIC文件。PIC不包含段重定位表
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;10-栈&quot;&gt;10 栈&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007115310362.png&quot; alt=&quot;image-20231007115310362&quot; style=&quot;zoom:67%;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;12-系统调用与api&quot;&gt;12 系统调用与API&lt;/h2&gt;
+
+&lt;p&gt;cpu规格：&lt;/p&gt;
+
+&lt;p&gt;100MHZ： 每1s CPU可执行100000000个指令周期&lt;/p&gt;
+
+&lt;p&gt;1000MHZ: 每1s CPU可执行1000个指令周期&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/2023-10-7-self_cultivation_of_programmers.assets/image-20231007103136489.png&quot; alt=&quot;image-20231007103136489&quot; style=&quot;zoom:50%;&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 07 Oct 2023 19:29:41 +0800</pubDate>
+        <link>http://localhost:8080/2023/self_cultivation_of_programmers.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2023/self_cultivation_of_programmers.html</guid>
+        
+        <category>compile</category>
+        
+        
+        <category>compile</category>
+        
+      </item>
     
       <item>
         <title>闭包</title>
@@ -112,8 +1711,8 @@
 &lt;/ol&gt;
 </description>
         <pubDate>Sat, 16 Jul 2022 22:29:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/07/closure_study/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/07/closure_study/</guid>
+        <link>http://localhost:8080/2022/closure_study.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2022/closure_study.html</guid>
         
         <category>closure</category>
         
@@ -164,8 +1763,8 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
         <pubDate>Sun, 10 Jul 2022 11:00:12 +0800</pubDate>
-        <link>http://localhost:4000/2022/07/send_email_with_python/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/07/send_email_with_python/</guid>
+        <link>http://localhost:8080/2022/send_email_with_python.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2022/send_email_with_python.html</guid>
         
         <category>python</category>
         
@@ -257,8 +1856,8 @@ PSH=1, client端发送显示所有设备信息&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://segmentfault.com/a/1190000039165592&quot;&gt;三次握手&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Sat, 23 Apr 2022 20:20:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/tcp_study/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/tcp_study/</guid>
+        <link>http://localhost:8080/2022/tcp_study.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2022/tcp_study.html</guid>
         
         <category>tcp</category>
         
@@ -287,7 +1886,7 @@ PSH=1, client端发送显示所有设备信息&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;62078&lt;/em&gt;&lt;/strong&gt;：   LOCKDOWN_PORT， ios 上的lockdown service，参见后者 lockdown&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;32498&lt;/em&gt;&lt;/strong&gt;：   socket.htons(62078) = 32498   lockdown_port转换为网络字节端口的结果，&lt;a href=&quot;/2022/03/socket_little_endian_big_endian/&quot;&gt;socket编程中的大端小端&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;32498&lt;/em&gt;&lt;/strong&gt;：   socket.htons(62078) = 32498   lockdown_port转换为网络字节端口的结果，&lt;a href=&quot;/2022/socket_little_endian_big_endian.html&quot;&gt;socket编程中的大端小端&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;8200,8100&lt;/em&gt;&lt;/strong&gt;： 8200（relay: tcp server, listen 8200）&amp;lt;—–&amp;gt;  8100 device(webdriveragent app: /screenshot)
             后续会看到tidevice启动了一个端口转发的server，将pc端的8200数据转发到了ios设备8100端口
@@ -299,7 +1898,7 @@ PSH=1, client端发送显示所有设备信息&lt;/p&gt;
 &lt;p&gt;webdriveragent runner app是什么？由facebook提供的ios上可安装的webdriver server。该server启动后在iphone上监听一个端口（例如8100），接收指令来实现对ios设备的远程控制，如打开/安装/卸载其他app，截屏，通过settings设置手机，点击等等。&lt;/p&gt;
 
 &lt;p&gt;webdriveragent runner app: 本质是链接XCTest.framework调用苹果API直接执行命令，实现自动化测试的目的。Facebook的webdriver agent runner 已经停止维护，建议由appium的&lt;a href=&quot;https://github.com/appium/WebDriverAgent&quot;&gt;webdriveragent in appium github&lt;/a&gt;下载。
-具体webdriver agent runner安装详细参见blog&lt;a href=&quot;/2021/09/appium_mac_config_guide/&quot;&gt;appium mac config guide&lt;/a&gt;中的webdriver agent runner安装部分。&lt;/p&gt;
+具体webdriver agent runner安装详细参见blog&lt;a href=&quot;/2021/appium_mac_config_guide.html&quot;&gt;appium mac config guide&lt;/a&gt;中的webdriver agent runner安装部分。&lt;/p&gt;
 
 &lt;p&gt;appium + webdriveragent_runner也是一种常见的移动端自动化测试方案。我们这里探讨tidevice+webdriveragent_runner。&lt;/p&gt;
 
@@ -363,7 +1962,7 @@ console_scripts =
     tidevice = tidevice.__main__:main
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;main()中本质是调用Usbmux生成了um对象，负责usbmux相关的通信。usbmux是啥？一个实现了usb连接的iPhone设备和pc端间，以类似tcp进行通信的系统。具体参见&lt;a href=&quot;/2022/04/usbmux/&quot;&gt;usbmux study&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;main()中本质是调用Usbmux生成了um对象，负责usbmux相关的通信。usbmux是啥？一个实现了usb连接的iPhone设备和pc端间，以类似tcp进行通信的系统。具体参见&lt;a href=&quot;/2022/usbmux.html&quot;&gt;usbmux study&lt;/a&gt;&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    um = Usbmux(args.socket)
     actions[args.subparser](args) # actually called: def cmd_wdaproxy(args: argparse.Namespace)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -599,611 +2198,13 @@ console_scripts =
 &lt;p&gt;&lt;a href=&quot;https://testerhome.com/topics/27159&quot;&gt;tidevice intro&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 22 Apr 2022 19:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/source_code_tidevice_study_cn/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/source_code_tidevice_study_cn/</guid>
+        <link>http://localhost:8080/2022/source_code_tidevice_study_cn.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2022/source_code_tidevice_study_cn.html</guid>
         
         <category>tidevice</category>
         
         
         <category>tidevice</category>
-        
-      </item>
-    
-      <item>
-        <title>Usbmux</title>
-        <description>&lt;p&gt;&lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux&quot;&gt;usbmux intro ref&lt;/a&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;br /&gt;
-This is a system for multiplexing several &quot;connections&quot; over one USB pipe. 
-
-Conceptually, it provides a TCP-like system-processes on the host machine open up connections to specific, numbered ports on the mobile device.
-
-Communications between the host (generally, iTunes running on a Mac or Windows machine) and the device (an iPhone, iPad or iPod touch) take place using a complicated scheme of nested layers. From lowest level to highest, they are:
-USB protocol: multiplexes multiple data streams over one pair of bulk endpoints &lt;br /&gt;
-
-usbmuxd protocol: provides a way of opening connections to TCP ports on the device&lt;br /&gt; 
-
-lockdownd protocol: tbd &lt;br /&gt;
-
-iTunesHelper? &lt;br /&gt;
-
-AFC?&lt;br /&gt;
-&lt;br /&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;this description is from https://www.theiphonewiki.com/wiki/Usbmux. But on my side, usbmuxd communicate with ios device like tcp, so I think we should put it at TCP layer. 
-I think the layer from lowerest to highest may be like this:&lt;/p&gt;
-
-&lt;p&gt;usbmuxd protocol: provides a way of opening connections to TCP ports on the device&lt;/p&gt;
-
-&lt;p&gt;lockdownd protocol: tbd&lt;/p&gt;
-
-&lt;p&gt;iTunesHelper?&lt;/p&gt;
-
-&lt;p&gt;AFC?&lt;/p&gt;
-
-&lt;p&gt;USB protocol: multiplexes multiple data streams over one pair of bulk endpoints&lt;/p&gt;
-
-&lt;p&gt;If you have any idea about this layer, you can contact with me or leave your comments.&lt;/p&gt;
-
-&lt;h2 id=&quot;usbmuxd-location&quot;&gt;usbmuxd location:&lt;/h2&gt;
-&lt;p&gt;code is from tidevice&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import os
-if os.name == &quot;posix&quot;:  # linux or darwin
-    address = &quot;/var/run/usbmuxd&quot;
-elif os.name == &quot;nt&quot;:  # windows
-    address = ('127.0.0.1', 27015)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;on Mac:&lt;/p&gt;
-&lt;blockquote&gt;
-/System/Library/PrivateFrameworks/MobileDevice.framework/Resources/usbmuxd, a daemon that is started by launchd (see /System/Library/LaunchDaemons/com.apple.usbmuxd.plist Catalina: /Library/Apple/System/Library/LaunchDaemons/com.apple.usbmuxd.plist)
-&lt;br /&gt;
-
-&lt;/blockquote&gt;
-
-&lt;p&gt;on windows:
-install iTunes, and this usbmuxd is already installed.&lt;/p&gt;
-</description>
-        <pubDate>Thu, 21 Apr 2022 12:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/usbmux/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/usbmux/</guid>
-        
-        <category>ios</category>
-        
-        
-        <category>ios</category>
-        
-      </item>
-    
-      <item>
-        <title>appium source code study</title>
-        <description>&lt;h2 id=&quot;running-appium-from-source&quot;&gt;Running Appium from Source&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/appium/appium/blob/master/docs/en/contributing-to-appium/appium-from-source.md&quot;&gt;appium link&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;npm&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;install&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;npm&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;build&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;node&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;debug-appium&quot;&gt;debug appium:&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://zhuanlan.zhihu.com/p/338287139&quot;&gt;ref link&lt;/a&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nx&quot;&gt;node&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;inspect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;brk&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4723&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;in chrome, open:    &lt;strong&gt;‘chrome://inspect/#devices’&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;source-code-analysis&quot;&gt;source code analysis&lt;/h2&gt;
-&lt;p&gt;packages:
-http://appium.io/docs/en/contributing-to-appium/appium-packages/index.html#appium-ios-driver&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;appium: main.js/appium.js&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;1) main.js: start server
-    &lt;img src=&quot;/images/appium/appium_main.png&quot; alt=&quot;appium main&quot; width=&quot;800&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;2) appium.js: extend basedriver, custom methods&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;appium-basedriver
-appium-xcuitest-driver:&lt;/p&gt;
-
-    &lt;p&gt;1) start wda&lt;/p&gt;
-
-    &lt;p&gt;2) communicate with wda&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-</description>
-        <pubDate>Wed, 20 Apr 2022 22:00:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/04/appium_source_code_study/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/04/appium_source_code_study/</guid>
-        
-        <category>appium</category>
-        
-        
-        <category>appium</category>
-        
-      </item>
-    
-      <item>
-        <title>socket 编程：大小端数据</title>
-        <description>&lt;h1 id=&quot;大小端&quot;&gt;大小端&lt;/h1&gt;
-&lt;p&gt;数据：0X12345678&lt;/p&gt;
-
-&lt;p&gt;内存地址从低到高&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; 0x0001    0x0002   0x0003  0x0004
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址&lt;/p&gt;
-
-&lt;p&gt;小端: 0x78      0x56     0x34    0x12                                低位数据在低位地址&lt;/p&gt;
-
-&lt;p&gt;由于发送端接送端主机可能存在主机序列模式不同，故发送出去数据时，统一转换为大端发送，接收端可统一按照大端解析。网络字节序统一为大端序。&lt;/p&gt;
-
-&lt;p&gt;常见的网络字节转换函数有：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;htons()  #host to network short，将short类型数据从主机字节序转换为网络字节序。
-
-ntohs()  #network to host short，将short类型数据从网络字节序转换为主机字节序。
-
-htonl()  #host to network long，将long类型数据从主机字节序转换为网络字节序。
-
-ntohl()  #network to host long，将long类型数据从网络字节序转换为主机字节序。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;ref:
-&lt;a href=&quot;ttps://www.cnblogs.com/cyx-b/p/12454495.html&quot;&gt;大小端&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Tue, 29 Mar 2022 20:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2022/03/socket_little_endian_big_endian/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/03/socket_little_endian_big_endian/</guid>
-        
-        <category>socket</category>
-        
-        
-        <category>socket</category>
-        
-      </item>
-    
-      <item>
-        <title>transfer from unicode to utf-8 encoding</title>
-        <description>&lt;p&gt;Chinese character:      汉&lt;/p&gt;
-
-&lt;p&gt;its Unicode value:        U+6C49&lt;/p&gt;
-
-&lt;p&gt;convert 6C49 to binary:   01101100 01001001
-                           1101100 01001001&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;汉&quot;&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# hex to binary, unicode value&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;unicode_escape&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;112&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\\&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;u6c49'&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;#hex decimal&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'6c49'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;121&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;27721&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;bin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;27721&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'0b110110001001001'&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#value of 6c49&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# utf-8 value&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;utf-8&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;113&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\xe6\xb1\x89&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;bin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'e6b189'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;129&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'0b111001101011000110001001'&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;format of UTF-8 byte sequences table:&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;1st Byte&lt;/th&gt;
-      &lt;th&gt;2nd Byte&lt;/th&gt;
-      &lt;th&gt;3rd Byte&lt;/th&gt;
-      &lt;th&gt;4th Byte&lt;/th&gt;
-      &lt;th&gt;Number of Free Bits&lt;/th&gt;
-      &lt;th&gt;Maximum Expressible Unicode Value&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;0xxxxxxx&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;007F hex (127)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;110xxxxx&lt;/td&gt;
-      &lt;td&gt;10xxxxxx&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt;(5+6)=11&lt;/td&gt;
-      &lt;td&gt;07FF hex (2047)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;1110xxxx&lt;/td&gt;
-      &lt;td&gt;10xxxxxx&lt;/td&gt;
-      &lt;td&gt;10xxxxxx&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt;(4+6+6)=16&lt;/td&gt;
-      &lt;td&gt;FFFF hex (65535)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;11110xxx&lt;/td&gt;
-      &lt;td&gt;10xxxxxx&lt;/td&gt;
-      &lt;td&gt;10xxxxxx&lt;/td&gt;
-      &lt;td&gt;10xxxxxx&lt;/td&gt;
-      &lt;td&gt;(3+6+6+6)=21&lt;/td&gt;
-      &lt;td&gt;10FFFF hex (1,114,111)&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;our Chinese character unicode is “6c49”, 07FF&amp;lt;6c49&amp;lt;FFFF, so we should use third format to convert.&lt;/p&gt;
-
-&lt;p&gt;template:       1110xxxx    10xxxxxx    10xxxxxx
-value of 6c49   01101100    01001001
-result:         11100110    10110001    10001001&lt;/p&gt;
-
-&lt;h1 id=&quot;ref&quot;&gt;ref&lt;/h1&gt;
-&lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/643694/what-is-the-difference-between-utf-8-and-unicode&quot;&gt;difference between utf-8 and unicode&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.fileformat.info/info/unicode/utf8.htm&quot;&gt;utf-8&lt;/a&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Mon, 10 Jan 2022 20:01:11 +0800</pubDate>
-        <link>http://localhost:4000/2022/01/unicode_to_utf-8/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022/01/unicode_to_utf-8/</guid>
-        
-        <category>encoding</category>
-        
-        
-        <category>encoding</category>
-        
-      </item>
-    
-      <item>
-        <title>libimobiledevice guide to control iphone</title>
-        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/libimobiledevice/libimobiledevice&quot;&gt;libimobiledevice github doc&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;step1-install-libimobiledevice&quot;&gt;step1 install libimobiledevice&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    brew update
-    brew uninstall --ignore-dependencies libimobiledevice
-    brew uninstall --ignore-dependencies usbmuxd
-    brew install --HEAD usbmuxd
-    brew unlink usbmuxd
-    brew link usbmuxd
-    brew install --HEAD libimobiledevice
-    git clone https://github.com/JonGabilondoAngulo/idevicelocation.git
-    cd idevicelocation
-    ./autogen.sh
-    make
-    sudo make install
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;step2-commands-test&quot;&gt;step2 commands test&lt;/h2&gt;
-&lt;p&gt;connect iphone to mac with usb, use commands from libimobiledevice api.&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ideviceinfo -k ProductVersion
-12.2.3
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;2) copy dmg from xcode(DeveloperDiskImage.dmg          and DeveloperDiskImage.dmg.signature) to your folder(e.g. ~/Documents/xxx/ios/).
-folder path: &lt;code class=&quot;highlighter-rouge&quot;&gt;Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSup‌​port/7.1/&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;3) ideviceimagemounter ~/Documents/xxx/ios/DeveloperDiskImage.dmg&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ ideviceimagemounter ~/Documents/xxx/ios/DeveloperDiskImage.dmg
-Uploading /Users/zhaoting/Documents/xxx/ios/DeveloperDiskImage.dmg
-done.
-Mounting...
-Done.
-Status: Complete
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;4) get app installed: &lt;code class=&quot;highlighter-rouge&quot;&gt;ideviceinstaller -l&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ ideviceinstaller -l
-CFBundleIdentifier, CFBundleVersion, CFBundleDisplayName
-com.skyjos.ftpmanagerfree, &quot;6201&quot;, &quot;FTPManager&quot;
-com.xxx.ultracaller, &quot;13&quot;, &quot;ultracaller&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;5) run app&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ idevicedebug run com.xx.xxx
-ERROR: Unspecified
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;6) observing notifications&lt;/p&gt;
-
-&lt;p&gt;https://github.com/libimobiledevice/libimobiledevice/issues/464&lt;/p&gt;
-
-&lt;p&gt;notification list:http://iphonedevwiki.net/index.php/SpringBoard.app/Notifications&lt;/p&gt;
-
-&lt;p&gt;command: &lt;code class=&quot;highlighter-rouge&quot;&gt;idevicenotificationproxy observe &quot;com.apple.springboard.lockcomplete&quot;&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) zhaoting@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ idevicenotificationproxy observe &quot;com.apple.springboard.lockcomplete&quot;
-! observing &quot;com.apple.springboard.lockcomplete&quot;
-&amp;gt; com.apple.springboard.lockcomplete
-&amp;gt; com.apple.springboard.lockcomplete
-^CExiting...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;7) restart iphone&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;idevicediagnostics restart
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;8）airplane mode&lt;/p&gt;
-
-&lt;p&gt;seems can not set airplane with libmobiledevice command, but we can set it by ios automation test framework like appium. pls ref &lt;a href=&quot;/2021/09/appium_mac_config_guide/&quot;&gt;appium mac config guide&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Wed, 22 Sep 2021 20:01:11 +0800</pubDate>
-        <link>http://localhost:4000/2021/09/guide_libimobiledevice/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/09/guide_libimobiledevice/</guid>
-        
-        <category>appium</category>
-        
-        
-        <category>appium</category>
-        
-      </item>
-    
-      <item>
-        <title>Appium mac config guide</title>
-        <description>&lt;p&gt;&lt;a href=&quot;http://appium.io/docs/en/about-appium/getting-started/&quot;&gt;appium mac config guide&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;1-install-appium&quot;&gt;1. install appium&lt;/h2&gt;
-&lt;p&gt;Appium can be installed in one of two ways: via NPM or by downloading Appium Desktop, which is a graphical, desktop-based way to launch the Appium server.&lt;/p&gt;
-
-&lt;p&gt;here we use the npm to install appium. firstly confirm node installed.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install node      
-node -v  
-npm -v  
-npm install -g appium@1.18   #recommend 1.18, tested ok.  
-appium -v 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;then use appium-doctor to check if any dependencies install needed&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(base) xxxx@M-C02Q90LGFVH6:~/Documents/xxxxx/ios/code/appium/node_modules/appium-webdriveragent$ appium-doctor --ios  
-info AppiumDoctor Appium Doctor v.1.15.4  
-info AppiumDoctor ### Diagnostic for necessary dependencies starting ###  
-info AppiumDoctor  ✔ The Node.js binary was found at: /Users/xxxx/.nvm/versions/node/v14.5.0/bin/node  
-info AppiumDoctor  ✔ Node version is 14.5.0  
-info AppiumDoctor  ✔ Xcode is installed at: /Applications/Xcode.app/Contents/Developer  
-info AppiumDoctor  ✔ Xcode Command Line Tools are installed in: /Applications/Xcode.app/Contents/Developer  
-info AppiumDoctor  ✔ DevToolsSecurity is enabled.  
-info AppiumDoctor  ✔ The Authorization DB is set up properly.  
-info AppiumDoctor  ✔ Carthage was found at: /usr/local/bin/carthage. Installed version is: 0.36.0  
-info AppiumDoctor  ✔ HOME is set to: /Users/xxxx  
-info AppiumDoctor ### Diagnostic for necessary dependencies completed, no fix needed. ###  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;2-install--xcuitest-driver-on-ios-real-device&quot;&gt;2. install  XCUITest Driver on ios real device&lt;/h2&gt;
-
-&lt;h3 id=&quot;21-install-external-dependencies&quot;&gt;2.1 install external dependencies&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install carthage  
-gem install xcpretty   # For real devices we can use xcpretty to make Xcode output more reasonable.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;22-add-devices-on-appledevelopercom&quot;&gt;2.2 add devices on apple.developer.com&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/account/resources/devices/list&quot;&gt;apple developer device list management link&lt;/a&gt;
-  &lt;img src=&quot;/images/appium/apple_devices.PNG&quot; alt=&quot;apple developer devices&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;221-find-appium-path&quot;&gt;2.2.1 find appium path&lt;/h4&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-$ which appium  
-/Users/xxxx/.nvm/versions/node/v14.5.0/bin/appium  
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h4 id=&quot;222-find-webdriveragent-project-under-appium&quot;&gt;2.2.2 find WebDriverAgent project under appium&lt;/h4&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cd /Users/xxxx/.nvm/versions/node/v14.5.0/bin/appium/node_modules/appium-webdriveragent  
-./Scripts/bootstrap.sh  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h4 id=&quot;223-open-webdriveragentxcodeproj-in-xcode&quot;&gt;2.2.3 open WebDriverAgent.xcodeproj in Xcode&lt;/h4&gt;
-&lt;p&gt;Before open project, login Xcode with your account(should be a developer account) and find your teamID later needed. (apple developer link: https://developer.apple.com/account/resources/identifiers )&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/appium/teamId.png&quot; alt=&quot;apple developer devices&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;And then add device to your resources list on the &lt;a href=&quot;https://developer.apple.com/account/resources/devices/list&quot;&gt;apple developer devices list&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;open WebDriverAgent.xcodeproj under &lt;code class=&quot;highlighter-rouge&quot;&gt;/Users/xxxx/.nvm/versions/node/v14.5.0/bin/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;For both the WebDriverAgentLib and WebDriverAgentRunner targets, select “signing” in “Build Settings”, and then select your Development Team. The outcome should look as shown below:
-&lt;img src=&quot;/images/appium/signing.png&quot; alt=&quot;teamid&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If you add new device for test, you should delete provisioning file now used under &lt;code class=&quot;highlighter-rouge&quot;&gt;~/Library/MobileDevice/Provisioning Profiles.&lt;/code&gt;, then restart Xcode, it will automatically download provisioning files.
-&lt;img src=&quot;/images/appium/provisioning.png&quot; alt=&quot;provisioning files&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;3test-with-appium&quot;&gt;3.Test with appium&lt;/h2&gt;
-&lt;p&gt;Prepare a iPhone and connect it with Mac through usb(please select “trust” if question “trust this computer or not?” poped up), then get basic info like “uuid” of iphone after libimobiledevice installed(you can also get udid from Xcode).
-  3.1-3.3 steps is not required, you can also get udid from Devices under Xcode.&lt;/p&gt;
-
-&lt;h3 id=&quot;31-install-libimobiledevice&quot;&gt;3.1 install libimobiledevice&lt;/h3&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Please see the guide and install lib libimobiledevice on mac. [libmobiledevice guide](todo) ### 3.2 get uuid with “idevice_id” provided by libimobiledevice ``` (base) xxxx@M-C02Q90LGFVH6:~/Documents/xxxxx/ios/code/appium/node_modules/appium-webdriveragent$ idevice_id   f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae (USB)   ``` ### 3.3 get app list installed on iphone with command “ideviceinstaller -l” ``` (base) xxxx@M-C02Q90LGFVH6:~/Documents/xxxxx/ios/code/appium/node_modules/appium-webdriveragent$ ideviceinstaller -l CFBundleIdentifier, CFBundleVersion, CFBundleDisplayName com.skyjos.ftpmanagerfree, &quot;6201&quot;, &quot;FTPManager&quot; com.xxxxx.ultracaller, &quot;13&quot;, &quot;ultracaller&quot;   com.foundry63.tailor, &quot;2.321246456&quot;, &quot;Tailor&quot;   pinterest, &quot;8&quot;, &quot;Pinterest&quot;   com.zhiliaoapp.musically, &quot;178023&quot;, &quot;TikTok&quot;   com.sogou.hotspot, &quot;711&quot;, &quot;今日十大热点&quot;   com.teapotapps.iperf, &quot;11&quot;, &quot;iPerf&quot;   com.facebook.WebDriverAgentRunner.xctrunner, &quot;1&quot;, &quot;WebDriverAgentRunner-Runner&quot;   ```    save the identifier of our target tested app like “iperf”: “com.teapotapps.iperf”   ### 3.4 start appium server 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Start appium server with command “appium” or  “appium –uuid uuid_number_of_iphone”.
-with –udid means you set the device you want to test, and if you do not set it, you can set in your test code like this:
-    ```  &lt;br /&gt;
-    from appium import webdriver&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;IOS_BASE_CAPBILITIES = {
-    # 'app': 'settings',
-    'app': 'com.teapotapps.iperf',
-    'automationName': 'xcuitest',
-    'platformName': 'iOS',
-    'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '12.3',
-    'deviceName': 'bigiphone',
-    'udid': 'f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae',
-    'showIOSLog': True,
-}
-
-EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
-
-driver = webdriver.Remote(
-    command_executor=EXECUTOR,
-    desired_capabilities=IOS_BASE_CAPBILITIES
-)
-```
-
-
-```
-(base) xxxx@M-C02Q90LGFVH6:~/test/ideviceactivate/libideviceactivation$ appium --udid f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae
-[Appium] Welcome to Appium v1.18.3
-[Appium] Non-default server args:
-[Appium]   udid: f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae
-[Appium] Deprecated server args:
-[Appium]   -U,--udid =&amp;gt; --default-capabilities '{&quot;udid&quot;:&quot;f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae&quot;}'
-[Appium] Default capabilities, which will be added to each request unless overridden by desired capabilities:
-[Appium]   udid: f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae
-[Appium] Appium REST http interface listener started on 0.0.0.0:4723
-```   ### 3.5 run your test code 
-```
-import time
-import copy
-import os
-from appium import webdriver
-
-
-EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
-
-#capabilities ref:http://appium.io/docs/en/writing-running-appium/caps/
-IOS_BASE_CAPBILITIES = {
-    # 'app': 'settings',
-    'app': 'com.teapotapps.iperf',
-    'automationName': 'xcuitest',
-    'platformName': 'iOS',
-    'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '12.3',
-    'deviceName': 'bigiphone',
-    'udid': 'f0fbae521xxxxxxxxxxxxxxxxxxx74d0ba11b6ae', #test iphone
-    'showIOSLog': True,
-}
-
-
-def config_settings(driver):
-    wifi_ele = driver.find_element_by_name('Wi-Fi')
-    print(wifi_ele)
-    print(wifi_ele.text)
-    # wifi_ele.click()
-
-    ele = driver.find_element_by_name('Airplane Mode')
-    print(ele)
-    print(ele.text)
-    ele.click()
-
-    time.sleep(5)
-    ele.click()
-    print('click finished')
-
-
-def get_window_size(driver):
-    size = driver.get_window_size()
-    print('*********size:')
-    print(size)
-
-
-def config_iperf(driver):
-    ele = driver.find_element_by_name('Server port')
-    print(ele)
-
-    print(driver.page_source)
-
-    eles = driver.find_elements_by_xpath('//XCUIElementTypeTextField')
-    for ele in eles:
-        print(ele.get_attribute('value'))
-        ele.clear()
-        ele.set_value('222')
-
-    start_btn = driver.find_element_by_name('Start')
-    start_btn.click()
-
-
-if __name__ == &quot;__main__&quot;:
-    caps = copy.copy(IOS_BASE_CAPBILITIES)
-    print(caps['app'])
-
-    driver = webdriver.Remote(
-        command_executor=EXECUTOR,
-        desired_capabilities=caps
-    )
-
-    config_iperf(driver)
-```
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;problems&quot;&gt;Problems&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;use another new iphone but errors occurred&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Problems: can not pair device.&lt;/p&gt;
-
-&lt;p&gt;Solution: reconnect to usb and choose “Trust” if question “Trust this computer or not?” poped up.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    [Appium] Appium v1.18.3 creating new XCUITestDriver (v3.29.0) session
-    [debug] [BaseDriver] W3C capabilities and MJSONWP desired capabilities were provided
-    [debug] [BaseDriver] Creating session with W3C capabilities: {
-    [debug] [BaseDriver]   &quot;alwaysMatch&quot;: {
-    [debug] [BaseDriver]     &quot;platformName&quot;: &quot;iOS&quot;,  
-    [debug] [BaseDriver]     &quot;appium:showIOSLog&quot;: true,
-    [debug] [BaseDriver]     &quot;appium:app&quot;: &quot;settings&quot;,  
-    [debug] [BaseDriver]     &quot;appium:automationName&quot;: &quot;xcuitest&quot;,  
-    [debug] [BaseDriver]     &quot;appium:udid&quot;: &quot;bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca&quot;,  
-    [debug] [BaseDriver]     &quot;appium:deviceName&quot;: &quot;iPhone&quot;,  
-    [debug] [BaseDriver]     &quot;appium:platformVersion&quot;: &quot;12.3&quot;  
-    [debug] [BaseDriver]   },  
-    [debug] [BaseDriver]   &quot;firstMatch&quot;: [  
-    [debug] [BaseDriver]     {}  
-    [debug] [BaseDriver]   ]  
-    [debug] [BaseDriver] }  
-    [BaseDriver] Session created with session id: f5023dac-8ab4-487f-8090-ae1ab06a002e  
-    [debug] [XCUITest] Current user: 'xxxx'  
-    [debug] [XCUITest] Available devices: bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca  
-    [debug] [XCUITest] Creating iDevice object with udid 'bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca'  
-    [XCUITest] Determining device to run tests on: udid: 'bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca', real device: true  
-    [debug] [BaseDriver] Event 'xcodeDetailsRetrieved' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))  
-    [debug] [BaseDriver] Event 'appConfigured' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))  
-    [debug] [BaseDriver] Event 'resetStarted' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))  
-    [debug] [XCUITest] Reset: running ios real device reset flow  
-    [debug] [BaseDriver] Event 'resetComplete' logged at 1604995579820 (16:06:19 GMT+0800 (China Standard Time))
-    [WebDriverAgent] Using WDA path: '/Users/xxxx/.nvm/versions/node/v14.5.0/lib/node_modules/appium/node_modules/appium-webdriveragent'  
-    [WebDriverAgent] Using WDA agent: '/Users/xxxx/.nvm/versions/node/v14.5.0/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj'  
-    [XCUITest] Continuing without capturing device logs: Could not find a pair record for device 'bac123dcxxxxxxxxxxx91ab4exxxxxf60b136e7bca'. Please first pair with the device  
-    [XCUITest] Setting up real device  
-    [XCUITest] {}  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;/usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj Building for iOS, but the linked and embedded framework ‘YYCache.framework’ was built for iOS + iOS Simulator.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;ref https://github.com/appium/appium/issues/13996 , please try:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;```
-npm uninstall -g appium
-npm install -g appium@beta
-```
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-</description>
-        <pubDate>Mon, 20 Sep 2021 19:40:41 +0800</pubDate>
-        <link>http://localhost:4000/2021/09/appium_mac_config_guide/</link>
-        <guid isPermaLink="true">http://localhost:4000/2021/09/appium_mac_config_guide/</guid>
-        
-        <category>appium</category>
-        
-        
-        <category>appium</category>
         
       </item>
     

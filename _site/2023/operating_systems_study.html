@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Operating System study</title>
+  <meta name="description" content="《Computer Systems: A Programmer’s Perspective》 reading records">
+  <meta name="author" content="leopardpan">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Operating System study">
+  <meta name="twitter:description" content="《Computer Systems: A Programmer’s Perspective》 reading records">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Operating System study">
+  <meta property="og:description" content="《Computer Systems: A Programmer’s Perspective》 reading records">
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="http://localhost:8080/2023/operating_systems_study.html">
+  <link rel="alternate" type="application/rss+xml" title="keep moving" href="http://localhost:8080/feed.xml">
+
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+<!-- 站点统计 -->
+  <script
+  async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+
+<!-- 百度统计 -->
+  
+  <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?625129f6a6c1cc07fc945a8fb5dbc0b4";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+  </script>
+  
+
+<!-- google 统计 -->
+  
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2487558142971429"
+          crossorigin="anonymous"></script>
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/archive" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      标签
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+      </div>
+    </span>
+
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">            
+            <a href="/#blog" title="前往 keep moving 的主页" class="blog-button">
+                <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+                <div class="info">
+                    <div class="info-back">
+                        <h2> 
+                            
+                                claudia
+                            
+                        </h2>
+                        <p>
+                           
+                                frontend / python
+                            
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for keep moving" class="blog-button">keep moving</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">small world</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                  <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                  <li class="navigation__item"><a href="/tags" title="tags">标签</a></li>
+                
+                  <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>          
+        </div>
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-clear"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">Operating System study</h1>
+    <div class="post-meta">
+      <img src="/images/calendar.png" width="20px"/> 
+      <time datetime="2023-10-27 22:00:41 +0800" itemprop="datePublished" class="post-meta__date date">2023-10-27</time>  
+         
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+    <p>《Computer Systems: A Programmer’s Perspective》 reading records</p>
+
+<h3 id="17-operating-systems-2-primary-purposes">1.7 operating systems 2 primary purposes</h3>
+
+<p>1）protect the hardware form misuse by applications</p>
+
+<p>2）provide applications with simple and uniform mechanisms for manipulating hardware devices</p>
+
+<h3 id="171-processes">1.7.1 Processes</h3>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027150242608.png" alt="image-20231027150242608" /></p>
+
+<h3 id="172-threads">1.7.2 Threads</h3>
+
+<p>process can be consist of multiple threads.</p>
+
+<p>it’s easier to share data between multiple threads than between multiple processes.</p>
+
+<h3 id="173-virtual-memory">1.7.3 Virtual Memory</h3>
+
+<p>Each process has same uniform view of memory, which known as its virtual address space.</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027150751863.png" alt="image-20231027150751863" style="zoom: 50%;" /></p>
+
+<p>Program code and data： code start from same fixed address for all processes.</p>
+
+<p>Heap: not fixed size. dynamically at run time as a result of calls to c lib such as  malloc and free.</p>
+
+<h3 id="174-files">1.7.4 Files</h3>
+
+<p>All I/O devices are modeled as files.</p>
+
+<h3 id="19-concurrency-and-parrallelism">1.9 Concurrency and parrallelism</h3>
+
+<h3 id="23-twos-complement-encodings">2.3 Two’s-complement Encodings</h3>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027101213270.png" alt="image-20231027101213270" style="zoom: 50%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027111140688.png" alt="image-20231027111140688" style="zoom:50%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027111637345.png" alt="image-20231027111637345" style="zoom:50%;" /></p>
+
+<p>mystore.c</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027153418370.png" alt="image-20231027153418370" style="zoom:50%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027153653877.png" alt="image-20231027153653877" style="zoom:50%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027153733554.png" alt="image-20231027153733554" style="zoom: 50%;" /></p>
+
+<p>.o file and binary file:</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027154004951.png" alt="image-20231027154004951" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027154019564.png" alt="image-20231027154019564" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027153151171.png" alt="image-20231027153151171" style="zoom: 67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027153849027.png" alt="image-20231027153849027" style="zoom: 67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027104441738.png" alt="image-20231027104441738" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027104533733.png" alt="image-20231027104533733" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027104602555.png" alt="image-20231027104602555" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027140935835.png" alt="image-20231027140935835" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027141609636.png" alt="image-20231027141609636" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027142005775.png" alt="image-20231027142005775" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027150751437.png" alt="image-20231027150751437" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027161318575.png" alt="image-20231027161318575" style="zoom:67%;" /></p>
+
+<h2 id="7-linking">7 Linking</h2>
+
+<h3 id="71-compiler-drivers">7.1 Compiler Drivers</h3>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027145731936.png" alt="image-20231027145731936" style="zoom:67%;" /></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>linux&gt; gcc <span class="nt">-Og</span> <span class="nt">-o</span> prog main.c sum.c
+</code></pre></div></div>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027145701129.png" alt="image-20231027145701129" style="zoom:80%;" /></p>
+
+<p>compile steps:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cpp <span class="o">[</span>other arguments] main.c /tmp/main.i  <span class="c"># replace include with file content</span>
+cc1 /tmp/main.i <span class="nt">-Og</span> <span class="o">[</span>other arguments] <span class="nt">-o</span> /tmp/main.s <span class="c">#translate it into an ASCII assembly-language file</span>
+as <span class="o">[</span>other arguments] <span class="nt">-o</span> /tmp/main.o /tmp/main.s <span class="c">#assembler translate main.s to main.o</span>
+ld <span class="nt">-o</span> prog <span class="o">[</span>system object files and args] /tmp/main.o /tmp/sum.o <span class="c">#combine main.o and sum.o, along with system the necessary system object files, to create bin exe object file</span>
+linux&gt; ./prog
+</code></pre></div></div>
+
+<h3 id="72-static-linking">7.2 static linking</h3>
+
+<p>take as input a collection of relocatable object files and command-line arguments and generate as a output a fully linked executable object file that can be loaded and run.</p>
+
+<p>linker build executable with 2 steps:</p>
+
+<ol>
+  <li><strong>Symbol resolution</strong>: associate each symbol reference with exactly one symbol definition</li>
+  <li><strong>Relocation</strong>: linker relocates sections(code, data) by associating memory location with each symbol definition, and then modifying all of the references to those symbols so that they point to this memory location.</li>
+</ol>
+
+<h3 id="73-relocatable-object-files">7.3 Relocatable Object files</h3>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027152416834.png" alt="image-20231027152416834" style="zoom:80%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027152532805.png" alt="image-20231027152532805" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027152553562.png" alt="image-20231027152553562" style="zoom:67%;" /></p>
+
+<h3 id="75-symbols-and-symbol-tables">7.5 Symbols and symbol tables</h3>
+
+<h2 id="9-virtual-memory">9 Virtual memory</h2>
+
+<h3 id="91-physical-and-virtual-address">9.1 Physical and Virtual Address</h3>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027164047574.png" alt="image-20231027164047574" style="zoom:67%;" /></p>
+
+<p>Virtual address–&gt; dedicated hardware on CPU chip called MMU(memory management unit)—&gt;Physical address</p>
+
+<h3 id="93-vm-as-a-tool-for-caching">9.3 VM as a Tool for Caching</h3>
+
+<h4 id="934-page-faults">9.3.4 Page Faults</h4>
+
+<p>swapping/paging: transfer a page between disk and Dram</p>
+
+<p>swapped in: pages are swapped in from disk to DRAM</p>
+
+<p>swapping out: pases are swapped out from DRAM to disk</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027094014806.png" alt="image-20231027094014806" style="zoom:67%;" /></p>
+
+<h4 id="935-allocating-pages">9.3.5 Allocating pages</h4>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027094710388.png" alt="image-20231027094710388" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027094802509.png" alt="image-20231027094802509" style="zoom:67%;" /></p>
+
+<h4 id="936-address-translating">9.3.6 Address Translating</h4>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027095817348.png" alt="image-20231027095817348" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027100551934.png" alt="image-20231027100551934" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027100745368.png" alt="image-20231027100745368" style="zoom:67%;" /></p>
+
+<h3 id="95-vm-as-a-tool-for-memory-protection">9.5 VM as a Tool for Memory Protection</h3>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027101047108.png" alt="image-20231027101047108" style="zoom:67%;" /></p>
+
+<h3 id="98-memory-mapping">9.8 Memory mapping</h3>
+
+<p>Virtual memory areas can be mapped to one of <strong>two types of objects:</strong></p>
+
+<ul>
+  <li>Regular file in the Linux file system</li>
+</ul>
+
+<p>such as executable object file. The file section is divided into page-size pieces, with each piece containing the initial contents of a virtual page.</p>
+
+<ul>
+  <li>Anonymous file</li>
+</ul>
+
+<p>created by kernel, that contains all binary zeros.</p>
+
+<p>the first time the CPU touches a virtual page in such an area, the kernel finds an appropriate victim page in physical memory, swaps out the victim page if it is dirty, overwrites the page with binary zeros, and update page table to mark the page as resident.</p>
+
+<p><strong>swap space</strong>(maintained by the kernel) bounds the total amount of virtual pages that can be allocated by the currently running processes.</p>
+
+<h4 id="981-shared-objects-revisited">9.8.1 shared objects revisited</h4>
+
+<p>An object can be mapped into an area of virtual memory as either a <strong>shared object</strong> or a <strong>private object</strong>.</p>
+
+<p><strong>shared object</strong>: any process make change to the object, other process will see the change.</p>
+
+<p><strong>private object</strong>: any process make change to the object, other process can not see the change.</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027110555019.png" alt="image-20231027110555019" style="zoom:67%;" /></p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027110615193.png" alt="image-20231027110615193" style="zoom:67%;" /></p>
+
+<p>copy-on-write: different process share a same object with read only permission. When one process want to write on this object, then copy a new one and write to new object.</p>
+
+<h4 id="982-the-fork-function-revisited">9.8.2 The fork Function revisited</h4>
+
+<p>current process–&gt;fork: create copies of current porcess’s <strong>mm_struct, area structs, and page tables.</strong></p>
+
+<h4 id="983-the-execve-function-revisited">9.8.3 The execve Function revisited</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>execve("a.out", NULL, NULL);
+</code></pre></div></div>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027112606841.png" alt="image-20231027112606841" style="zoom:67%;" /></p>
+
+<ol>
+  <li>
+    <p>delete existing user areas</p>
+  </li>
+  <li>
+    <p>map private areas</p>
+  </li>
+  <li>
+    <p>map shared areas</p>
+  </li>
+  <li>
+    <p>set the program counter(PC)</p>
+  </li>
+</ol>
+
+<h4 id="984-user-level-memory-mapping-with-the-mmap-function">9.8.4 User-level memory mapping with the mmap function</h4>
+
+<p>Linux process can use mmap to map an object into a new area of virtual memory</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027142418698.png" alt="image-20231027142418698" style="zoom:67%;" /></p>
+
+<p>start: start address is merely a hint. and is usually specified as NULL.</p>
+
+<p>port: permission of mapped virtual memory area.</p>
+
+<ul>
+  <li>PROT_EXEC: pages in the area consist of instructions that may be executed by the CPU</li>
+  <li>PROT_READ: Pages in the area may be read.</li>
+  <li>PROT_WRITE: Pages in the area may be written.</li>
+  <li>PROT_NONE: Pages in the area cannnot be accessed.</li>
+</ul>
+
+<p>flags: the type of mapped object.</p>
+
+<ul>
+  <li>MAP_ANON: anonymous object, virtual pages are demand-zero.</li>
+  <li>MAP_PRIVATE: private copy-on-write object</li>
+  <li>MAP_SHARED: shared object</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bufp = Mmap(NULL, size, PROT_READ, MAP_PRIVATE|MAP_ANON, 0, 0);
+</code></pre></div></div>
+
+<p>delete the area: munmap delete the area starting at virtual address start with length bytes.</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027143430622.png" alt="image-20231027143430622" style="zoom:67%;" /></p>
+
+<h3 id="99-dynamic-memroy-allocation">9.9 Dynamic memroy allocation</h3>
+
+<p>A dynamic memory allocator maintains an area of process’s virtual memory known as heap.</p>
+
+<p><strong>heap:</strong> an area of demand-zero memory that begins immediately after the uninitialized data and grows upward(toward higher addresses.)</p>
+
+<p>for each process, the kernel maintains a variable <strong>brk</strong> that points to the top of the heap.</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027150521036.png" alt="image-20231027150521036" style="zoom:67%;" /></p>
+
+<p>Allocators come in two basic styles:</p>
+
+<p>Explicit allocators:  malloc and free. new and delete(c++)</p>
+
+<p>Implicit allocators:  garbage collectors.</p>
+
+<h4 id="991-the-malloc-and-free-functions">9.9.1 The malloc and free Functions</h4>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027151222990.png" alt="image-20231027151222990" style="zoom:67%;" /></p>
+
+<p><strong>malloc:</strong> return <strong>at least size bytes</strong> that is suitably aligned for any kind of data object that might be contained in the block.</p>
+
+<p><strong>malloc:</strong> does not initialize the memory it returns.</p>
+
+<p><strong>calloc</strong>: a thin wrapper around the malloc function that <strong>initializes the allocated memory to zero</strong>.</p>
+
+<p><strong>realloc:</strong> change size of previously allocated block</p>
+
+<p><strong>sbrk:</strong> grows or shrinks the heap by adding incr to the kernel’s brk pointer.</p>
+
+<p><img src="../images/2023-10-27-operating_systems_study.assets/image-20231027151921552.png" alt="image-20231027151921552" style="zoom: 67%;" /></p>
+
+<h4 id="992-why-dynamic-memory-allocation">9.9.2 why dynamic memory allocation?</h4>
+
+<h4 id="994-fragmentation">9.9.4 Fragmentation</h4>
+
+<h3 id="912-summary">9.12 Summary</h3>
+
+<p>Virtual memory, 3 important capabilities:</p>
+
+<p>1) <strong>caches</strong> recently used contents of the virtual address space stored on disk in main memory</p>
+
+<p><strong>page fault:</strong>  a reference to a page on disk triggers a page fault that transfers control to a fault handler in the operating system.</p>
+
+<ol>
+  <li>
+    <p><strong>simplifies memory management</strong>, which in turn simplifies linking, sharing data between processes, the allocation of memory for processes, and program loading.</p>
+  </li>
+  <li>
+    <p><strong>simplifies memory protection</strong> by incorporating protection bits into every page table entry.</p>
+  </li>
+</ol>
+
+<p><strong>mmap</strong>: create and delete areas of virtual memory.</p>
+
+<p><strong>malloc</strong>: manages memory in an area of the virutal address space called the <strong>heap</strong></p>
+
+<p>dynamic memory allocators are application-level programs with a system-level feel, directly manipulating memory without much help from the type system.</p>
+
+<p><strong>Allocators</strong> come in two flavors: <strong>Explicit allocators/ Implicit allocators</strong></p>
+
+
+
+  </section>
+</article>
+
+<section>
+
+            <div class="content-play">
+              <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏一个呗</a></p>
+              <div class="hide_box-play"></div>
+              <div class="shang_box-play">
+                <a class="shang_close-play" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/images/payimg/close.jpg" alt="取消" /></a>
+                <div class="shang_tit-play">
+                  <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="/images/payimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+              <div class="shang_payimg">    
+                    <img src="/images/payimg/weipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                  <div class="pay_item checked" data-id="alipay">
+                    <span class="pay_logo"><img src="/images/payimg/alipay.jpg" alt="支付宝" /></span>
+                  </div>
+                  <div class="pay_item" data-id="weipay">
+                    <span class="pay_logo"><img src="/images/payimg/wechat.jpg" alt="微信" /></span>
+                  </div>
+                </div>
+                <div class="shang_info-play">
+                  <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript">
+            function dashangToggle(){
+              $(".hide_box-play").fadeToggle();
+              $(".shang_box-play").fadeToggle();
+            }
+            </script>
+
+            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';"></div>
+
+            <style type="text/css">
+              .content-play{width:80%;margin-top: 20px;margin-bottom: 10px;height:40px;}
+              .hide_box-play{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+              .shang_box-play{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+              .shang_box-play img{border:none;border-width:0;}
+              .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+              .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+              .shang_close-play{float:right;display:inline-block;
+                margin-right: 10px;margin-top: 20px;
+              }
+              .shang_logo{display:block;text-align:center;margin:20px auto;}
+              .shang_tit-play{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/images/payimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+              .shang_tit-play p{color:#a3a3a3;text-align:center;font-size:16px;}
+              .shang_payimg{width:140px;padding:10px;padding-left: 80px; /*border:6px solid #EA5F00;**/margin:0 auto;border-radius:3px;height:140px;display:inline-block;}
+              .shang_payimg img{display:inline-block;margin-right:10px;float:left;text-align:center;width:140px;height:140px; }
+              .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+              .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:500px;margin-left:110px;}
+              .shang_payselect .pay_item{display:inline-block;margin-right:140px;float:left;}
+              .shang_info-play{clear:both;}
+              .shang_info-play p,.shang_info-play a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+            </style>
+
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2023/self_cultivation_of_programmers.html" data-toggle="tooltip" data-placement="top" title="《程序员的自我修养》读书笔记">上一篇：  <span>《程序员的自我修养》读书笔记</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2023/build-source-code-of-cpython-record.html" data-toggle="tooltip" data-placement="top" title="build source code of cpython record">下一篇：  <span>build source code of cpython record</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="post-comments">
+
+  
+
+</section>
+
+
+            <section class="footer">
+    <footer>
+        <div class = "footer_div">  
+        <nav class="cover-navigation navigation--social">
+          <ul class="navigation">
+
+          
+
+          
+          
+          
+
+          
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+
+          </ul>
+        </nav>
+
+        </div>
+
+        <div class = "footer_div">  
+           <p class="copyright text-muted">
+            Copyright &copy; keep moving 2025 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            <iframe
+                style="margin-left: 2px; margin-bottom:-5px;"
+                frameborder="0" scrolling="0" width="91px" height="20px"
+                src="https://ghbtns.com/github-btn.html?user=claudia1204&repo=claudia1204.github.io&type=star&count=true" >
+            </iframe>
+            </p>
+        	<div align="right">
+    			<link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+          <!-- 访问统计 -->
+          <span id="busuanzi_container_site_pv">
+            本站总访问量
+            <span id="busuanzi_value_site_pv"></span>次
+          </span>
+
+        </div>
+        <div>
+    </footer>
+</section>
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+  </body>
+
+</html>

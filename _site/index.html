@@ -7,16 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <title>keep moving</title>
-  <meta name="description" content="small place">
+  <meta name="description" content="small world">
   <meta name="author" content="leopardpan">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="keep moving">
-  <meta name="twitter:description" content="small place">
+  <meta name="twitter:description" content="small world">
 
   <meta property="og:type" content="article">
   <meta property="og:title" content="keep moving">
-  <meta property="og:description" content="small place">
+  <meta property="og:description" content="small world">
 
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,8 +24,8 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/">
-  <link rel="alternate" type="application/rss+xml" title="keep moving" href="http://localhost:4000/feed.xml">
+  <link rel="canonical" href="http://localhost:8080/">
+  <link rel="alternate" type="application/rss+xml" title="keep moving" href="http://localhost:8080/feed.xml">
 
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
 
@@ -118,7 +118,7 @@
         <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for keep moving" class="blog-button">keep moving</a></h1>
         
         <hr class="panel-cover__divider" />
-        <p class="panel-cover__description">small place</p>
+        <p class="panel-cover__description">small world</p>
         <hr class="panel-cover__divider panel-cover__divider--secondary" />
         
         
@@ -160,7 +160,133 @@
   <ol class="post-list">
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/07/closure_study/" title="访问 闭包">闭包</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2025/collective_communications.html" title="访问 集合通信操作学习">集合通信操作学习</a></h2>
+      <p class="excerpt">集合通信，指的是分布式进程中，多个进程同时进行某一项操作（也叫规约）时的动作。这个规约操作可以是执行加法、减法、乘法…比如多机多gpu，执行数据的规约操作。其中每个进程有一个唯一id，rank，以0为起始。例如2个进程，则分为rank为0和11. 规约操作分类规约操作根据规约的形式分为几类：  allgather,  allreduce  reduce  reducescatter  sendrecv1.1 allgather收集所有进程的数据，每个进程都存储一份gather后的结果图片来...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2025-01-27 14:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2025-01-27</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right">collective</span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2025/collective_communications.html>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2024/c_2d_array.html" title="访问 c语言：二维数组传参">c语言：二维数组传参</a></h2>
+      <p class="excerpt">二维数组传参数时需要注意的是告诉编译器传递的是一个数组指针。有3种写法写法1：传递int (*array)[3]含有3个元素的一维数组指针地址在C语言中，虽然不能直接传递二维数组作为指针的指针（即int**类型），但可以通过传递指向数组第一维的指针和行数来实现对二维数组的操作。由于二维数组实际上是按行连续存储的一维数组，因此可以通过一维指针间接操作整个二维数组。下面是一个通过“指针的指针”方式模拟二维数组传参的示例，但实际上内部处理的是一维数组：#include &lt;stdio.h&g...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2024-01-25 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2024-01-25</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right">carray</span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2024/c_2d_array.html>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2024/linux_device_driver.html" title="访问 《Linux设备驱动程序》读书笔记">《Linux设备驱动程序》读书笔记</a></h2>
+      <p class="excerpt">1. 设备和模块分类1.1 驱动分类      字符设备：可以当做一个字节流来存取设备，一个字符驱动负责实现这种行为。驱动常常至少实现open，close，read，write系统调用。一个字符设备和普通文件区别：普通文件可以移来移去，但是大部分字符设备仅仅是数据通道，只能顺序存取。        块设备：通过/dev目录的文件系统节点来存取。        网络接口  7  Linux设备驱动中的并发控制7.1 信号量和互斥锁的区别信号量和自旋锁是两种不同的同步机制，用于保护共享资源不被...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2024-01-16 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2024-01-16</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right">driverlinux</span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2024/linux_device_driver.html>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2023/build-source-code-of-cpython-record.html" title="访问 build source code of cpython record">build source code of cpython record</a></h2>
+      <p class="excerpt">envenv: ubuntu 1804guide      git clone cpython from github        cd cpython-main and run commands:  ref(https://devguide.python.org/)  ./configure --with-pydebug &amp;&amp; make -j2.1 some errors occur, remind us some modules need to be installe...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2023-12-24 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2023-12-24</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right">cpython</span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2023/build-source-code-of-cpython-record.html>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2023/operating_systems_study.html" title="访问 Operating System study">Operating System study</a></h2>
+      <p class="excerpt">《Computer Systems: A Programmer’s Perspective》 reading records1.7 operating systems 2 primary purposes1）protect the hardware form misuse by applications2）provide applications with simple and uniform mechanisms for manipulating hardware devices1.7....&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2023-10-27 22:00:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2023-10-27</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right">operatingsystemstudy</span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2023/operating_systems_study.html>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2023/self_cultivation_of_programmers.html" title="访问 《程序员的自我修养》读书笔记">《程序员的自我修养》读书笔记</a></h2>
+      <p class="excerpt">1 背景知识进程process p：thread athread bthread ab可共享进程p的数据：  全局变量  堆数据  函数里的静态变量  程序代码，任何线程都有权利读取并执行任何代码  打开的文件，A线程打开的文件可由B线程读写thread的私有空间：  局部变量  栈  函数的参数  TLS（线程局部存储）  寄存器fork一个进程，linux采用写时复制。因此在只读的情况下fork进程特别快。fork：产生本任务的镜像，exec启动新任务。clone：产生新的线程，从指定...&hellip;</p>
+      <div class="post-list__meta">
+        <time datetime="2023-10-07 19:29:41 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" />
+          2023-10-07</time>
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" />
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right">compile</span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2023/self_cultivation_of_programmers.html>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2022/closure_study.html" title="访问 闭包">闭包</a></h2>
       <p class="excerpt">闭包概念在一个内部函数中，对外部作用域的变量进行引用，并且一般外部函数的返回值为内部函数，那么内部函数就被认为是闭包闭包的作用  可以读取函数内部的变量  让内部变量始终保持在内存中闭包demojs demo：//此处可以将闭包理解成能够读取其它函数内部变量的函数。f2就是闭包function f1(){    var n=110;    function f2(){        console.log(n) //子对象可以访问父对象的所有属性。父对象不能访问子对象属性        n...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-07-16 22:29:41 +0800" class="post-list__meta--date date">
@@ -174,14 +300,14 @@
             <span class="post-list__meta--tags-right">closure</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/07/closure_study/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/closure_study.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/07/send_email_with_python/" title="访问 send email with python">send email with python</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/send_email_with_python.html" title="访问 send email with python">send email with python</a></h2>
       <p class="excerpt">python demosend email python demo code#!/usr/bin/python# -*- coding: UTF-8 -*-from email.mime.text import MIMETextfrom email.header import Headerfrom smtplib import SMTP_SSLclass Sender(object):    def __init__(self):        # smtp server of qq ma...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-07-10 11:00:12 +0800" class="post-list__meta--date date">
@@ -195,14 +321,14 @@
             <span class="post-list__meta--tags-right">python</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/07/send_email_with_python/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/send_email_with_python.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/04/tcp_study/" title="访问 tcp三次握手连接+四次挥手断开">tcp三次握手连接+四次挥手断开</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/tcp_study.html" title="访问 tcp三次握手连接+四次挥手断开">tcp三次握手连接+四次挥手断开</a></h2>
       <p class="excerpt">学习tidevice启动webdriveragent的过程中正好想到用wireshark抓包看一下tcp三次握手四次断开流程。三次握手备注：此图来源于https://segmentfault.com/a/1190000039165592一些标志符意义：SYN: 连接请求ACK: 确认报文段seq: 报文序号ack： 期望收到的下一个字节号| 序列号     | client                | 数据流向     |  server                     | ...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-04-23 20:20:41 +0800" class="post-list__meta--date date">
@@ -216,14 +342,14 @@
             <span class="post-list__meta--tags-right">tcp</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/04/tcp_study/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/tcp_study.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/04/source_code_tidevice_study_cn/" title="访问 tidevice的魔法： 跨平台吊起webdriver agent runner源码学习">tidevice的魔法： 跨平台吊起webdriver agent runner源码学习</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/source_code_tidevice_study_cn.html" title="访问 tidevice的魔法： 跨平台吊起webdriver agent runner源码学习">tidevice的魔法： 跨平台吊起webdriver agent runner源码学习</a></h2>
       <p class="excerpt">根据tidevice git文档 ,tidevice可以实现跨平台(windows/linux/mac)自动化测试。在windows上，tidevice可以脱离Xcode唤起ios上已经安装好的webdriveragent runner app。tidevice是怎么实现脱离Xcode吊起webdriver agent runner的呢？让我们来读一读源码。由一条命令tidevice wdaproxy -B com.facebook.wda.WebDriverAgent.Runner --...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-04-22 19:40:41 +0800" class="post-list__meta--date date">
@@ -237,14 +363,14 @@
             <span class="post-list__meta--tags-right">tidevice</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/04/source_code_tidevice_study_cn/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/source_code_tidevice_study_cn.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/04/usbmux/" title="访问 Usbmux">Usbmux</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/usbmux.html" title="访问 Usbmux">Usbmux</a></h2>
       <p class="excerpt">usbmux intro refThis is a system for multiplexing several "connections" over one USB pipe. Conceptually, it provides a TCP-like system-processes on the host machine open up connections to specific, numbered ports on the mobile device.Communication...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-04-21 12:40:41 +0800" class="post-list__meta--date date">
@@ -258,14 +384,14 @@
             <span class="post-list__meta--tags-right">ios</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/04/usbmux/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/usbmux.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/04/appium_source_code_study/" title="访问 appium source code study">appium source code study</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/appium_source_code_study.html" title="访问 appium source code study">appium source code study</a></h2>
       <p class="excerpt">Running Appium from Sourceappium linknpm installnpm run buildnode .debug appium:ref link node --inspect-brk . --port 4723in chrome, open:    ‘chrome://inspect/#devices’source code analysispackages:http://appium.io/docs/en/contributing-to-appium/ap...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-04-20 22:00:41 +0800" class="post-list__meta--date date">
@@ -279,14 +405,14 @@
             <span class="post-list__meta--tags-right">appium</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/04/appium_source_code_study/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/appium_source_code_study.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/03/socket_little_endian_big_endian/" title="访问 socket 编程：大小端数据">socket 编程：大小端数据</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/socket_little_endian_big_endian.html" title="访问 socket 编程：大小端数据">socket 编程：大小端数据</a></h2>
       <p class="excerpt">大小端数据：0X12345678内存地址从低到高 0x0001    0x0002   0x0003  0x0004大端: 0x12      0x34     0x56    0x78                                高位数据在低位地址小端: 0x78      0x56     0x34    0x12                                低位数据在低位地址由于发送端接送端主机可能存在主机序列模式不同，故发送出去数据时，统一转换为...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-03-29 20:40:41 +0800" class="post-list__meta--date date">
@@ -300,14 +426,14 @@
             <span class="post-list__meta--tags-right">socket</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/03/socket_little_endian_big_endian/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/socket_little_endian_big_endian.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2022/01/unicode_to_utf-8/" title="访问 transfer from unicode to utf-8 encoding">transfer from unicode to utf-8 encoding</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2022/unicode_to_utf-8.html" title="访问 transfer from unicode to utf-8 encoding">transfer from unicode to utf-8 encoding</a></h2>
       <p class="excerpt">Chinese character:      汉its Unicode value:        U+6C49convert 6C49 to binary:   01101100 01001001                           1101100 01001001h= "汉"# hex to binary, unicode valueh.encode("unicode_escape")Out[112]: b'\\u6c49'  #hex decimalint('6c4...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2022-01-10 20:01:11 +0800" class="post-list__meta--date date">
@@ -321,14 +447,14 @@
             <span class="post-list__meta--tags-right">encoding</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2022/01/unicode_to_utf-8/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2022/unicode_to_utf-8.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2021/09/guide_libimobiledevice/" title="访问 libimobiledevice guide to control iphone">libimobiledevice guide to control iphone</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2021/guide_libimobiledevice.html" title="访问 libimobiledevice guide to control iphone">libimobiledevice guide to control iphone</a></h2>
       <p class="excerpt">libimobiledevice github docstep1 install libimobiledevice    brew update    brew uninstall --ignore-dependencies libimobiledevice    brew uninstall --ignore-dependencies usbmuxd    brew install --HEAD usbmuxd    brew unlink usbmuxd    brew link us...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2021-09-22 20:01:11 +0800" class="post-list__meta--date date">
@@ -342,14 +468,14 @@
             <span class="post-list__meta--tags-right">appium</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2021/09/guide_libimobiledevice/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2021/guide_libimobiledevice.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2021/09/appium_mac_config_guide/" title="访问 Appium mac config guide">Appium mac config guide</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2021/appium_mac_config_guide.html" title="访问 Appium mac config guide">Appium mac config guide</a></h2>
       <p class="excerpt">appium mac config guide1. install appiumAppium can be installed in one of two ways: via NPM or by downloading Appium Desktop, which is a graphical, desktop-based way to launch the Appium server.here we use the npm to install appium. firstly confir...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2021-09-20 19:40:41 +0800" class="post-list__meta--date date">
@@ -363,14 +489,14 @@
             <span class="post-list__meta--tags-right">appium</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2021/09/appium_mac_config_guide/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2021/appium_mac_config_guide.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2021/09/selenium_problems/" title="访问 Selenium usage collection">Selenium usage collection</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2021/selenium_problems.html" title="访问 Selenium usage collection">Selenium usage collection</a></h2>
       <p class="excerpt">insert value to inputWhen we want to use selenium to insert some value to input element in html, we follow steps as follows:   step1: clear the text in the input   step2: insert valuefirstly, we get element:   #!-encoding=utf-8-   chrome_option = ...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2021-09-11 20:01:11 +0800" class="post-list__meta--date date">
@@ -384,14 +510,14 @@
             <span class="post-list__meta--tags-right">selenium</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2021/09/selenium_problems/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2021/selenium_problems.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2021/04/selenium_study/" title="访问 Selenium study">Selenium study</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2021/selenium_study.html" title="访问 Selenium study">Selenium study</a></h2>
       <p class="excerpt">seleinum docwhat is SeleniumSelenium is an open source automated testing suite for web applications.   Selenium has four components:       Selenium Integrated Development Environment (IDE)       Selenium Remote Control (RC)       Webdriver       S...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2021-04-11 20:01:11 +0800" class="post-list__meta--date date">
@@ -405,14 +531,14 @@
             <span class="post-list__meta--tags-right">selenium</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2021/04/selenium_study/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2021/selenium_study.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2020/05/blockchain_study/" title="访问 blockchain study">blockchain study</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2020/blockchain_study.html" title="访问 blockchain study">blockchain study</a></h2>
       <p class="excerpt">blockchains types:  Public blockchains: such as Bitcoin. open for anyone to participate at any leve, and have opens  Permissioned blockchains: such as Ripple. control roles that individuals can play within the network.  Private blockchains区块链技术应用场...&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2020-05-06 22:29:41 +0800" class="post-list__meta--date date">
@@ -426,14 +552,14 @@
             <span class="post-list__meta--tags-right">blockchain</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2020/05/blockchain_study/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2020/blockchain_study.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2020/05/ssh_commands_study/" title="访问 ssh commands study">ssh commands study</a></h2>
+      <h2 class="post-list__post-title post-title"><a href="/2020/ssh_commands_study.html" title="访问 ssh commands study">ssh commands study</a></h2>
       <p class="excerpt">ssh with proxyssh  -o 'ProxyCommand=ssh  username@jumpserver nc jumpserver 22' root@remoteserverssh -tt CNHZ5GRAN1133+tester@10.57.152.85 ssh -tt root@10.57.157.83useful linksdifference-between-ssh-proxycommand-w-nc-exec-nc&hellip;</p>
       <div class="post-list__meta">
         <time datetime="2020-05-01 22:00:41 +0800" class="post-list__meta--date date">
@@ -447,133 +573,7 @@
             <span class="post-list__meta--tags-right">ssh</span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2020/05/ssh_commands_study/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2020/01/config_cygwin/" title="访问 install cygwin and ssh service on windows record">install cygwin and ssh service on windows record</a></h2>
-      <p class="excerpt">1. install ssh server(cygwin) on Windows1) download setup-x86_64.exe on cygwin.com2) run  setup-x86_64.exe and setup as follow steps, click next until to select packages.ps: if pc can not get access to internet, can chose local(you should download...&hellip;</p>
-      <div class="post-list__meta">
-        <time datetime="2020-01-20 16:29:41 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" />
-          2020-01-20</time>
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" />
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">cygwin</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2020/01/config_cygwin/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2020/01/robotframework_study/" title="访问 robotframework study">robotframework study</a></h2>
-      <p class="excerpt">ROBOT_LIBRARY_SCOPEROBOT_LIBRARY_SCOPE has tree types of values.TEST CASEA new instance is created for every test case.A possible suite setup and suite teardown share yet another instance.This is the default.TEST SUITEA new instance is created for...&hellip;</p>
-      <div class="post-list__meta">
-        <time datetime="2020-01-03 16:29:41 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" />
-          2020-01-03</time>
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" />
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">robotframework</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2020/01/robotframework_study/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2020/01/selenium_robot_python_demo/" title="访问 selenium robot/python demo">selenium robot/python demo</a></h2>
-      <p class="excerpt">Selenium is an open source automated testing suite for web applications.Selenium has four components:Selenium Integrated Development Environment (IDE)Selenium Remote Control (RC)WebdriverSelenium GridSelenium IDEa firefox extension, support record...&hellip;</p>
-      <div class="post-list__meta">
-        <time datetime="2020-01-02 20:01:11 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" />
-          2020-01-02</time>
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" />
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">selenium</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2020/01/selenium_robot_python_demo/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2020/01/solve_x11_on_mac/" title="访问 solve the Problems with X11 - Can't open display on MAC">solve the Problems with X11 - Can't open display on MAC</a></h2>
-      <p class="excerpt">how to solve the Problems with X11 - Can’t open display on MAChow to solve the Problems with X11 - Can’t open display on MAC  do commands on  mac:    defaults write com.apple.x11 nolisten_tcp -boolean falsedefaults write org.X.x11 nolisten_tcp -bo...&hellip;</p>
-      <div class="post-list__meta">
-        <time datetime="2020-01-01 16:29:41 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" />
-          2020-01-01</time>
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" />
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">mac</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2020/01/solve_x11_on_mac/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2019/11/update_brew_mirror/" title="访问 update brew repo">update brew repo</a></h2>
-      <p class="excerpt">   cd `brew --repo`   git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git   brew updatesome mirrorshttps://git.coding.net/homebrew/homebrew.git/https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git/https://mir...&hellip;</p>
-      <div class="post-list__meta">
-        <time datetime="2019-11-02 16:29:41 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" />
-          2019-11-02</time>
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" />
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">mac</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2019/11/update_brew_mirror/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2019/10/flaskbb_quick_start/" title="访问 FlaskBB guide">FlaskBB guide</a></h2>
-      <p class="excerpt">clone and start:git clone https://github.com/sh4nks/flaskbb.gitcd flaskbbgit checkout 2.0.0virtualenv .venvsource .venv/bin/activatepip install -r requirements.txtflaskbb makeconfigflaskbb --config flaskbb.cfg installflaskbb --config flaskbb.cfg r...&hellip;</p>
-      <div class="post-list__meta">
-        <time datetime="2019-10-24 19:29:41 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" />
-          2019-10-24</time>
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" />
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">flaskbb</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2019/10/flaskbb_quick_start/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2020/ssh_commands_study.html>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
@@ -630,7 +630,7 @@
 
         <div class = "footer_div">  
            <p class="copyright text-muted">
-            Copyright &copy; keep moving 2022 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            Copyright &copy; keep moving 2025 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
             <iframe
                 style="margin-left: 2px; margin-bottom:-5px;"
                 frameborder="0" scrolling="0" width="91px" height="20px"

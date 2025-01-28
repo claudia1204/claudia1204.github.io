@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>c语言：二维数组传参</title>
+  <meta name="description" content="二维数组传参数时需要注意的是告诉编译器传递的是一个数组指针。有3种写法">
+  <meta name="author" content="leopardpan">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="c语言：二维数组传参">
+  <meta name="twitter:description" content="二维数组传参数时需要注意的是告诉编译器传递的是一个数组指针。有3种写法">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="c语言：二维数组传参">
+  <meta property="og:description" content="二维数组传参数时需要注意的是告诉编译器传递的是一个数组指针。有3种写法">
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="http://localhost:8080/2024/c_2d_array.html">
+  <link rel="alternate" type="application/rss+xml" title="keep moving" href="http://localhost:8080/feed.xml">
+
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+<!-- 站点统计 -->
+  <script
+  async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+
+<!-- 百度统计 -->
+  
+  <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?625129f6a6c1cc07fc945a8fb5dbc0b4";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+  </script>
+  
+
+<!-- google 统计 -->
+  
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2487558142971429"
+          crossorigin="anonymous"></script>
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/archive" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      标签
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+      </div>
+    </span>
+
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">            
+            <a href="/#blog" title="前往 keep moving 的主页" class="blog-button">
+                <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+                <div class="info">
+                    <div class="info-back">
+                        <h2> 
+                            
+                                claudia
+                            
+                        </h2>
+                        <p>
+                           
+                                frontend / python
+                            
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for keep moving" class="blog-button">keep moving</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">small world</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                  <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                  <li class="navigation__item"><a href="/tags" title="tags">标签</a></li>
+                
+                  <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>          
+        </div>
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-clear"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">c语言：二维数组传参</h1>
+    <div class="post-meta">
+      <img src="/images/calendar.png" width="20px"/> 
+      <time datetime="2024-01-25 19:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2024-01-25</time>  
+         
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+    <p>二维数组传参数时需要注意的是告诉编译器传递的是一个数组指针。有3种写法</p>
+
+<h2 id="写法1传递int-array3">写法1：传递<code class="highlighter-rouge">int (*array)[3]</code></h2>
+
+<p>含有3个元素的一维数组指针地址</p>
+
+<p>在C语言中，虽然不能直接传递二维数组作为指针的指针（即<code class="highlighter-rouge">int**</code>类型），但可以通过传递指向数组第一维的指针和行数来实现对二维数组的操作。由于二维数组实际上是按行连续存储的一维数组，因此可以通过一维指针间接操作整个二维数组。</p>
+
+<p>下面是一个通过“指针的指针”方式模拟二维数组传参的示例，但实际上内部处理的是一维数组：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+</span>
+<span class="c1">// 定义一个处理二维数组的函数原型，这里使用一级指针数组表示二维数组</span>
+<span class="kt">void</span> <span class="nf">process_2d_array</span><span class="p">(</span><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">array</span><span class="p">)[</span><span class="mi">3</span><span class="p">],</span> <span class="kt">int</span> <span class="n">rows</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 通过(*array)[j]的方式访问元素，实际上等同于array[i][j]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rows</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"Element at [%d][%d]: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="n">array</span><span class="p">)[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">j</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 定义一个3x3的二维数组</span>
+    <span class="kt">int</span> <span class="n">my_array</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">},</span>
+        <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">},</span>
+        <span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="c1">// 虽然不直接传递二级指针，但我们可以通过类型转换将二维数组名视为指向一维数组的指针，并传递给函数</span>
+    <span class="n">process_2d_array</span><span class="p">((</span><span class="kt">int</span><span class="p">(</span><span class="o">*</span><span class="p">)[</span><span class="mi">3</span><span class="p">])</span><span class="n">my_array</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">my_array</span><span class="p">)</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">my_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这段代码中，我们并没有真正传递指针的指针，而是将二维数组名强制类型转换为指向具有固定列数的一维数组的指针，并将其传递给函数。注意这种方式仅适用于列数固定的二维数组。对于列数可变的情况，通常需要传递额外的信息以描述二维数组的结构。</p>
+
+<h2 id="写法2-传二维数组进来int-array3">写法2 传二维数组进来，<code class="highlighter-rouge">int array[][3]</code></h2>
+
+<p>在C语言中，传递二维数组给函数时，通常需要通过指针来完成。这里是一个二维数组传参的简单示例：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+</span>
+<span class="c1">// 定义一个处理二维数组的函数原型</span>
+<span class="kt">void</span> <span class="nf">process_2d_array</span><span class="p">(</span><span class="kt">int</span> <span class="n">array</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span> <span class="kt">int</span> <span class="n">rows</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 遍历二维数组并打印元素</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rows</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"Element at [%d][%d]: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 定义一个3x3的二维数组</span>
+    <span class="kt">int</span> <span class="n">my_array</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">},</span>
+        <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">},</span>
+        <span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="c1">// 调用函数，传递二维数组和行数</span>
+    <span class="n">process_2d_array</span><span class="p">(</span><span class="n">my_array</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">my_array</span><span class="p">)</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">my_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这个例子中，<code class="highlighter-rouge">process_2d_array</code> 函数接收一个指向整型数组的指针（在这里是二维数组的第一维），以及二维数组的行数。由于C语言编译器能够根据数组定义推断出数组第一维的大小（在这种情况下每一行有3个元素），所以在函数内部可以使用这个信息来遍历整个二维数组。</p>
+
+<p>注意：如果数组的列数不固定，则必须作为参数传递给函数。上述代码中的二维数组列数固定为3，因此不需要额外传递列数参数。若列数动态可变，则可以将函数声明修改为接受行数和每行元素数量两个参数。例如：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">process_2d_array</span><span class="p">(</span><span class="kt">int</span> <span class="n">array</span><span class="p">[][</span><span class="n">COLS</span><span class="p">],</span> <span class="kt">int</span> <span class="n">rows</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cols</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里的 <code class="highlighter-rouge">COLS</code> 应该在调用函数前已知，并作为实参传递进去。</p>
+
+<h2 id="写法3-传递数组指针进来int-arr">写法3 传递数组指针进来，<code class="highlighter-rouge">int *arr</code></h2>
+
+<p>此时只能使用arr[0~11]来取值。因为不是一维数组</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include &lt;stdio.h&gt;
+
+int main(){
+    int my_array[2][3] = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    //int (*p)[3] = my_array;
+    int (*p) = my_array;
+    //printf("p[0][1]=%d\n", p[0][1]);
+    printf("p[0]=%d\n p[3]=%d\n", p[0], p[4]);
+}
+</code></pre></div></div>
+
+<h2 id="区分int-arr3-和-intarr3">区分int <em>arr[3] 和 int(</em>arr)[3]</h2>
+
+<p>是的，编译器对 <code class="highlighter-rouge">int *arr[3]</code> 和 <code class="highlighter-rouge">int (*arr)[3]</code> 的解析确实不同：</p>
+
+<ol>
+  <li><strong>int *arr[3]</strong>：
+    <ul>
+      <li>编译器将其解析为一个包含三个元素的数组（arr），而每个元素都是指向整型变量的指针。</li>
+      <li>类型可以理解为“指针数组”，即数组中的每一个元素都是 <code class="highlighter-rouge">int*</code> 类型。</li>
+      <li>示例声明等同于有三个指针变量，分别可以存储整型变量的地址。</li>
+    </ul>
+  </li>
+  <li><strong>int (*arr)[3]</strong>：
+    <ul>
+      <li>编译器将其解析为一个指向具有三个整型元素的一维数组的指针（arr）。</li>
+      <li>类型可以理解为“指向数组的指针”，即这个指针指向的是一个大小为3的整数数组。</li>
+      <li>示例声明相当于一个指针，该指针可以指向二维数组的第一行或者其他任何含有三个连续 <code class="highlighter-rouge">int</code> 类型数据的内存区域。</li>
+    </ul>
+  </li>
+</ol>
+
+<p>总结来说，两者的主要区别在于：</p>
+<ul>
+  <li><code class="highlighter-rouge">int *arr[3]</code> 是一个数组，其中每个元素是一个指针。</li>
+  <li><code class="highlighter-rouge">int (*arr)[3]</code> 是一个指针，它指向一个含有三个整型元素的数组。</li>
+</ul>
+
+<h2 id="语法解析">语法解析</h2>
+
+<p>在C语言中，编译器解析声明时通常遵循一定的优先级和约定俗成的“右结合性”规则。对于复杂类型的声明，编译器会从左向右逐步分析，并根据遇到的关键字调整解析路径。以下是一个一般的解析顺序：</p>
+
+<ol>
+  <li>
+    <p><strong>基本类型</strong>：首先识别基本类型关键字，如 <code class="highlighter-rouge">int</code>、<code class="highlighter-rouge">float</code>、<code class="highlighter-rouge">char</code> 等。</p>
+  </li>
+  <li>
+    <p><strong>指针与数组</strong>：当遇到星号 <code class="highlighter-rouge">*</code> 时，知道这是一个指针声明；当遇到方括号 <code class="highlighter-rouge">[]</code> 时，开始处理数组部分。这里有个特殊规则是，数组维度可以出现在类型名后，也可以紧跟在变量名后（例如 <code class="highlighter-rouge">int arr[3]</code> 和 <code class="highlighter-rouge">int [3] arr</code> 在效果上是相同的）。</p>
+
+    <ul>
+      <li>
+        <p>对于 <code class="highlighter-rouge">int *arr[3]</code>，编译器首先看到 <code class="highlighter-rouge">int</code>，知道这是整型，然后看到星号 <code class="highlighter-rouge">*</code>，理解为指针，最后是方括号 <code class="highlighter-rouge">[]</code>，由于数组维度跟在了变量名之后，因此整个表达式被解释为一个包含三个元素的数组，每个元素都是一个指向整型的指针。</p>
+      </li>
+      <li>
+        <p>对于 <code class="highlighter-rouge">int (*arr)[3]</code>，编译器同样首先看到 <code class="highlighter-rouge">int</code>，然后立即遇到括号 <code class="highlighter-rouge">(*arr)</code>，其中星号说明它是指针，但因为括号的存在，使得数组维度 <code class="highlighter-rouge">[3]</code> 结合到这个指针类型上，所以整体被解释为一个指向含有三个整数元素的一维数组的指针。</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>函数指针</strong>：如果在声明中遇到了圆括号 <code class="highlighter-rouge">()</code>，则编译器会将其视为函数指针声明的一部分，先解析函数参数列表，然后再处理返回类型和其他修饰符。</p>
+  </li>
+  <li>
+    <p><strong>其他类型修饰符</strong>：例如 <code class="highlighter-rouge">const</code>、<code class="highlighter-rouge">volatile</code>、<code class="highlighter-rouge">restrict</code> 等，它们通常位于类型关键字和指针符号之间，用来描述该类型的属性。</p>
+  </li>
+  <li>
+    <p><strong>结构体、联合体与枚举</strong>：编译器还会处理 <code class="highlighter-rouge">struct</code>、<code class="highlighter-rouge">union</code>、<code class="highlighter-rouge">enum</code> 关键字及其定义的内容，以及它们可能构成的指针或数组类型。</p>
+  </li>
+</ol>
+
+<p>总的来说，在处理复杂的类型声明时，编译器会按照上述步骤逐渐构建类型信息，最终确定完整的数据类型定义。在某些情况下，为了清晰起见，人们可能会选择使用类型别名 (<code class="highlighter-rouge">typedef</code>) 或者将复杂的类型定义放在另一个地方并通过指针来间接声明变量，这样可以使代码更易读。</p>
+
+
+  </section>
+</article>
+
+<section>
+
+            <div class="content-play">
+              <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏一个呗</a></p>
+              <div class="hide_box-play"></div>
+              <div class="shang_box-play">
+                <a class="shang_close-play" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/images/payimg/close.jpg" alt="取消" /></a>
+                <div class="shang_tit-play">
+                  <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="/images/payimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+              <div class="shang_payimg">    
+                    <img src="/images/payimg/weipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                  <div class="pay_item checked" data-id="alipay">
+                    <span class="pay_logo"><img src="/images/payimg/alipay.jpg" alt="支付宝" /></span>
+                  </div>
+                  <div class="pay_item" data-id="weipay">
+                    <span class="pay_logo"><img src="/images/payimg/wechat.jpg" alt="微信" /></span>
+                  </div>
+                </div>
+                <div class="shang_info-play">
+                  <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript">
+            function dashangToggle(){
+              $(".hide_box-play").fadeToggle();
+              $(".shang_box-play").fadeToggle();
+            }
+            </script>
+
+            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';"></div>
+
+            <style type="text/css">
+              .content-play{width:80%;margin-top: 20px;margin-bottom: 10px;height:40px;}
+              .hide_box-play{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+              .shang_box-play{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+              .shang_box-play img{border:none;border-width:0;}
+              .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+              .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+              .shang_close-play{float:right;display:inline-block;
+                margin-right: 10px;margin-top: 20px;
+              }
+              .shang_logo{display:block;text-align:center;margin:20px auto;}
+              .shang_tit-play{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/images/payimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+              .shang_tit-play p{color:#a3a3a3;text-align:center;font-size:16px;}
+              .shang_payimg{width:140px;padding:10px;padding-left: 80px; /*border:6px solid #EA5F00;**/margin:0 auto;border-radius:3px;height:140px;display:inline-block;}
+              .shang_payimg img{display:inline-block;margin-right:10px;float:left;text-align:center;width:140px;height:140px; }
+              .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+              .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:500px;margin-left:110px;}
+              .shang_payselect .pay_item{display:inline-block;margin-right:140px;float:left;}
+              .shang_info-play{clear:both;}
+              .shang_info-play p,.shang_info-play a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+            </style>
+
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2024/linux_device_driver.html" data-toggle="tooltip" data-placement="top" title="《Linux设备驱动程序》读书笔记">上一篇：  <span>《Linux设备驱动程序》读书笔记</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2025/collective_communications.html" data-toggle="tooltip" data-placement="top" title="集合通信操作学习">下一篇：  <span>集合通信操作学习</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="post-comments">
+
+  
+
+</section>
+
+
+            <section class="footer">
+    <footer>
+        <div class = "footer_div">  
+        <nav class="cover-navigation navigation--social">
+          <ul class="navigation">
+
+          
+
+          
+          
+          
+
+          
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+
+          </ul>
+        </nav>
+
+        </div>
+
+        <div class = "footer_div">  
+           <p class="copyright text-muted">
+            Copyright &copy; keep moving 2025 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            <iframe
+                style="margin-left: 2px; margin-bottom:-5px;"
+                frameborder="0" scrolling="0" width="91px" height="20px"
+                src="https://ghbtns.com/github-btn.html?user=claudia1204&repo=claudia1204.github.io&type=star&count=true" >
+            </iframe>
+            </p>
+        	<div align="right">
+    			<link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+          <!-- 访问统计 -->
+          <span id="busuanzi_container_site_pv">
+            本站总访问量
+            <span id="busuanzi_value_site_pv"></span>次
+          </span>
+
+        </div>
+        <div>
+    </footer>
+</section>
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+  </body>
+
+</html>

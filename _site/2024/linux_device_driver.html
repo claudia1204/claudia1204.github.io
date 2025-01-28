@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>《Linux设备驱动程序》读书笔记</title>
+  <meta name="description" content="1. 设备和模块分类">
+  <meta name="author" content="leopardpan">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="《Linux设备驱动程序》读书笔记">
+  <meta name="twitter:description" content="1. 设备和模块分类">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="《Linux设备驱动程序》读书笔记">
+  <meta property="og:description" content="1. 设备和模块分类">
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="http://localhost:8080/2024/linux_device_driver.html">
+  <link rel="alternate" type="application/rss+xml" title="keep moving" href="http://localhost:8080/feed.xml">
+
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+<!-- 站点统计 -->
+  <script
+  async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+
+<!-- 百度统计 -->
+  
+  <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?625129f6a6c1cc07fc945a8fb5dbc0b4";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+  </script>
+  
+
+<!-- google 统计 -->
+  
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2487558142971429"
+          crossorigin="anonymous"></script>
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/archive" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      标签
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+      </div>
+    </span>
+
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">            
+            <a href="/#blog" title="前往 keep moving 的主页" class="blog-button">
+                <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+                <div class="info">
+                    <div class="info-back">
+                        <h2> 
+                            
+                                claudia
+                            
+                        </h2>
+                        <p>
+                           
+                                frontend / python
+                            
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for keep moving" class="blog-button">keep moving</a></h1>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">small world</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                  <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                  <li class="navigation__item"><a href="/tags" title="tags">标签</a></li>
+                
+                  <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>          
+        </div>
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-clear"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">《Linux设备驱动程序》读书笔记</h1>
+    <div class="post-meta">
+      <img src="/images/calendar.png" width="20px"/> 
+      <time datetime="2024-01-16 19:29:41 +0800" itemprop="datePublished" class="post-meta__date date">2024-01-16</time>  
+         
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+    <h2 id="1-设备和模块分类">1. 设备和模块分类</h2>
+
+<h3 id="11-驱动分类">1.1 驱动分类</h3>
+
+<ul>
+  <li>
+    <p>字符设备：可以当做一个字节流来存取设备，一个字符驱动负责实现这种行为。驱动常常至少实现open，close，read，write系统调用。<strong>一个字符设备和普通文件区别</strong>：普通文件可以移来移去，但是大部分字符设备仅仅是数据通道，只能顺序存取。</p>
+  </li>
+  <li>
+    <p>块设备：通过/dev目录的文件系统节点来存取。</p>
+  </li>
+  <li>
+    <p>网络接口</p>
+  </li>
+</ul>
+
+<h2 id="7--linux设备驱动中的并发控制">7  Linux设备驱动中的并发控制</h2>
+
+<h3 id="71-信号量和互斥锁的区别">7.1 信号量和互斥锁的区别</h3>
+
+<p>信号量和自旋锁是两种不同的同步机制，用于保护共享资源不被多个并发线程或进程同时访问。它们在实现并发控制时的主要区别如下：</p>
+
+<ol>
+  <li><strong>睡眠与非睡眠</strong>
+    <ul>
+      <li><strong>信号量</strong>：当一个线程试图获取已被占用的信号量时，如果该信号量的值小于0，则线程会被挂起（即“睡眠”），并放入等待队列中，直到其他线程释放信号量从而唤醒它。</li>
+      <li><strong>自旋锁</strong>：持有自旋锁的线程不会睡眠，而是在无法获取锁时进入循环等待状态（称为“自旋”），持续不断地检查锁是否可用。这意味着持有自旋锁的线程会消耗CPU时间，而不是被调度器挂起。</li>
+    </ul>
+  </li>
+  <li><strong>上下文切换</strong>
+    <ul>
+      <li><strong>信号量</strong>：可能导致上下文切换，因为线程在等待信号量时可能需要切换到其他可运行的线程。</li>
+      <li><strong>自旋锁</strong>：由于不涉及线程睡眠和唤醒，所以一般不会发生上下文切换，但在持有锁期间可能会阻止其他处理器核心上的任务进行有效执行。</li>
+    </ul>
+  </li>
+  <li><strong>使用场景</strong>
+    <ul>
+      <li><strong>信号量</strong>：适用于临界区代码执行时间较长的情况，或者在用户空间和内核空间之间同步时，适合于任何可以等待的上下文，包括进程上下文。</li>
+      <li><strong>自旋锁</strong>：适用于临界区代码执行非常快且预期锁定时间极短的情况，通常只在内核空间内部使用，特别是中断处理程序、高速缓存一致性操作等场合，因为在这些情况下，上下文切换的开销远大于快速获取锁的成本。</li>
+    </ul>
+  </li>
+  <li><strong>性能和资源消耗</strong>
+    <ul>
+      <li><strong>信号量</strong>：当临界区中的操作确实需要较长时间时，信号量通过让出CPU给其他任务提高了整体系统效率，但增加了上下文切换的开销。</li>
+      <li><strong>自旋锁</strong>：对于锁保护区域执行时间很短的情况，自旋锁能避免上下文切换开销，但如果自旋时间过长，则会导致CPU空转和能耗增加。</li>
+    </ul>
+  </li>
+  <li><strong>递归性</strong>
+    <ul>
+      <li><strong>信号量</strong>：有些信号量实现允许递归调用（同一线程可以多次获得同一个信号量）。</li>
+      <li><strong>自旋锁</strong>：通常不允许递归持有，即一旦一个线程获取了自旋锁，就不能再次获取它，否则会导致死锁。</li>
+    </ul>
+  </li>
+  <li><strong>多持有者</strong>
+    <ul>
+      <li><strong>信号量</strong>：可以有任意数量的锁持有者，取决于其设计类型（如二进制信号量只能有一个持有者，而计数信号量可以允许多个）。</li>
+      <li><strong>自旋锁</strong>：在同一时刻最多只能有一个任务持有自旋锁。</li>
+    </ul>
+  </li>
+</ol>
+
+<p>总结起来，选择使用信号量还是自旋锁主要依赖于预期的临界区执行时间和上下文的要求。如果临界区执行时间不确定或可能较长，以及上下文可能是可以睡眠的，应优先考虑使用信号量；如果临界区执行时间短且必须在不能睡眠的上下文中执行，比如中断服务例程中，则应采用自旋锁。</p>
+
+<h3 id="72-信号量和互斥体区别">7.2 信号量和互斥体区别</h3>
+
+<p>信号量和互斥体（Mutex，也称为互斥锁）都是用于同步线程访问共享资源的机制，但它们在功能和使用上有明显的区别：</p>
+
+<ol>
+  <li><strong>互斥体（Mutex）</strong>：
+    <ul>
+      <li><strong>基本特征</strong>：互斥体是一种二进制信号量（值只能为0或1），它提供了一种排他性的锁机制。</li>
+      <li><strong>作用</strong>：主要用于实现对共享资源的互斥访问，确保任何时刻只有一个线程能够进入临界区（即执行保护的代码段）。</li>
+      <li><strong>加锁与解锁</strong>：一个线程获取互斥锁后，其他试图获取该锁的线程将被阻塞，直到拥有锁的线程释放该锁。</li>
+      <li><strong>适用场景</strong>：当需要确保数据完整性、避免竞态条件时，比如在单个全局变量或者复杂的多步骤操作中防止多个线程同时修改。</li>
+    </ul>
+  </li>
+  <li><strong>信号量（Semaphore）</strong>：
+    <ul>
+      <li><strong>基本特征</strong>：信号量可以有任意非负整数值，而不局限于0和1。</li>
+      <li><strong>作用</strong>：不仅可以用来实现互斥，还可以控制同时访问某一资源的线程数量。例如，如果信号量的值表示可用资源的数量，则每次P（wait）操作会减少信号量的值，当值为0时阻止更多的线程；V（signal）操作则增加信号量的值，可能唤醒等待的线程。</li>
+      <li><strong>同步机制</strong>：信号量可用于实现更复杂的同步模式，如生产者-消费者问题中的缓冲区满空控制，或者限制并发执行的任务数等。</li>
+      <li><strong>适用场景</strong>：当需要控制资源池大小、管理有限资源或多路同步时。</li>
+    </ul>
+  </li>
+</ol>
+
+<p>总结来说，互斥体用于保证一次只有一个线程访问资源，而信号量提供了更灵活的并发控制手段，允许一定数量的线程同时访问资源。</p>
+
+<p>第二条没看懂？？</p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116100841614.png" alt="image-20240116100841614" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116100956801.png" alt="image-20240116100956801" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116101137399.png" alt="image-20240116101137399" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116101441798.png" alt="image-20240116101441798" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116101457519.png" alt="image-20240116101457519" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116101625698.png" alt="image-20240116101625698" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116101701744.png" alt="image-20240116101701744" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116102605354.png" alt="image-20240116102605354" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116102703987.png" alt="image-20240116102703987" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116104734969.png" alt="image-20240116104734969" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116105525419.png" alt="image-20240116105525419" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116110711468.png" alt="image-20240116110711468" /></p>
+
+<p>MCU是Microcontroller Unit（微控制器）的缩写，也称为单片机或微控制单元。它是一种将中央处理器（CPU）、随机存取存储器（RAM）、只读存储器（ROM）、输入/输出（I/O）接口、定时器/计数器、模数转换器（ADC）、数模转换器（DAC）、串行通信接口（如UART、SPI、I²C等）以及其他外围设备集成在一块芯片上的计算机系统。</p>
+
+<p>MCU的设计目标是为了实现对特定应用系统的控制功能，并且具有体积小、功耗低、成本经济、易于嵌入到各种产品中的特点。MCU广泛应用于各类电子设备和工业控制系统中，例如家用电器、汽车电子、智能仪器仪表、消费类电子产品、医疗设备、安防系统以及工业自动化等领域，作为控制核心部件来执行数据处理、信号采集、实时控制等任务。</p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116111208132.png" alt="image-20240116111208132" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116111150013.png" alt="image-20240116111150013" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116111344633.png" alt="image-20240116111344633" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116111543927.png" alt="image-20240116111543927" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116111702296.png" alt="image-20240116111702296" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116112617623.png" alt="image-20240116112617623" /></p>
+
+<p>vmalloc是Linux内核中的一种内存分配机制，用于在虚拟地址空间中分配连续的大块内存区域，不同于物理内存页直接映射到虚拟地址空间的kmalloc函数。vmalloc主要用于那些需要大量连续虚拟地址空间，但对物理内存不需要连续的需求场景。</p>
+
+<p>以下是vmalloc的主要特点和用途：</p>
+
+<ol>
+  <li><strong>大内存分配</strong>：当需要分配大于物理内存页面大小的连续地址空间时（比如分配一个大型设备驱动的数据缓冲区），vmalloc可以跨越多个不连续的物理页，并通过页表将这些物理页映射到连续的虚拟地址区间。</li>
+  <li><strong>虚拟地址连续</strong>：vmalloc保证返回的是虚拟地址空间中的连续区域，这有助于一些硬件接口或协议要求连续地址的应用场景。</li>
+  <li><strong>非物理连续</strong>：尽管虚拟地址连续，对应的物理内存页则可能是分散的，这样有助于更有效地利用物理内存碎片。</li>
+  <li><strong>跨NUMA节点</strong>：由于vmalloc分配的虚拟地址与物理地址解耦，因此可以在不同NUMA节点上的物理内存之间分配，适应复杂的多处理器系统。</li>
+  <li><strong>性能开销</strong>：vmalloc相比于kmalloc有更高的间接寻址开销，因为访问vmalloc分配的内存通常涉及额外的TLB（Translation Lookaside Buffer） miss以及页表查找。</li>
+  <li><strong>安全性增强</strong>：vmalloc提供的地址空间与其他内核空间或用户空间地址相隔离，有利于提高系统的安全性和稳定性。</li>
+  <li><strong>使用场景</strong>：适用于大规模数据结构、设备驱动的缓冲区分配、或者与物理地址无关的场合，如映射I/O资源等。</li>
+</ol>
+
+<p>在实现上，vmalloc通过维护独立于物理内存管理结构的vm_struct链表来记录虚拟内存区域的信息，并配合页表进行映射。由于涉及到页表的操作，所以vmalloc操作往往比kmalloc更加复杂且昂贵，但对于需要大量连续虚拟地址的情况来说是必需的</p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116112836935.png" alt="image-20240116112836935" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116142501414.png" alt="image-20240116142501414" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116142819576.png" alt="image-20240116142819576" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116142927926.png" alt="image-20240116142927926" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116143149217.png" alt="image-20240116143149217" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116143246989.png" alt="" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116143300363.png" alt="image-20240116143300363" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116143444701.png" alt="image-20240116143444701" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116143641036.png" alt="image-20240116143641036" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116144051181.png" alt="image-20240116144051181" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116144521966.png" alt="image-20240116144521966" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116144713920.png" alt="image-20240116144713920" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116150812621.png" alt="image-20240116150812621" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116151103239.png" alt="image-20240116151103239" style="zoom:67%;" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116151953238.png" alt="image-20240116151953238" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116152632259.png" alt="image-20240116152632259" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116152755151.png" alt="image-20240116152755151" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116153023237.png" alt="image-20240116153023237" /></p>
+
+<p>流式DMA（Direct Memory Access）映射和普通DMA映射都是Linux内核中用于管理内存与外部设备之间直接数据传输的机制。这里的“普通”或“一致性”DMA映射通常指的是通过<code class="highlighter-rouge">dma_alloc_coherent()</code>等函数实现的一致性DMA映射，而“流式”DMA映射则指通过<code class="highlighter-rouge">dma_map_single()</code>、<code class="highlighter-rouge">dma_map_page()</code>等函数进行的临时或单次数据传输时的DMA映射。</p>
+
+<p><strong>一致性DMA映射</strong>：</p>
+<ul>
+  <li>适用于长时间存在的内存区域，比如驱动程序为硬件分配的连续缓冲区。</li>
+  <li>内存区域在物理地址空间上是连续的，并且保证了CPU缓存和DMA操作之间的数据一致性，即CPU和DMA控制器对同一块内存区域访问时不需要额外的手动同步。</li>
+  <li><code class="highlighter-rouge">dma_alloc_coherent()</code>不仅分配内存，还会确保该内存符合DMA的要求，包括硬件一致性需求以及可能的特定地址约束（如在某些平台上需要从特定地址范围开始的内存）。</li>
+  <li>当不再需要时，使用<code class="highlighter-rouge">dma_free_coherent()</code>来释放内存和相关的DMA映射。</li>
+</ul>
+
+<p><strong>流式DMA映射</strong>：</p>
+<ul>
+  <li>适用于临时或者一次性数据传输，可以是对单个连续内存区域或页面的映射。</li>
+  <li>不像一致性DMA映射那样预先分配并保持一致性的内存区域，流式映射是在实际DMA传输前动态创建的，并且可以在完成传输后立即解除映射。</li>
+  <li><code class="highlighter-rouge">dma_map_single()</code>将用户空间或内核空间的一个已经存在的内存区域映射到DMA可访问的物理地址空间。</li>
+  <li>在传输完成后，必须调用<code class="highlighter-rouge">dma_unmap_single()</code>或<code class="highlighter-rouge">dma_unmap_page()</code>来取消映射，并告知系统 DMA 操作已完成，以便系统处理潜在的 cache 同步问题。</li>
+  <li>对于小批量或非频繁的数据传输来说，流式映射提供了一种更灵活的方式，因为它不需要为每次传输预先分配固定大小的连续内存。</li>
+</ul>
+
+<p>总结来说，一致性DMA映射主要面向长期存在的、需保持数据一致性的专用内存区域；而流式DMA映射则更适合于临时和灵活的内存映射场景，特别是当涉及非连续的内存页或者不需要保持一致性的数据传输时。</p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116153235930.png" alt="image-20240116153235930" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116153314594.png" alt="image-20240116153314594" style="zoom:80%;" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116161022585.png" alt="image-20240116161022585" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116161715185.png" alt="image-20240116161715185" /></p>
+
+<p>I2C（Inter-Integrated Circuit）是一种串行通信总线标准，由飞利浦半导体（现恩智浦半导体）在1980年代初期开发。I2C总线用于连接微控制器和各种外围设备，如传感器、存储器、LCD驱动器等，在同一电路板上实现芯片间的低速数据传输。</p>
+
+<p>I2C总线的特点包括：</p>
+
+<ol>
+  <li>
+    <p><strong>两线式</strong>：仅使用两条线路进行通信，即数据线SDA（Serial Data Line）和时钟线SCL（Serial Clock Line）。</p>
+  </li>
+  <li>
+    <p><strong>多主从结构</strong>：支持多个主设备和多个从设备，但在任何时刻只有一个主设备可以控制总线并发起通信。</p>
+  </li>
+  <li>
+    <p><strong>寻址方式</strong>：每个连接到总线的设备都有一个唯一的7位或10位地址，使得主设备能够选择与特定从设备通信。</p>
+  </li>
+  <li>
+    <p><strong>同步通信</strong>：数据传输是基于时钟信号SCL进行同步的，主设备负责生成时钟信号，所有设备都根据该时钟信号进行数据采样和移位操作。</p>
+  </li>
+  <li>
+    <p><strong>双向通信</strong>：数据线SDA上的信息既可发送也可接收，因此支持全双工通信模式，但实际上在同一时间内只有单方向的数据流动（类似半双工）。</p>
+  </li>
+  <li>
+    <p><strong>总线仲裁</strong>：如果同时存在多个主设备尝试控制总线，则通过硬件自动进行总线仲裁，确保不会发生数据冲突。</p>
+  </li>
+  <li>
+    <p><strong>开放标准</strong>：I2C总线规范对所有制造商开放，并且被广泛应用于众多嵌入式系统中，因其简单性和低成本而备受青睐。</p>
+  </li>
+  <li>
+    <p><strong>速度范围</strong>：I2C总线的速度可以根据需要配置，支持标准模式、快速模式、快速加模式以及高速模式等多种速率等级，最高速率可达每秒几兆比特。</p>
+  </li>
+</ol>
+
+<p>I2C总线通常用于短距离、低速率的场合，特别适合于低功耗设备间的小型化设计和通信需求。</p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116162123442.png" alt="image-20240116162123442" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116164023429.png" alt="image-20240116164023429" style="zoom:67%;" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116164638077.png" alt="image-20240116164638077" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116170709753.png" alt="image-20240116170709753" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116170734375.png" alt="image-20240116170734375" style="zoom: 33%;" /></p>
+
+<p><img src="../images/2024-01-16-linux_device_driver.assets/image-20240116171740130.png" alt="image-20240116171740130" /></p>
+
+
+  </section>
+</article>
+
+<section>
+
+            <div class="content-play">
+              <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏一个呗</a></p>
+              <div class="hide_box-play"></div>
+              <div class="shang_box-play">
+                <a class="shang_close-play" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/images/payimg/close.jpg" alt="取消" /></a>
+                <div class="shang_tit-play">
+                  <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="/images/payimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+              <div class="shang_payimg">    
+                    <img src="/images/payimg/weipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                  <div class="pay_item checked" data-id="alipay">
+                    <span class="pay_logo"><img src="/images/payimg/alipay.jpg" alt="支付宝" /></span>
+                  </div>
+                  <div class="pay_item" data-id="weipay">
+                    <span class="pay_logo"><img src="/images/payimg/wechat.jpg" alt="微信" /></span>
+                  </div>
+                </div>
+                <div class="shang_info-play">
+                  <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript">
+            function dashangToggle(){
+              $(".hide_box-play").fadeToggle();
+              $(".shang_box-play").fadeToggle();
+            }
+            </script>
+
+            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';"></div>
+
+            <style type="text/css">
+              .content-play{width:80%;margin-top: 20px;margin-bottom: 10px;height:40px;}
+              .hide_box-play{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+              .shang_box-play{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+              .shang_box-play img{border:none;border-width:0;}
+              .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+              .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+              .shang_close-play{float:right;display:inline-block;
+                margin-right: 10px;margin-top: 20px;
+              }
+              .shang_logo{display:block;text-align:center;margin:20px auto;}
+              .shang_tit-play{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/images/payimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+              .shang_tit-play p{color:#a3a3a3;text-align:center;font-size:16px;}
+              .shang_payimg{width:140px;padding:10px;padding-left: 80px; /*border:6px solid #EA5F00;**/margin:0 auto;border-radius:3px;height:140px;display:inline-block;}
+              .shang_payimg img{display:inline-block;margin-right:10px;float:left;text-align:center;width:140px;height:140px; }
+              .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+              .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:500px;margin-left:110px;}
+              .shang_payselect .pay_item{display:inline-block;margin-right:140px;float:left;}
+              .shang_info-play{clear:both;}
+              .shang_info-play p,.shang_info-play a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+            </style>
+
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2023/build-source-code-of-cpython-record.html" data-toggle="tooltip" data-placement="top" title="build source code of cpython record">上一篇：  <span>build source code of cpython record</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2024/c_2d_array.html" data-toggle="tooltip" data-placement="top" title="c语言：二维数组传参">下一篇：  <span>c语言：二维数组传参</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="post-comments">
+
+  
+
+</section>
+
+
+            <section class="footer">
+    <footer>
+        <div class = "footer_div">  
+        <nav class="cover-navigation navigation--social">
+          <ul class="navigation">
+
+          
+
+          
+          
+          
+
+          
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+
+          </ul>
+        </nav>
+
+        </div>
+
+        <div class = "footer_div">  
+           <p class="copyright text-muted">
+            Copyright &copy; keep moving 2025 Theme by <a href="http://claudia1204.github.io/">claudia1204</a> |
+            <iframe
+                style="margin-left: 2px; margin-bottom:-5px;"
+                frameborder="0" scrolling="0" width="91px" height="20px"
+                src="https://ghbtns.com/github-btn.html?user=claudia1204&repo=claudia1204.github.io&type=star&count=true" >
+            </iframe>
+            </p>
+        	<div align="right">
+    			<link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+          <!-- 访问统计 -->
+          <span id="busuanzi_container_site_pv">
+            本站总访问量
+            <span id="busuanzi_value_site_pv"></span>次
+          </span>
+
+        </div>
+        <div>
+    </footer>
+</section>
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+  </body>
+
+</html>

@@ -1,6 +1,6 @@
 title: keep moving
 description: >- # this means to ignore newlines until "baseurl:"
-  small place
+  small world
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://claudia1204.github.io"
 avatarTitle: claudia
@@ -11,7 +11,7 @@ baidu:
     id: 625129f6a6c1cc07fc945a8fb5dbc0b4
 google:
     ad-client: "ca-pub-2487558142971429"
-permalink: /:year/:month/:title/
+# permalink: /:year/:month/:title.html
 # Format
 highlighter: rouge
 
@@ -25,7 +25,8 @@ blog_button:
     title: 博客主页
 
 
-permalink: /:year/:month/:title/
+# permalink: /:year/:month/:title/
+permalink: /:year/:title.html
 # Format
 highlighter: rouge
 
