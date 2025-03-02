@@ -31,24 +31,28 @@ tags: collective
 
 图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html
 
-```
+```c
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
 def run_all_gather(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+    # 初始化分布式环境，使用NCCL后端
+    dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f"Rank {rank} before all_gather: {tensor}")
+    # 设置当前进程使用的GPU
+    device = torch.device(f'cuda:{rank}')
+    
+    tensor_size = 2  # 每个进程创建的张量大小
+    dtype = torch.float32  # 确保所有张量使用相同的数据类型
+    
+    # 创建每个进程对应的那一部分数据，并确保数据类型一致
+    input_tensor = (torch.ones(tensor_size, dtype=dtype) * (rank + 1)).to(device)
+    print(f"Rank {rank} before all_gather: {input_tensor}")
 
-    # 准备接收结果的张量列表
-    gather_list = [torch.zeros_like(tensor) for _ in range(world_size)]
-
-    # 执行all_gather操作
-    dist.all_gather(gather_list, tensor)
+    # 收集所有ranks的张量
+    gather_list = [torch.empty_like(input_tensor) for _ in range(world_size)]
+    dist.all_gather(gather_list, input_tensor)
 
     # 输出all_gather后的结果
     print(f"Rank {rank} after all_gather: {gather_list}")
@@ -57,11 +61,14 @@ def run_all_gather(rank, world_size):
     dist.destroy_process_group()
 
 def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_all_gather,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+    world_size = 4  # 示例中使用4个进程，但可以根据需要调整
+    if torch.cuda.device_count() < world_size:
+        print(f"This example requires at least {world_size} GPUs.")
+    else:
+        mp.spawn(run_all_gather,
+                 args=(world_size,),
+                 nprocs=world_size,
+                 join=True)
 
 if __name__ == "__main__":
     main()
@@ -70,14 +77,14 @@ if __name__ == "__main__":
 运行结果：
 
 ```
-Rank 0 before all_gather: tensor([1.])
-Rank 1 before all_gather: tensor([2.])
-Rank 2 before all_gather: tensor([3.])
-Rank 3 before all_gather: tensor([4.])
-Rank 0 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 1 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 2 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+Rank 1 before all_gather: tensor([2., 2.], device='cuda:1')
+Rank 0 before all_gather: tensor([1., 1.], device='cuda:0')
+Rank 3 before all_gather: tensor([4., 4.], device='cuda:3')
+Rank 2 before all_gather: tensor([3., 3.], device='cuda:2')
+Rank 0 after all_gather: [tensor([1., 1.], device='cuda:0'), tensor([2., 2.], device='cuda:0'), tensor([3., 3.], device='cuda:0'), tensor([4., 4.], device='cuda:0')]
+Rank 2 after all_gather: [tensor([1., 1.], device='cuda:2'), tensor([2., 2.], device='cuda:2'), tensor([3., 3.], device='cuda:2'), tensor([4., 4.], device='cuda:2')]
+Rank 1 after all_gather: [tensor([1., 1.], device='cuda:1'), tensor([2., 2.], device='cuda:1'), tensor([3., 3.], device='cuda:1'), tensor([4., 4.], device='cuda:1')]
+Rank 3 after all_gather: [tensor([1., 1.], device='cuda:3'), tensor([2., 2.], device='cuda:3'), tensor([3., 3.], device='cuda:3'), tensor([4., 4.], device='cuda:3')]
 ```
 
 
@@ -88,34 +95,43 @@ Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])
 
 allreduce代码：
 
-```
+```c
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
 def run_all_reduce(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size) # 初始化分布式环境，gloo作为后端。如果有多个gpu可用可以改为nccl
+    # 初始化分布式环境，使用NCCL后端
+    dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f"Rank {rank} before all_reduce: {tensor}")
+    # 设置当前进程使用的GPU
+    device = torch.device(f'cuda:{rank}')
+    
+    tensor_size = 8  # 每个进程创建的张量大小
+    dtype = torch.float32  # 确保所有张量使用相同的数据类型
+    
+    # 创建每个进程对应的那一部分数据，并确保数据类型一致
+    input_tensor = (torch.ones(tensor_size, dtype=dtype) * (rank + 1)).to(device)
+    print(f"Rank {rank} before all_reduce: {input_tensor}")
 
     # 执行all_reduce操作（求和）
-    dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
+    dist.all_reduce(input_tensor, op=dist.ReduceOp.SUM)
 
     # 输出all_reduce后的结果
-    print(f"Rank {rank} after all_reduce: {tensor}")
+    print(f"Rank {rank} after all_reduce: {input_tensor}") 
 
     # 清理资源
     dist.destroy_process_group()
 
 def main():
     world_size = 4  # 模拟4个进程
-    mp.spawn(run_all_reduce,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+    if torch.cuda.device_count() < world_size:
+        print(f"This example requires at least {world_size} GPUs.")
+    else:
+        mp.spawn(run_all_reduce,
+                 args=(world_size,),
+                 nprocs=world_size,
+                 join=True)
 
 if __name__ == "__main__":
     main()
@@ -123,55 +139,61 @@ if __name__ == "__main__":
 
 运行结果：
 
-```
-Rank 0 before all_reduce: tensor([1.])
-Rank 1 before all_reduce: tensor([2.])
-Rank 2 before all_reduce: tensor([3.])
-Rank 3 before all_reduce: tensor([4.])
-Rank 0 after all_reduce: tensor([10.])
-Rank 1 after all_reduce: tensor([10.])
-Rank 2 after all_reduce: tensor([10.])
-Rank 3 after all_reduce: tensor([10.])
+```shell
+Rank 3 before all_reduce: tensor([4., 4., 4., 4., 4., 4., 4., 4.], device='cuda:3')
+Rank 1 before all_reduce: tensor([2., 2., 2., 2., 2., 2., 2., 2.], device='cuda:1')
+Rank 0 before all_reduce: tensor([1., 1., 1., 1., 1., 1., 1., 1.], device='cuda:0')
+Rank 2 before all_reduce: tensor([3., 3., 3., 3., 3., 3., 3., 3.], device='cuda:2')
+Rank 0 after all_reduce: tensor([10., 10., 10., 10., 10., 10., 10., 10.], device='cuda:0')
+Rank 1 after all_reduce: tensor([10., 10., 10., 10., 10., 10., 10., 10.], device='cuda:1')
+Rank 3 after all_reduce: tensor([10., 10., 10., 10., 10., 10., 10., 10.], device='cuda:3')
+Rank 2 after all_reduce: tensor([10., 10., 10., 10., 10., 10., 10., 10.], device='cuda:2')
 ```
 
 ### 1.3 reduce操作
 
 所有进程执行reduce操作，最终结果发送到根进程
 
-```
+```c
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
 def run_reduce(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+    # 初始化分布式环境，使用NCCL后端
+    dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f"Rank {rank} before reduce: {tensor}")
+    # 设置当前进程使用的GPU
+    device = torch.device(f'cuda:{rank}')
+    
+    tensor_size = 8  # 每个进程创建的张量大小
+    dtype = torch.float32  # 确保所有张量使用相同的数据类型
+    
+    # 创建每个进程对应的那一部分数据，并确保数据类型一致
+    input_tensor = (torch.ones(tensor_size, dtype=dtype) * (rank + 1)).to(device)
+    print(f"Rank {rank} before reduce: {input_tensor}")
 
-    # 指定根进程为0
-    root_rank = 0
+    # 执行reduce操作（求和），并将结果放在根rank上
+    dist.reduce(input_tensor, dst=0, op=dist.ReduceOp.SUM)
 
-    # 执行reduce操作（求和）
-    if rank == root_rank:
-        print(f"Rank {rank} is the root.")
-        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
-        print(f"Rank {rank} after reduce: {tensor}")
+    if rank == 0:
+        # 根rank上的输出张量现在包含了所有ranks的归约结果
+        print(f"Root Rank {rank} after reduce: {input_tensor}")
     else:
-        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
-        print(f"Rank {rank} after reduce: (unchanged) {tensor}")
+        print(f"Rank {rank} remains unchanged after reduce: {input_tensor}")
 
     # 清理资源
     dist.destroy_process_group()
 
 def main():
     world_size = 4  # 模拟4个进程
-    mp.spawn(run_reduce,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+    if torch.cuda.device_count() < world_size:
+        print(f"This example requires at least {world_size} GPUs.")
+    else:
+        mp.spawn(run_reduce,
+                 args=(world_size,),
+                 nprocs=world_size,
+                 join=True)
 
 if __name__ == "__main__":
     main()
@@ -179,16 +201,15 @@ if __name__ == "__main__":
 
 运行结果：
 
-```
-Rank 0 before reduce: tensor([1.])
-Rank 1 before reduce: tensor([2.])
-Rank 2 before reduce: tensor([3.])
-Rank 3 before reduce: tensor([4.])
-Rank 0 is the root.
-Rank 0 after reduce: tensor([10.])
-Rank 1 after reduce: (unchanged) tensor([2.])
-Rank 2 after reduce: (unchanged) tensor([3.])
-Rank 3 after reduce: (unchanged) tensor([4.])
+```c
+Rank 1 before reduce: tensor([2., 2., 2., 2., 2., 2., 2., 2.], device='cuda:1')
+Rank 0 before reduce: tensor([1., 1., 1., 1., 1., 1., 1., 1.], device='cuda:0')
+Rank 2 before reduce: tensor([3., 3., 3., 3., 3., 3., 3., 3.], device='cuda:2')
+Rank 3 before reduce: tensor([4., 4., 4., 4., 4., 4., 4., 4.], device='cuda:3')
+Rank 1 remains unchanged after reduce: tensor([2., 2., 2., 2., 2., 2., 2., 2.], device='cuda:1')
+Rank 2 remains unchanged after reduce: tensor([3., 3., 3., 3., 3., 3., 3., 3.], device='cuda:2')
+Root Rank 0 after reduce: tensor([10., 10., 10., 10., 10., 10., 10., 10.], device='cuda:0')
+Rank 3 remains unchanged after reduce: tensor([4., 4., 4., 4., 4., 4., 4., 4.], device='cuda:3')
 ```
 
 ### 1.4 reducescatter 操作
@@ -201,22 +222,27 @@ Rank 3 after reduce: (unchanged) tensor([4.])
 
 
 
-```
+```c
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
 def run_reduce_scatter(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+    # 初始化分布式环境，使用NCCL后端
+    dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
-    # 创建一个初始张量列表，每个进程都有相同大小的部分
-    tensor_size = 2  # 每个进程创建的张量大小
-    input_tensor = torch.ones(tensor_size * world_size) * (rank + 1)
+    # 设置当前进程使用的GPU
+    device = torch.device(f'cuda:{rank}')
+    
+    tensor_size = 8  # 每个进程创建的张量大小
+    dtype = torch.float32  # 确保所有张量使用相同的数据类型
+    
+    # 创建每个进程对应的那一部分数据，并确保数据类型一致
+    input_tensor = (torch.ones(tensor_size, dtype=dtype) * (rank + 1)).to(device)
     print(f"Rank {rank} before reduce_scatter: {input_tensor}")
 
-    # 准备接收结果的张量
-    output_tensor = torch.empty(tensor_size)
+    # 准备接收结果的张量，并确保其数据类型与输入张量一致
+    output_tensor = torch.empty(tensor_size // world_size, dtype=dtype).to(device)
 
     # 执行reduce_scatter操作（求和）
     dist.reduce_scatter(output_tensor, [input_tensor], op=dist.ReduceOp.SUM)
@@ -229,10 +255,13 @@ def run_reduce_scatter(rank, world_size):
 
 def main():
     world_size = 4  # 模拟4个进程
-    mp.spawn(run_reduce_scatter,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+    if torch.cuda.device_count() < world_size:
+        print(f"This example requires at least {world_size} GPUs.")
+    else:
+        mp.spawn(run_reduce_scatter,
+                 args=(world_size,),
+                 nprocs=world_size,
+                 join=True)
 
 if __name__ == "__main__":
     main()
@@ -241,14 +270,14 @@ if __name__ == "__main__":
 
 运行结果：
 
-````
-Rank 0 before reduce_scatter: tensor([1., 1., 1., 1., 1., 1., 1., 1.])
-Rank 1 before reduce_scatter: tensor([2., 2., 2., 2., 2., 2., 2., 2.])
-Rank 2 before reduce_scatter: tensor([3., 3., 3., 3., 3., 3., 3., 3.])
-Rank 3 before reduce_scatter: tensor([4., 4., 4., 4., 4., 4., 4., 4.])
-Rank 0 after reduce_scatter: tensor([10., 10.])
-Rank 1 after reduce_scatter: tensor([10., 10.])
-Rank 2 after reduce_scatter: tensor([10., 10.])
-Rank 3 after reduce_scatter: tensor([10., 10.])
+````shell
+Rank 1 before reduce_scatter: tensor([2., 2., 2., 2., 2., 2., 2., 2.], device='cuda:1')
+Rank 2 before reduce_scatter: tensor([3., 3., 3., 3., 3., 3., 3., 3.], device='cuda:2')
+Rank 3 before reduce_scatter: tensor([4., 4., 4., 4., 4., 4., 4., 4.], device='cuda:3')
+Rank 0 before reduce_scatter: tensor([1., 1., 1., 1., 1., 1., 1., 1.], device='cuda:0')
+Rank 1 after reduce_scatter: tensor([10., 10.], device='cuda:1')
+Rank 3 after reduce_scatter: tensor([10., 10.], device='cuda:3')
+Rank 2 after reduce_scatter: tensor([10., 10.], device='cuda:2')
+Rank 0 after reduce_scatter: tensor([10., 10.], device='cuda:0')
 ````
 

@@ -5,9 +5,41 @@
     <description>small world</description>
     <link>http://localhost:8080/</link>
     <atom:link href="http://localhost:8080/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Jan 2025 23:04:45 +0800</pubDate>
-    <lastBuildDate>Tue, 28 Jan 2025 23:04:45 +0800</lastBuildDate>
+    <pubDate>Sun, 02 Mar 2025 15:35:28 +0800</pubDate>
+    <lastBuildDate>Sun, 02 Mar 2025 15:35:28 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>操作系统相关学习</title>
+        <description>&lt;h2 id=&quot;where操作系统代码放在哪&quot;&gt;Where：操作系统代码放在哪&lt;/h2&gt;
+
+&lt;p&gt;一般放在机械硬盘里，也有固态硬盘或者u盘或者网络服务器上&lt;/p&gt;
+
+&lt;p&gt;存放在硬盘里时，一般在磁盘第一个扇区，通常被称为MBR或者引导扇区。存放以下数据&lt;/p&gt;
+
+&lt;p&gt;1）bootloader引导程序&lt;/p&gt;
+
+&lt;p&gt;2）partition table分区表&lt;/p&gt;
+
+&lt;p&gt;3）磁盘签名&lt;/p&gt;
+
+&lt;p&gt;4）结束标志&lt;/p&gt;
+
+&lt;p&gt;5）其他信息：如BIOS参数块（BPB），其包含磁盘基本参数，如扇区字节数，扇区数量，FAT（文件分配表）的个数和位置等&lt;/p&gt;
+
+&lt;h2 id=&quot;how-操作系统是怎样运行的&quot;&gt;How: 操作系统是怎样运行的&lt;/h2&gt;
+
+</description>
+        <pubDate>Sat, 01 Feb 2025 14:29:41 +0800</pubDate>
+        <link>http://localhost:8080/2025/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0.html</link>
+        <guid isPermaLink="true">http://localhost:8080/2025/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0.html</guid>
+        
+        <category>collective</category>
+        
+        
+        <category>collective-communications</category>
+        
+      </item>
     
       <item>
         <title>集合通信操作学习</title>
@@ -37,51 +69,58 @@
 
 &lt;p&gt;图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distributed&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiprocessing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;
 
-def run_all_gather(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size)
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;run_all_gather&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;cp&quot;&gt;# 初始化分布式环境，使用NCCL后端
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;nccl&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f&quot;Rank {rank} before all_gather: {tensor}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 设置当前进程使用的GPU
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;每个进程创建的张量大小&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;确保所有张量使用相同的数据类型&lt;/span&gt;
+    
+    &lt;span class=&quot;cp&quot;&gt;# 创建每个进程对应的那一部分数据，并确保数据类型一致
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} before all_gather: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 准备接收结果的张量列表
-    gather_list = [torch.zeros_like(tensor) for _ in range(world_size)]
+    &lt;span class=&quot;cp&quot;&gt;# 收集所有ranks的张量
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;gather_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty_like&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;all_gather&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gather_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 执行all_gather操作
-    dist.all_gather(gather_list, tensor)
+    &lt;span class=&quot;cp&quot;&gt;# 输出all_gather后的结果
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} after all_gather: {gather_list}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 输出all_gather后的结果
-    print(f&quot;Rank {rank} after all_gather: {gather_list}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 清理资源
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;destroy_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-    # 清理资源
-    dist.destroy_process_group()
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;示例中使用&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;个进程，但可以根据需要调整&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;This example requires at least {world_size} GPUs.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run_all_gather&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,),&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;nprocs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_all_gather,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
-
-if __name__ == &quot;__main__&quot;:
-    main()
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;__main__&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;运行结果：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before all_gather: tensor([1.])
-Rank 1 before all_gather: tensor([2.])
-Rank 2 before all_gather: tensor([3.])
-Rank 3 before all_gather: tensor([4.])
-Rank 0 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 1 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 2 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 1 before all_gather: tensor([2., 2.], device='cuda:1')
+Rank 0 before all_gather: tensor([1., 1.], device='cuda:0')
+Rank 3 before all_gather: tensor([4., 4.], device='cuda:3')
+Rank 2 before all_gather: tensor([3., 3.], device='cuda:2')
+Rank 0 after all_gather: [tensor([1., 1.], device='cuda:0'), tensor([2., 2.], device='cuda:0'), tensor([3., 3.], device='cuda:0'), tensor([4., 4.], device='cuda:0')]
+Rank 2 after all_gather: [tensor([1., 1.], device='cuda:2'), tensor([2., 2.], device='cuda:2'), tensor([3., 3.], device='cuda:2'), tensor([4., 4.], device='cuda:2')]
+Rank 1 after all_gather: [tensor([1., 1.], device='cuda:1'), tensor([2., 2.], device='cuda:1'), tensor([3., 3.], device='cuda:1'), tensor([4., 4.], device='cuda:1')]
+Rank 3 after all_gather: [tensor([1., 1.], device='cuda:3'), tensor([2., 2.], device='cuda:3'), tensor([3., 3.], device='cuda:3'), tensor([4., 4.], device='cuda:3')]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;12-allreduce操作&quot;&gt;1.2 allreduce操作&lt;/h3&gt;
@@ -90,103 +129,117 @@ Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])
 
 &lt;p&gt;allreduce代码：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distributed&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiprocessing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;
 
-def run_all_reduce(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size) # 初始化分布式环境，gloo作为后端。如果有多个gpu可用可以改为nccl
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;run_all_reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;cp&quot;&gt;# 初始化分布式环境，使用NCCL后端
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;nccl&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f&quot;Rank {rank} before all_reduce: {tensor}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 设置当前进程使用的GPU
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;每个进程创建的张量大小&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;确保所有张量使用相同的数据类型&lt;/span&gt;
+    
+    &lt;span class=&quot;cp&quot;&gt;# 创建每个进程对应的那一部分数据，并确保数据类型一致
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} before all_reduce: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 执行all_reduce操作（求和）
-    dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
+    &lt;span class=&quot;cp&quot;&gt;# 执行all_reduce操作（求和）
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;all_reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ReduceOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 输出all_reduce后的结果
-    print(f&quot;Rank {rank} after all_reduce: {tensor}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 输出all_reduce后的结果
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} after all_reduce: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
 
-    # 清理资源
-    dist.destroy_process_group()
+    &lt;span class=&quot;cp&quot;&gt;# 清理资源
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;destroy_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_all_reduce,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;模拟&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;个进程&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;This example requires at least {world_size} GPUs.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run_all_reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,),&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;nprocs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-if __name__ == &quot;__main__&quot;:
-    main()
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;__main__&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;运行结果：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before all_reduce: tensor([1.])
-Rank 1 before all_reduce: tensor([2.])
-Rank 2 before all_reduce: tensor([3.])
-Rank 3 before all_reduce: tensor([4.])
-Rank 0 after all_reduce: tensor([10.])
-Rank 1 after all_reduce: tensor([10.])
-Rank 2 after all_reduce: tensor([10.])
-Rank 3 after all_reduce: tensor([10.])
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 3 before all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;4., 4., 4., 4., 4., 4., 4., 4.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:3'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 1 before all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;2., 2., 2., 2., 2., 2., 2., 2.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:1'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 0 before all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;1., 1., 1., 1., 1., 1., 1., 1.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:0'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 2 before all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;3., 3., 3., 3., 3., 3., 3., 3.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:2'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 0 after all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10., 10., 10., 10., 10., 10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:0'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 1 after all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10., 10., 10., 10., 10., 10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:1'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 3 after all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10., 10., 10., 10., 10., 10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:3'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 2 after all_reduce: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10., 10., 10., 10., 10., 10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:2'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;13-reduce操作&quot;&gt;1.3 reduce操作&lt;/h3&gt;
 
 &lt;p&gt;所有进程执行reduce操作，最终结果发送到根进程&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distributed&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiprocessing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;
 
-def run_reduce(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size)
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;run_reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;cp&quot;&gt;# 初始化分布式环境，使用NCCL后端
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;nccl&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f&quot;Rank {rank} before reduce: {tensor}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 设置当前进程使用的GPU
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;每个进程创建的张量大小&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;确保所有张量使用相同的数据类型&lt;/span&gt;
+    
+    &lt;span class=&quot;cp&quot;&gt;# 创建每个进程对应的那一部分数据，并确保数据类型一致
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} before reduce: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 指定根进程为0
-    root_rank = 0
+    &lt;span class=&quot;cp&quot;&gt;# 执行reduce操作（求和），并将结果放在根rank上
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dst&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ReduceOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 执行reduce操作（求和）
-    if rank == root_rank:
-        print(f&quot;Rank {rank} is the root.&quot;)
-        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
-        print(f&quot;Rank {rank} after reduce: {tensor}&quot;)
-    else:
-        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
-        print(f&quot;Rank {rank} after reduce: (unchanged) {tensor}&quot;)
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;cp&quot;&gt;# 根rank上的输出张量现在包含了所有ranks的归约结果
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Root Rank {rank} after reduce: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} remains unchanged after reduce: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 清理资源
-    dist.destroy_process_group()
+    &lt;span class=&quot;cp&quot;&gt;# 清理资源
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;destroy_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_reduce,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;模拟&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;个进程&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;This example requires at least {world_size} GPUs.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run_reduce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,),&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;nprocs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-if __name__ == &quot;__main__&quot;:
-    main()
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;__main__&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;运行结果：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before reduce: tensor([1.])
-Rank 1 before reduce: tensor([2.])
-Rank 2 before reduce: tensor([3.])
-Rank 3 before reduce: tensor([4.])
-Rank 0 is the root.
-Rank 0 after reduce: tensor([10.])
-Rank 1 after reduce: (unchanged) tensor([2.])
-Rank 2 after reduce: (unchanged) tensor([3.])
-Rank 3 after reduce: (unchanged) tensor([4.])
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;before&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;before&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;before&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;before&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;remains&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unchanged&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;after&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;remains&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unchanged&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;after&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Root&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;after&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Rank&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;remains&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unchanged&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;after&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;14-reducescatter-操作&quot;&gt;1.4 reducescatter 操作&lt;/h3&gt;
@@ -197,53 +250,61 @@ Rank 3 after reduce: (unchanged) tensor([4.])
 
 &lt;p&gt;图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distributed&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiprocessing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;
 
-def run_reduce_scatter(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group(&quot;gloo&quot;, rank=rank, world_size=world_size)
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;run_reduce_scatter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;cp&quot;&gt;# 初始化分布式环境，使用NCCL后端
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;nccl&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 创建一个初始张量列表，每个进程都有相同大小的部分
-    tensor_size = 2  # 每个进程创建的张量大小
-    input_tensor = torch.ones(tensor_size * world_size) * (rank + 1)
-    print(f&quot;Rank {rank} before reduce_scatter: {input_tensor}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 设置当前进程使用的GPU
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;每个进程创建的张量大小&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;确保所有张量使用相同的数据类型&lt;/span&gt;
+    
+    &lt;span class=&quot;cp&quot;&gt;# 创建每个进程对应的那一部分数据，并确保数据类型一致
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} before reduce_scatter: {input_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 准备接收结果的张量
-    output_tensor = torch.empty(tensor_size)
+    &lt;span class=&quot;cp&quot;&gt;# 准备接收结果的张量，并确保其数据类型与输入张量一致
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;output_tensor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tensor_size&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// world_size, dtype=dtype).to(device)&lt;/span&gt;
 
-    # 执行reduce_scatter操作（求和）
-    dist.reduce_scatter(output_tensor, [input_tensor], op=dist.ReduceOp.SUM)
+    &lt;span class=&quot;cp&quot;&gt;# 执行reduce_scatter操作（求和）
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduce_scatter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input_tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ReduceOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 输出reduce_scatter后的结果
-    print(f&quot;Rank {rank} after reduce_scatter: {output_tensor}&quot;)
+    &lt;span class=&quot;cp&quot;&gt;# 输出reduce_scatter后的结果
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Rank {rank} after reduce_scatter: {output_tensor}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    # 清理资源
-    dist.destroy_process_group()
+    &lt;span class=&quot;cp&quot;&gt;# 清理资源
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;destroy_process_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_reduce_scatter,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;模拟&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;个进程&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cuda&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;This example requires at least {world_size} GPUs.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run_reduce_scatter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,),&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;nprocs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-if __name__ == &quot;__main__&quot;:
-    main()
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;__main__&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
     
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;运行结果：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 0 before reduce_scatter: tensor([1., 1., 1., 1., 1., 1., 1., 1.])
-Rank 1 before reduce_scatter: tensor([2., 2., 2., 2., 2., 2., 2., 2.])
-Rank 2 before reduce_scatter: tensor([3., 3., 3., 3., 3., 3., 3., 3.])
-Rank 3 before reduce_scatter: tensor([4., 4., 4., 4., 4., 4., 4., 4.])
-Rank 0 after reduce_scatter: tensor([10., 10.])
-Rank 1 after reduce_scatter: tensor([10., 10.])
-Rank 2 after reduce_scatter: tensor([10., 10.])
-Rank 3 after reduce_scatter: tensor([10., 10.])
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rank 1 before reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;2., 2., 2., 2., 2., 2., 2., 2.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:1'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 2 before reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;3., 3., 3., 3., 3., 3., 3., 3.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:2'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 3 before reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;4., 4., 4., 4., 4., 4., 4., 4.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:3'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 0 before reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;1., 1., 1., 1., 1., 1., 1., 1.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:0'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 1 after reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:1'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 3 after reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:3'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 2 after reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:2'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Rank 0 after reduce_scatter: tensor&lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;10., 10.], &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cuda:0'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 </description>
@@ -1865,346 +1926,6 @@ PSH=1, client端发送显示所有设备信息&lt;/p&gt;
         <category>tcp</category>
         
         <category>network</category>
-        
-      </item>
-    
-      <item>
-        <title>tidevice的魔法： 跨平台吊起webdriver agent runner源码学习</title>
-        <description>&lt;p&gt;根据&lt;a href=&quot;https://github.com/alibaba/taobao-iphone-device&quot;&gt;tidevice git&lt;/a&gt;文档 ,tidevice可以实现跨平台(windows/linux/mac)自动化测试。&lt;/p&gt;
-
-&lt;p&gt;在windows上，tidevice可以脱离Xcode唤起ios上已经安装好的webdriveragent runner app。&lt;/p&gt;
-
-&lt;p&gt;tidevice是怎么实现脱离Xcode吊起webdriver agent runner的呢？让我们来读一读源码。&lt;/p&gt;
-
-&lt;p&gt;由一条命令&lt;code class=&quot;highlighter-rouge&quot;&gt;tidevice wdaproxy -B com.facebook.wda.WebDriverAgent.Runner --port 8200&lt;/code&gt;开始。&lt;/p&gt;
-
-&lt;h2 id=&quot;端口汇总和基本原理&quot;&gt;端口汇总和基本原理&lt;/h2&gt;
-
-&lt;p&gt;后续会有很多端口用到，这里拉出来前面说明下，避免后面看到的时候有点蒙：&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;27015&lt;/em&gt;&lt;/strong&gt;：   usbmux（127.0.0.1:27015）&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;62078&lt;/em&gt;&lt;/strong&gt;：   LOCKDOWN_PORT， ios 上的lockdown service，参见后者 lockdown&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;32498&lt;/em&gt;&lt;/strong&gt;：   socket.htons(62078) = 32498   lockdown_port转换为网络字节端口的结果，&lt;a href=&quot;/2022/socket_little_endian_big_endian.html&quot;&gt;socket编程中的大端小端&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;8200,8100&lt;/em&gt;&lt;/strong&gt;： 8200（relay: tcp server, listen 8200）&amp;lt;—–&amp;gt;  8100 device(webdriveragent app: /screenshot)
-            后续会看到tidevice启动了一个端口转发的server，将pc端的8200数据转发到了ios设备8100端口
-            linux上有类似工具包&lt;a href=&quot;https://linuxcommandlibrary.com/man/iproxy&quot;&gt;iproxy&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;42015&lt;/em&gt;&lt;/strong&gt;：    socket.htons(8100) = 42015    webdriveragent runner监听的端口8100转换为网络字节端口。&lt;/p&gt;
-
-&lt;h3 id=&quot;webdriveragent-runner&quot;&gt;webdriveragent runner&lt;/h3&gt;
-&lt;p&gt;webdriveragent runner app是什么？由facebook提供的ios上可安装的webdriver server。该server启动后在iphone上监听一个端口（例如8100），接收指令来实现对ios设备的远程控制，如打开/安装/卸载其他app，截屏，通过settings设置手机，点击等等。&lt;/p&gt;
-
-&lt;p&gt;webdriveragent runner app: 本质是链接XCTest.framework调用苹果API直接执行命令，实现自动化测试的目的。Facebook的webdriver agent runner 已经停止维护，建议由appium的&lt;a href=&quot;https://github.com/appium/WebDriverAgent&quot;&gt;webdriveragent in appium github&lt;/a&gt;下载。
-具体webdriver agent runner安装详细参见blog&lt;a href=&quot;/2021/appium_mac_config_guide.html&quot;&gt;appium mac config guide&lt;/a&gt;中的webdriver agent runner安装部分。&lt;/p&gt;
-
-&lt;p&gt;appium + webdriveragent_runner也是一种常见的移动端自动化测试方案。我们这里探讨tidevice+webdriveragent_runner。&lt;/p&gt;
-
-&lt;h3 id=&quot;lockdown-service&quot;&gt;lockdown service&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&quot;https://gist.github.com/ddz/b6879ba86fc7ddc2e26f&quot;&gt;lockdown service介绍&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux#lockdownd_protocol&quot;&gt;lockdown service介绍2&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;lockdown 服务是ios上的守护进程，提供ios系统信息以及使用一些services.例如app的安装，手机备份，重装等。它需要root权限运行.
-使用lockdown service需要建立通过usb或者网络与ios设备建立一个SSL连接，连接过程中需要授权使用ios设备配对的一些keys。&lt;/p&gt;
-
-&lt;h3 id=&quot;usbmux&quot;&gt;usbmux&lt;/h3&gt;
-&lt;p&gt;usbmux是啥？itunes和iPhone通过usbmux进行通信。
-windows上iTunes能控制iPhone并且进行软件卸载，备份等就是通过的这个”usbmux”协议. about it, please see &lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux&quot;&gt;usbmux intro ref&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;instruments&quot;&gt;instruments&lt;/h3&gt;
-&lt;p&gt;源代码码中不乏instruments的身影.instruments 是什么?&lt;/p&gt;
-
-&lt;p&gt;根据dtxmsg格式
-&lt;a href=&quot;https://github.com/troybowman/dtxmsg/blob/master/slides.pdf&quot;&gt;dtx msg&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://bbs.pediy.com/thread-246139.htm&quot;&gt;中文版dtxmsg, dtx msg&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/ios/instrument.PNG&quot; alt=&quot;instrument&quot; width=&quot;713&quot; /&gt;
-图片来源于以上dtx msg博文&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2019/411/&quot;&gt;wwdc关于instruments的介绍&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;我们了解到:&lt;/p&gt;
-
-&lt;p&gt;instruments是一个由Apple开发的一系列调试工具集,集合于Xcode:&lt;/p&gt;
-
-&lt;p&gt;时间耗时检测&lt;/p&gt;
-
-&lt;p&gt;泄露检测&lt;/p&gt;
-
-&lt;p&gt;跟踪文件 I/O&lt;/p&gt;
-
-&lt;p&gt;Apple实现了OSX上运行的一个用于提供iOS调试分析的server&lt;/p&gt;
-
-&lt;h3 id=&quot;前置知识总结&quot;&gt;前置知识总结&lt;/h3&gt;
-&lt;p&gt;根据理解画了幅图如下
-&lt;img src=&quot;/images/ios/tidevice_communication.PNG&quot; alt=&quot;tidevice通信&quot; width=&quot;713&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;step 1 .&lt;/p&gt;
-
-&lt;p&gt;tidevice 在pc上开启了一个tcp转发服务器，用于转发pc端8200数据到ios端8100数据。&lt;/p&gt;
-
-&lt;p&gt;tidevice和pc上（windows安装itunes获得， mac上自带）的usbmuxd进行通信，启动ios上lockdown/instrument相关服务,模拟xcode通信吊起webdriver agent runner&lt;/p&gt;
-
-&lt;p&gt;step 2.&lt;/p&gt;
-
-&lt;p&gt;tidevice发api命令（有统一的restful api标准定义）给（监听8200的）tcp server， server转发给ios上（监听8100的）webdriveragent runner， webdriveragent runner接受api，调用xctest框架实现自动化控制。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&quot;程序入口&quot;&gt;程序入口&lt;/h2&gt;
-&lt;p&gt;setup.cfg中设定了入口为tidev中的__main__里的main函数&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[entry_points]
-console_scripts = 
-    tidevice = tidevice.__main__:main
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;main()中本质是调用Usbmux生成了um对象，负责usbmux相关的通信。usbmux是啥？一个实现了usb连接的iPhone设备和pc端间，以类似tcp进行通信的系统。具体参见&lt;a href=&quot;/2022/usbmux.html&quot;&gt;usbmux study&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    um = Usbmux(args.socket)
-    actions[args.subparser](args) # actually called: def cmd_wdaproxy(args: argparse.Namespace)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;cmd_wdaproxy在这里干了两件事:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;启动一个tcpserver: 实现端口转发 8200 &amp;lt;—&amp;gt; 8100, like &lt;a href=&quot;https://www.mankier.com/1/iproxy&quot;&gt;iproxy&lt;/a&gt;，通过给pc端8200发数据，转发到ios上的8100，也就是webdriver agent runner所监听的端口&lt;/li&gt;
-  &lt;li&gt;启动 WDAService, 开启 webdriveragent runner
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; if args.port:
-     cmds = [
-         sys.executable, '-m', 'tidevice', '-u', d.udid, 'relay',
-         str(args.port), '8100'
-     ]
-     p = subprocess.Popen(cmds, stdout=sys.stdout, stderr=sys.stderr)
-    
- ...
-    
- serv = WDAService(d, args.bundle_id, env) # start webdriveragent runner
- ...
- serv.start()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;WDAService实际调用子进程，执行tidevce xctest命令 ```subprocess.Popen(“python -m tidevice -u {udid} xctest –bundle_id {bundle_id}”)”&lt;/p&gt;
-
-&lt;p&gt;xctest里我理解就是对Xcode和iPhone的通信过程进行了逆向工程,模拟其Xcode通信的流程和数据，驱动xctest project start，可以看到核心代码如下:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-    ## IDE 1st connection
-    ##
-
-    x1 = self._connect_testmanagerd_lockdown()    #通过usbmux连接 com.apple.testmanagerd.lockdown服务
-    data = s.send_recv_packet({
-                    &quot;Request&quot;: &quot;StartService&quot;,
-                    &quot;Service&quot;: name,
-                    &quot;Label&quot;: PROGRAM_NAME,
-                })
-    x1_daemon_chan = x1.make_channel(
-        'dtxproxy:XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface' #创建channel
-    )
-    identifier = '_IDE_initiateControlSessionWithProtocolVersion:'
-    aux = AUXMessageBuffer()
-    aux.append_obj(XCODE_VERSION)
-    x1.call_message(x1_daemon_chan, identifier, aux) #对channel发送对应的二进制数据
-
-
-    ##
-    ## IDE 2nd connection
-    x2 = self._connect_testmanagerd_lockdown()
-    x2_deamon_chan = x2.make_channel(
-        'dtxproxy:XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface'
-    )
-    x2.register_callback(Event.FINISHED, lambda _: quit_event.set())
-    #
-    identifier = '_IDE_initiateSessionWithIdentifier:forClient:atPath:protocolVersion:'
-    aux = AUXMessageBuffer()
-    aux.append_obj(session_identifier)
-    aux.append_obj(str(session_identifier) + '-6722-000247F15966B083')
-    aux.append_obj(
-        '/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild')
-    aux.append_obj(XCODE_VERSION)
-    result = x2.call_message(x2_deamon_chan, identifier, aux)
-
-
-    ###launch app
-    xctest_path = f&quot;/tmp/{target_name}-{str(session_identifier).upper()}.xctestconfiguration&quot;  # yapf: disable
-    xctest_content = bplist.objc_encode(bplist.XCTestConfiguration({
-        &quot;testBundleURL&quot;: bplist.NSURL(None, f&quot;file://{app_info['Path']}/PlugIns/{target_name}.xctest&quot;),
-        &quot;sessionIdentifier&quot;: session_identifier,
-        &quot;targetApplicationBundleID&quot;: target_app_bundle_id,
-    }))  # yapf: disable
-
-    # service: com.apple.instruments.remoteserver
-    conn = self.connect_instruments() # start service &quot;com.apple.instruments.remoteserver.DVTSecureSocketProxy&quot;  # for iOS 14.0
-    channel = conn.make_channel(InstrumentsService.ProcessControl)
-    conn.call_message(channel, &quot;processIdentifierForBundleIdentifier:&quot;,
-                      [bundle_id])
-    pid = conn.call_message(
-        channel, identifier,
-        [app_path, bundle_id, app_env, app_args, app_options])
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;流程总结：
-  流程中我们看到#1 和#2 两次启动并且连接lockdown服务，创建channel，通过channel发送数据进行了初始化控制session的操作（_IDE_initiateControlSessionWithProtocolVersion 和 XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface）。
-  猜测是Xcode启动ios上对应的xcuitest framework的时候前置初始化操作。#3 吊起webdriver runner app，主要是启动instrument服务（InstrumentsRemoteServer = “com.apple.instruments.remoteserver”），创建channel然后发送DTXMessage启动app.&lt;/p&gt;
-
-&lt;h2 id=&quot;代码流程分步解析&quot;&gt;代码流程分步解析&lt;/h2&gt;
-
-&lt;p&gt;下面来看下方法connect_testmanagerd_lockdown，通过查看代码发现本质是socket连接usbmuxd，通过该connection发送start service指令，启动lockdown service（ssl连接）.&lt;/p&gt;
-
-&lt;p&gt;分步骤看下最常见的start service并且连接到该service包含哪些内容。&lt;/p&gt;
-
-&lt;p&gt;1 其中启动一次service 完整流程包括&lt;/p&gt;
-
-&lt;p&gt;usbmuxd connection1 —&amp;gt; connection1 send info:connect—&amp;gt; querType—&amp;gt; GetValue—&amp;gt; StartSession—&amp;gt; StartService—&amp;gt; StopSession&lt;/p&gt;
-
-&lt;p&gt;2 开启service后，下次连接，根据返回的信息例如{‘EnableServiceSSL’: True, ‘Port’: 53190, ‘Request’: ‘StartService’, ‘Service’: ‘com.apple.testmanagerd.lockdown.secure’}信息，connect返回的端口，即可连接该service&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_connect_testmanagerd_lockdown:
-	conn = start_service(LockdownService.TestmanagerdLockdownSecure=com.apple.testmanagerd.lockdown.secure)
-		create_session as s:		
-				create_inner_connection as s:
-						conn = self._usbmux.create_connection()
-						conn send ('MessageType': 'Connect', port=LOCKDOWN_PORT)
-						return conn
-						
-					QueryType
-					GetValue
-					StartSession
-					yield s
-					StopSession
-				
-								
-		    data = s.send_recv_packet({
-                &quot;Request&quot;: &quot;StartService&quot;,
-                &quot;Service&quot;: name,
-                &quot;Label&quot;: PROGRAM_NAME,
-            })
-				
-				
-		conn = self.create_inner_connection(data['Port'], _ssl=_ssl, ssl_dial_only=ssl_dial_only)
-		return conn
-		 
-	return DTXService(conn)	 
-
-...
-	
-    make_channel:
-	    result = self.call_message(0, '_requestChannelWithCode:identifier:', aux)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h4 id=&quot;一部分log步骤大致如下&quot;&gt;一部分log步骤大致如下&lt;/h4&gt;
-
-&lt;p&gt;As tested form code, follow steps happened during webdriveragent runner app started:&lt;/p&gt;
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    1. SEND(1): {'MessageType': 'ListDevices', 'ClientVersionString': 'libusbmuxd 1.1.0', 'ProgName': 'tidevice', 'kLibUSBMuxVersion': 3}
-    2. send payload: {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 32498, 'ProgName': 'tidevice'} 
-    connected to port: 32498    # why here is 32498 instead of 62078? socket.htons(62078) = 32498
-    3. &quot;Request&quot;: &quot;QueryType&quot;
-    {'Request': 'QueryType', 'Type': 'com.apple.mobile.lockdown'}
-    
-    4. 'Request': 'GetValue'
-       {'Key': 'ProductVersion', 'Request': 'GetValue', 'Value': '14.2'}
-    
-    5. {'MessageType': 'ReadPairRecord', 'PairRecordID': 'bac123dc8ed3a3cdd491ab4e4699f60b136e7bca', 'ClientVersionString': 'libusbmu
-    xd 1.1.0', 'ProgName': 'tidevice', 'kLibUSBMuxVersion': 3} 
-    
-    6. {'Request': 'StartSession', 'HostID': '3096123013660573123119811848', 'SystemBUID': '30961229-7292436981136919796', 'ProgName'
-    : 'tidevice'}
-       {'EnableSessionSSL': True, 'Request': 'StartSession', 'SessionID': 'A56A6BFD-5D97-4083-8950-4228FA67E29C'}
-    
-    7. {'Request': 'StartService', 'Service': 'com.apple.mobile.installation_proxy', 'Label': 'tidevice'}
-       {'Port': 53184, 'Request': 'StartService', 'Service': 'com.apple.mobile.installation_proxy'}
-    
-    8. {'Request': 'StopSession'}
-       CLOSE
-    
-    9. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 49359, 'ProgName': 'tidevice'}
-       {'MessageType': 'Result', 'Number': 0}
-       connected to port: 49359
-    
-    10. {'Command': 'Browse', 'ClientOptions': {'ApplicationType': 'User', 'ReturnAttributes': ['CFBundleIdentifier']}}
-        {'CurrentIndex': 0, 'CurrentAmount': 10, 'Status': 'BrowsingApplications', 'CurrentList': [{'CFBundleIdentifier': 'x.x.x'}, {'CFBundleIdentifier': 'x.x.x'}, ..., {'CFBundleIdentifier': 'x.x.x'}]}
-        RECV(5): {'Status': 'Complete'}
-    
-    11. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 32498, 'ProgName': 'tidevice'}
-        {'MessageType': 'Result', 'Number': 0}
-        connected to port: 32498
-    
-    12. {'Request': 'QueryType'}
-       {'Request': 'QueryType', 'Type': 'com.apple.mobile.lockdown'}
-    
-    13. {'Request': 'GetValue', 'Key': 'ProductVersion', 'Label': 'tidevice'}
-       {'Key': 'ProductVersion', 'Request': 'GetValue', 'Value': '14.2'}
-    
-    14. {'Request': 'StartSession', 'HostID': '3096123013660573123119811848', 'SystemBUID': '30961229-7292436981136919796', 'ProgName': 'tidevice'}
-       {'EnableSessionSSL': True, 'Request': 'StartSession', 'SessionID': '553E60ED-73B1-4E84-AF87-330E59E7B266'}
-    
-    15. {'Request': 'StopSession', 'ProtocolVersion': '2', 'Label': 'tidevice', 'SessionID': '553E60ED-73B1-4E84-AF87-330E59E7B266'}
-       {'Request': 'StopSession'}
-       CLOSE(7)
-    
-    16. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 42015, 'ProgName': 'tidevice'}
-       {'MessageType': 'Result', 'Number': 3}
-    
-    17. {'Request': 'StartService', 'Service': &amp;lt;LockdownService.TestmanagerdLockdownSecure: 'com.apple.testmanagerd.lockdown.secure'&amp;gt;,
-    'Label': 'tidevice'}
-       {'EnableServiceSSL': True, 'Port': 53190, 'Request': 'StartService', 'Service': 'com.apple.testmanagerd.lockdown.secure'} 
-       备注：开启lockdown service，socket返回需要ssl连接，请连接端口号53190. socket.htons(53190)=50895
-    18. {'DeviceID': 95, 'MessageType': 'Connect', 'PortNumber': 50895, 'ProgName': 'tidevice'}
-       {'MessageType': 'Result', 'Number': 0}
-       connected to port: 50895
-       进行连接lockdown(50895),连接成功
-    19. SEND DTXMessage: channel:0 expect_reply:0 data_length:619, data...
-       SEND DTXMessage: channel:0 expect_reply:1 data_length:478, data...
-       RECV DTXMessage: expects_reply:0 flags:2 conv:0 ('_notifyOfPublishedCapabilities:', [{'com.apple.private.DTXBlockCompression': 2, 'com.
-    apple.private.DTXConnection': 1}])
-       RECV DTXMessage: expects_reply:0 flags:0 conv:1 None
-    ...
-    20. {'Command': 'Lookup', 'ClientOptions': {'BundleIDs': ['com.facebook.WebDriverAgentRunner.xctrunner']}}
-     {'Status': 'Complete', 'LookupResult': {'com.facebook.WebDriverAgentRunner.xctrunner': {'CFBundlePackageType': 'APPL', 'NSCon
-    tactsUsageDescription': 'Access is necessary for automated testing.', 'NSBluetoothAlwaysUsageDescription': 'Access is necessary for automated testing.', 'DTPlatformVersion'
-    : '14.2', 'DTSDKBuild': '18B58', 'NFCReaderUsageDescription': 'Access is necessary for automated testing.', 'NSSiriUsageDescription': 'Access is necessary for automated tes
-    ting.', 'LSRequiresIPhoneOS': True, 'NSCameraUsageDescription': 'Access is necessary for automated testing.', 'ProfileValidated': True, 'CFBundleDisplayName': 'WebDriverAge
-    ntRunner-Runner', 'SignerIdentity': 'Apple Development: ...', 'DTXcodeBuild': '12B42a', 'NSRemindersUsageDescription': 'Access is necessary for automat
-    ed testing.', 'EnvironmentVariables': {'CFFIXED_USER_HOME': '/private/var/mobile/Containers/Data/Application/D01XX616-XXXX-XXXX-XXXX-7B2749AFC1E6', 'TMPDIR': '/private/var/
-    mobile/Containers/Data/Application/D01XX616-XXXX-XXXX-XXXX-7B2749AFC1E6/tmp', 'HOME': '/private/var/mobile/Containers/Data/Application/D01AB616-XXXX-XXXX-XXXX-7B2749AFC1E6'
-    }, 'CFBundleNumericVersion': 16809984, 'SequenceNumber': 3604, 'IsDemotedApp': False, 'Path': '/private/var/containers/Bundle/Application/A557E8E0-XXXX-XXXX-XXXX-49A9183F1B
-    B3/WebDriverAgentRunner-Runner.app', 'CFBundleIdentifier': 'com.facebook.WebDriverAgentRunner.xctrunner', 'NSHealthClinicalHealthRecordsShareUsageDescription': 'Access is n
-    ecessary for automated testing.', 'UIDeviceFamily': [1, 2], 'CFBundleSignature': '????', 'CFBundleInfoDictionaryVersion': '6.0', 'IsUpgradeable': True, 'CFBundleSupportedPl
-    atforms': ['iPhoneOS'], 'NSHealthUpdateUsageDescription': 'Access is necessary for automated testing.', 'UIRequiresFullScreen': True, 'NSMotionUsageDescription': 'Access is
-    necessary for automated testing.', 'MinimumOSVersion': '9.0', 'NSPhotoLibraryAddUsageDescription': 'Access is necessary for automated testing.', 'CFBundleName': 'WebDriver
-    AgentRunner-Runner', 'CFBundleShortVersionString': '1.0', 'UIBackgroundModes': ['continuous'], 'UIRequiredDeviceCapabilities': ['armv7'], 'CFBundleExecutable': 'WebDriverAg
-    entRunner-Runner', 'NSHealthShareUsageDescription': 'Access is necessary for automated testing.', 'ApplicationType': 'User', 'NSAppleMusicUsageDescription': 'Access is nece
-    ssary for automated testing.', 'NSSpeechRecognitionUsageDescription': 'Access is necessary for automated testing.', 'Container': '/private/var/mobile/Containers/Data/Applic
-    ation/D01AB616-FF64-43F1-B9E7-7B2749AFC1E6', 'NSLocationUsageDescription': 'Access is necessary for automated testing.', 'BuildMachineOSBuild': '20A2371', 'NSCalendarsUsage
-    Description': 'Access is necessary for automated testing.', 'DTPlatformName': 'iphoneos', 'NSMicrophoneUsageDescription': 'Access is necessary for automated testing.', 'CFB
-    undleAllowMixedLocalizations': True, 'NSLocationWhenInUseUsageDescription': 'Access is necessary for automated testing.', 'CFBundleVersion': '1', 'CFBundleDevelopmentRegion
-    ': 'en', 'NSFaceIDUsageDescription': 'Access is necessary for automated testing.', 'DTCompiler': 'com.apple.compilers.llvm.clang.1_0', 'NSLocationAlwaysAndWhenInUseUsageDes
-    cription': 'Access is necessary for automated testing.', 'NSHomeKitUsageDescription': 'Access is necessary for automated testing.', 'DTSDKName': 'iphoneos14.2.internal', 'N
-    SAppTransportSecurity': {'NSAllowsArbitraryLoads': True}, 'Entitlements': {'keychain-access-groups': ['T3TLXX99XX.com.facebook.WebDriverAgentRunner.xctrunner'], 'applicatio
-    n-identifier': 'T3TLXX99XX.com.facebook.WebDriverAgentRunner.xctrunner', 'get-task-allow': True, 'com.apple.developer.team-identifier': 'T3TLXX99XX'}, 'DTPlatformBuild': '1
-    8B58', 'NSPhotoLibraryUsageDescription': 'Access is necessary for automated testing.', 'IsAppClip': False, 'UISupportedInterfaceOrientations': ['UIInterfaceOrientationPortr
-    ait', 'UIInterfaceOrientationLandscapeLeft', 'UIInterfaceOrientationLandscapeRight'], 'DTXcode': '1220'}}}
-  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;参考&quot;&gt;参考&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://jon-gabilondo-angulo-7635.medium.com/understanding-usbmux-and-the-ios-lockdown-service-7f2a1dfd07ae&quot;&gt;understanding-usbmux-and-the-ios-lockdown-service&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.theiphonewiki.com/wiki/Usbmux&quot;&gt;iphonewiki: Usbmux&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://testerhome.com/topics/27159&quot;&gt;tidevice intro&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Fri, 22 Apr 2022 19:40:41 +0800</pubDate>
-        <link>http://localhost:8080/2022/source_code_tidevice_study_cn.html</link>
-        <guid isPermaLink="true">http://localhost:8080/2022/source_code_tidevice_study_cn.html</guid>
-        
-        <category>tidevice</category>
-        
-        
-        <category>tidevice</category>
         
       </item>
     

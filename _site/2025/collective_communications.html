@@ -194,51 +194,58 @@
 
 <p>图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">import</span> <span class="n">torch</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">distributed</span> <span class="n">as</span> <span class="n">dist</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">multiprocessing</span> <span class="n">as</span> <span class="n">mp</span>
 
-def run_all_gather(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+<span class="n">def</span> <span class="n">run_all_gather</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span><span class="o">:</span>
+    <span class="cp"># 初始化分布式环境，使用NCCL后端
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="s">"nccl"</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">)</span>
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f"Rank {rank} before all_gather: {tensor}")
+    <span class="cp"># 设置当前进程使用的GPU
+</span>    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">(</span><span class="n">f</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="p">{</span><span class="n">rank</span><span class="p">}</span><span class="err">'</span><span class="p">)</span>
+    
+    <span class="n">tensor_size</span> <span class="o">=</span> <span class="mi">2</span>  <span class="err">#</span> <span class="err">每个进程创建的张量大小</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">float32</span>  <span class="err">#</span> <span class="err">确保所有张量使用相同的数据类型</span>
+    
+    <span class="cp"># 创建每个进程对应的那一部分数据，并确保数据类型一致
+</span>    <span class="n">input_tensor</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tensor_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)).</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} before all_gather: {input_tensor}"</span><span class="p">)</span>
 
-    # 准备接收结果的张量列表
-    gather_list = [torch.zeros_like(tensor) for _ in range(world_size)]
+    <span class="cp"># 收集所有ranks的张量
+</span>    <span class="n">gather_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">)]</span>
+    <span class="n">dist</span><span class="p">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">gather_list</span><span class="p">,</span> <span class="n">input_tensor</span><span class="p">)</span>
 
-    # 执行all_gather操作
-    dist.all_gather(gather_list, tensor)
+    <span class="cp"># 输出all_gather后的结果
+</span>    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} after all_gather: {gather_list}"</span><span class="p">)</span>
 
-    # 输出all_gather后的结果
-    print(f"Rank {rank} after all_gather: {gather_list}")
+    <span class="cp"># 清理资源
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
 
-    # 清理资源
-    dist.destroy_process_group()
+<span class="n">def</span> <span class="n">main</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="mi">4</span>  <span class="err">#</span> <span class="err">示例中使用</span><span class="mi">4</span><span class="err">个进程，但可以根据需要调整</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">world_size</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"This example requires at least {world_size} GPUs."</span><span class="p">)</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">mp</span><span class="p">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">run_all_gather</span><span class="p">,</span>
+                 <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,),</span>
+                 <span class="n">nprocs</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
+                 <span class="n">join</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_all_gather,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
-
-if __name__ == "__main__":
-    main()
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="o">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>运行结果：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 0 before all_gather: tensor([1.])
-Rank 1 before all_gather: tensor([2.])
-Rank 2 before all_gather: tensor([3.])
-Rank 3 before all_gather: tensor([4.])
-Rank 0 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 1 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 2 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
-Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 1 before all_gather: tensor([2., 2.], device='cuda:1')
+Rank 0 before all_gather: tensor([1., 1.], device='cuda:0')
+Rank 3 before all_gather: tensor([4., 4.], device='cuda:3')
+Rank 2 before all_gather: tensor([3., 3.], device='cuda:2')
+Rank 0 after all_gather: [tensor([1., 1.], device='cuda:0'), tensor([2., 2.], device='cuda:0'), tensor([3., 3.], device='cuda:0'), tensor([4., 4.], device='cuda:0')]
+Rank 2 after all_gather: [tensor([1., 1.], device='cuda:2'), tensor([2., 2.], device='cuda:2'), tensor([3., 3.], device='cuda:2'), tensor([4., 4.], device='cuda:2')]
+Rank 1 after all_gather: [tensor([1., 1.], device='cuda:1'), tensor([2., 2.], device='cuda:1'), tensor([3., 3.], device='cuda:1'), tensor([4., 4.], device='cuda:1')]
+Rank 3 after all_gather: [tensor([1., 1.], device='cuda:3'), tensor([2., 2.], device='cuda:3'), tensor([3., 3.], device='cuda:3'), tensor([4., 4.], device='cuda:3')]
 </code></pre></div></div>
 
 <h3 id="12-allreduce操作">1.2 allreduce操作</h3>
@@ -247,103 +254,117 @@ Rank 3 after all_gather: [tensor([1.]), tensor([2.]), tensor([3.]), tensor([4.])
 
 <p>allreduce代码：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">import</span> <span class="n">torch</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">distributed</span> <span class="n">as</span> <span class="n">dist</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">multiprocessing</span> <span class="n">as</span> <span class="n">mp</span>
 
-def run_all_reduce(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size) # 初始化分布式环境，gloo作为后端。如果有多个gpu可用可以改为nccl
+<span class="n">def</span> <span class="n">run_all_reduce</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span><span class="o">:</span>
+    <span class="cp"># 初始化分布式环境，使用NCCL后端
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="s">"nccl"</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">)</span>
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f"Rank {rank} before all_reduce: {tensor}")
+    <span class="cp"># 设置当前进程使用的GPU
+</span>    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">(</span><span class="n">f</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="p">{</span><span class="n">rank</span><span class="p">}</span><span class="err">'</span><span class="p">)</span>
+    
+    <span class="n">tensor_size</span> <span class="o">=</span> <span class="mi">8</span>  <span class="err">#</span> <span class="err">每个进程创建的张量大小</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">float32</span>  <span class="err">#</span> <span class="err">确保所有张量使用相同的数据类型</span>
+    
+    <span class="cp"># 创建每个进程对应的那一部分数据，并确保数据类型一致
+</span>    <span class="n">input_tensor</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tensor_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)).</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} before all_reduce: {input_tensor}"</span><span class="p">)</span>
 
-    # 执行all_reduce操作（求和）
-    dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
+    <span class="cp"># 执行all_reduce操作（求和）
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">all_reduce</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">dist</span><span class="p">.</span><span class="n">ReduceOp</span><span class="p">.</span><span class="n">SUM</span><span class="p">)</span>
 
-    # 输出all_reduce后的结果
-    print(f"Rank {rank} after all_reduce: {tensor}")
+    <span class="cp"># 输出all_reduce后的结果
+</span>    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} after all_reduce: {input_tensor}"</span><span class="p">)</span> 
 
-    # 清理资源
-    dist.destroy_process_group()
+    <span class="cp"># 清理资源
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_all_reduce,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+<span class="n">def</span> <span class="n">main</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="mi">4</span>  <span class="err">#</span> <span class="err">模拟</span><span class="mi">4</span><span class="err">个进程</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">world_size</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"This example requires at least {world_size} GPUs."</span><span class="p">)</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">mp</span><span class="p">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">run_all_reduce</span><span class="p">,</span>
+                 <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,),</span>
+                 <span class="n">nprocs</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
+                 <span class="n">join</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
 
-if __name__ == "__main__":
-    main()
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="o">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>运行结果：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 0 before all_reduce: tensor([1.])
-Rank 1 before all_reduce: tensor([2.])
-Rank 2 before all_reduce: tensor([3.])
-Rank 3 before all_reduce: tensor([4.])
-Rank 0 after all_reduce: tensor([10.])
-Rank 1 after all_reduce: tensor([10.])
-Rank 2 after all_reduce: tensor([10.])
-Rank 3 after all_reduce: tensor([10.])
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 3 before all_reduce: tensor<span class="o">([</span>4., 4., 4., 4., 4., 4., 4., 4.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:3'</span><span class="o">)</span>
+Rank 1 before all_reduce: tensor<span class="o">([</span>2., 2., 2., 2., 2., 2., 2., 2.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:1'</span><span class="o">)</span>
+Rank 0 before all_reduce: tensor<span class="o">([</span>1., 1., 1., 1., 1., 1., 1., 1.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:0'</span><span class="o">)</span>
+Rank 2 before all_reduce: tensor<span class="o">([</span>3., 3., 3., 3., 3., 3., 3., 3.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:2'</span><span class="o">)</span>
+Rank 0 after all_reduce: tensor<span class="o">([</span>10., 10., 10., 10., 10., 10., 10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:0'</span><span class="o">)</span>
+Rank 1 after all_reduce: tensor<span class="o">([</span>10., 10., 10., 10., 10., 10., 10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:1'</span><span class="o">)</span>
+Rank 3 after all_reduce: tensor<span class="o">([</span>10., 10., 10., 10., 10., 10., 10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:3'</span><span class="o">)</span>
+Rank 2 after all_reduce: tensor<span class="o">([</span>10., 10., 10., 10., 10., 10., 10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:2'</span><span class="o">)</span>
 </code></pre></div></div>
 
 <h3 id="13-reduce操作">1.3 reduce操作</h3>
 
 <p>所有进程执行reduce操作，最终结果发送到根进程</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">import</span> <span class="n">torch</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">distributed</span> <span class="n">as</span> <span class="n">dist</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">multiprocessing</span> <span class="n">as</span> <span class="n">mp</span>
 
-def run_reduce(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+<span class="n">def</span> <span class="n">run_reduce</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span><span class="o">:</span>
+    <span class="cp"># 初始化分布式环境，使用NCCL后端
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="s">"nccl"</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">)</span>
 
-    # 创建一个随机张量作为起始值
-    tensor = torch.tensor([rank + 1.0], device=torch.device('cpu'))  # 使用CPU以简化配置
-    print(f"Rank {rank} before reduce: {tensor}")
+    <span class="cp"># 设置当前进程使用的GPU
+</span>    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">(</span><span class="n">f</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="p">{</span><span class="n">rank</span><span class="p">}</span><span class="err">'</span><span class="p">)</span>
+    
+    <span class="n">tensor_size</span> <span class="o">=</span> <span class="mi">8</span>  <span class="err">#</span> <span class="err">每个进程创建的张量大小</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">float32</span>  <span class="err">#</span> <span class="err">确保所有张量使用相同的数据类型</span>
+    
+    <span class="cp"># 创建每个进程对应的那一部分数据，并确保数据类型一致
+</span>    <span class="n">input_tensor</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tensor_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)).</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} before reduce: {input_tensor}"</span><span class="p">)</span>
 
-    # 指定根进程为0
-    root_rank = 0
+    <span class="cp"># 执行reduce操作（求和），并将结果放在根rank上
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">dist</span><span class="p">.</span><span class="n">ReduceOp</span><span class="p">.</span><span class="n">SUM</span><span class="p">)</span>
 
-    # 执行reduce操作（求和）
-    if rank == root_rank:
-        print(f"Rank {rank} is the root.")
-        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
-        print(f"Rank {rank} after reduce: {tensor}")
-    else:
-        dist.reduce(tensor, dst=root_rank, op=dist.ReduceOp.SUM)
-        print(f"Rank {rank} after reduce: (unchanged) {tensor}")
+    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="o">:</span>
+        <span class="cp"># 根rank上的输出张量现在包含了所有ranks的归约结果
+</span>        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Root Rank {rank} after reduce: {input_tensor}"</span><span class="p">)</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} remains unchanged after reduce: {input_tensor}"</span><span class="p">)</span>
 
-    # 清理资源
-    dist.destroy_process_group()
+    <span class="cp"># 清理资源
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_reduce,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+<span class="n">def</span> <span class="n">main</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="mi">4</span>  <span class="err">#</span> <span class="err">模拟</span><span class="mi">4</span><span class="err">个进程</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">world_size</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"This example requires at least {world_size} GPUs."</span><span class="p">)</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">mp</span><span class="p">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">run_reduce</span><span class="p">,</span>
+                 <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,),</span>
+                 <span class="n">nprocs</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
+                 <span class="n">join</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
 
-if __name__ == "__main__":
-    main()
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="o">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>运行结果：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 0 before reduce: tensor([1.])
-Rank 1 before reduce: tensor([2.])
-Rank 2 before reduce: tensor([3.])
-Rank 3 before reduce: tensor([4.])
-Rank 0 is the root.
-Rank 0 after reduce: tensor([10.])
-Rank 1 after reduce: (unchanged) tensor([2.])
-Rank 2 after reduce: (unchanged) tensor([3.])
-Rank 3 after reduce: (unchanged) tensor([4.])
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Rank</span> <span class="mi">1</span> <span class="n">before</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">1</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Rank</span> <span class="mi">0</span> <span class="n">before</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.,</span> <span class="mi">1</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">0</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Rank</span> <span class="mi">2</span> <span class="n">before</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">2</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Rank</span> <span class="mi">3</span> <span class="n">before</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">3</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Rank</span> <span class="mi">1</span> <span class="n">remains</span> <span class="n">unchanged</span> <span class="n">after</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.,</span> <span class="mi">2</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">1</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Rank</span> <span class="mi">2</span> <span class="n">remains</span> <span class="n">unchanged</span> <span class="n">after</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.,</span> <span class="mi">3</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">2</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Root</span> <span class="n">Rank</span> <span class="mi">0</span> <span class="n">after</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.,</span> <span class="mi">10</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">0</span><span class="err">'</span><span class="p">)</span>
+<span class="n">Rank</span> <span class="mi">3</span> <span class="n">remains</span> <span class="n">unchanged</span> <span class="n">after</span> <span class="n">reduce</span><span class="o">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.,</span> <span class="mi">4</span><span class="p">.],</span> <span class="n">device</span><span class="o">=</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="mi">3</span><span class="err">'</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h3 id="14-reducescatter-操作">1.4 reducescatter 操作</h3>
@@ -354,53 +375,61 @@ Rank 3 after reduce: (unchanged) tensor([4.])
 
 <p>图片来源：https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">import</span> <span class="n">torch</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">distributed</span> <span class="n">as</span> <span class="n">dist</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="n">multiprocessing</span> <span class="n">as</span> <span class="n">mp</span>
 
-def run_reduce_scatter(rank, world_size):
-    # 初始化分布式环境
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+<span class="n">def</span> <span class="n">run_reduce_scatter</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span><span class="o">:</span>
+    <span class="cp"># 初始化分布式环境，使用NCCL后端
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="s">"nccl"</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">)</span>
 
-    # 创建一个初始张量列表，每个进程都有相同大小的部分
-    tensor_size = 2  # 每个进程创建的张量大小
-    input_tensor = torch.ones(tensor_size * world_size) * (rank + 1)
-    print(f"Rank {rank} before reduce_scatter: {input_tensor}")
+    <span class="cp"># 设置当前进程使用的GPU
+</span>    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">(</span><span class="n">f</span><span class="err">'</span><span class="n">cuda</span><span class="o">:</span><span class="p">{</span><span class="n">rank</span><span class="p">}</span><span class="err">'</span><span class="p">)</span>
+    
+    <span class="n">tensor_size</span> <span class="o">=</span> <span class="mi">8</span>  <span class="err">#</span> <span class="err">每个进程创建的张量大小</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">float32</span>  <span class="err">#</span> <span class="err">确保所有张量使用相同的数据类型</span>
+    
+    <span class="cp"># 创建每个进程对应的那一部分数据，并确保数据类型一致
+</span>    <span class="n">input_tensor</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tensor_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)).</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} before reduce_scatter: {input_tensor}"</span><span class="p">)</span>
 
-    # 准备接收结果的张量
-    output_tensor = torch.empty(tensor_size)
+    <span class="cp"># 准备接收结果的张量，并确保其数据类型与输入张量一致
+</span>    <span class="n">output_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">empty</span><span class="p">(</span><span class="n">tensor_size</span> <span class="c1">// world_size, dtype=dtype).to(device)</span>
 
-    # 执行reduce_scatter操作（求和）
-    dist.reduce_scatter(output_tensor, [input_tensor], op=dist.ReduceOp.SUM)
+    <span class="cp"># 执行reduce_scatter操作（求和）
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">reduce_scatter</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">,</span> <span class="p">[</span><span class="n">input_tensor</span><span class="p">],</span> <span class="n">op</span><span class="o">=</span><span class="n">dist</span><span class="p">.</span><span class="n">ReduceOp</span><span class="p">.</span><span class="n">SUM</span><span class="p">)</span>
 
-    # 输出reduce_scatter后的结果
-    print(f"Rank {rank} after reduce_scatter: {output_tensor}")
+    <span class="cp"># 输出reduce_scatter后的结果
+</span>    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Rank {rank} after reduce_scatter: {output_tensor}"</span><span class="p">)</span>
 
-    # 清理资源
-    dist.destroy_process_group()
+    <span class="cp"># 清理资源
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
 
-def main():
-    world_size = 4  # 模拟4个进程
-    mp.spawn(run_reduce_scatter,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
+<span class="n">def</span> <span class="n">main</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="mi">4</span>  <span class="err">#</span> <span class="err">模拟</span><span class="mi">4</span><span class="err">个进程</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">world_size</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">"This example requires at least {world_size} GPUs."</span><span class="p">)</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">mp</span><span class="p">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">run_reduce_scatter</span><span class="p">,</span>
+                 <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,),</span>
+                 <span class="n">nprocs</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span>
+                 <span class="n">join</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
 
-if __name__ == "__main__":
-    main()
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="o">:</span>
+    <span class="n">main</span><span class="p">()</span>
     
 </code></pre></div></div>
 
 <p>运行结果：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 0 before reduce_scatter: tensor([1., 1., 1., 1., 1., 1., 1., 1.])
-Rank 1 before reduce_scatter: tensor([2., 2., 2., 2., 2., 2., 2., 2.])
-Rank 2 before reduce_scatter: tensor([3., 3., 3., 3., 3., 3., 3., 3.])
-Rank 3 before reduce_scatter: tensor([4., 4., 4., 4., 4., 4., 4., 4.])
-Rank 0 after reduce_scatter: tensor([10., 10.])
-Rank 1 after reduce_scatter: tensor([10., 10.])
-Rank 2 after reduce_scatter: tensor([10., 10.])
-Rank 3 after reduce_scatter: tensor([10., 10.])
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rank 1 before reduce_scatter: tensor<span class="o">([</span>2., 2., 2., 2., 2., 2., 2., 2.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:1'</span><span class="o">)</span>
+Rank 2 before reduce_scatter: tensor<span class="o">([</span>3., 3., 3., 3., 3., 3., 3., 3.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:2'</span><span class="o">)</span>
+Rank 3 before reduce_scatter: tensor<span class="o">([</span>4., 4., 4., 4., 4., 4., 4., 4.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:3'</span><span class="o">)</span>
+Rank 0 before reduce_scatter: tensor<span class="o">([</span>1., 1., 1., 1., 1., 1., 1., 1.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:0'</span><span class="o">)</span>
+Rank 1 after reduce_scatter: tensor<span class="o">([</span>10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:1'</span><span class="o">)</span>
+Rank 3 after reduce_scatter: tensor<span class="o">([</span>10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:3'</span><span class="o">)</span>
+Rank 2 after reduce_scatter: tensor<span class="o">([</span>10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:2'</span><span class="o">)</span>
+Rank 0 after reduce_scatter: tensor<span class="o">([</span>10., 10.], <span class="nv">device</span><span class="o">=</span><span class="s1">'cuda:0'</span><span class="o">)</span>
 </code></pre></div></div>
 
 
@@ -476,6 +505,11 @@ Rank 3 after reduce_scatter: tensor([10., 10.])
             </a>
         </li>
         
+        
+        <li class="next">
+            <a href="/2025/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0.html" data-toggle="tooltip" data-placement="top" title="操作系统相关学习">下一篇：  <span>操作系统相关学习</span>
+            </a>
+        </li>
         
     </ul>
 </section>
